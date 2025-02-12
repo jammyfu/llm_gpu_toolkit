@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LLM 模型显存计算器</title>
     <style>
         /* 基础样式 */
@@ -308,340 +308,461 @@
                 text-align: center;
             }
         }
+
+        /* 新增语言切换按钮样式 */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .language-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .language-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .language-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>LLM 模型显存计算器</h1>
+    <!-- 添加语言切换按钮 -->
+    <div class="language-switcher">
+        <button class="language-btn" onclick="toggleLanguage()">English</button>
+    </div>
+    
+    <div class="container">
+        <h1>LLM 模型显存计算器</h1>
 
-    <div class="control-panel">
-        <div>
-            <label for="modelType">选择模型系列:</label>
-            <select id="modelType" onchange="loadModelData()">
+        <div class="control-panel">
+            <div>
+                <label for="modelType">选择模型系列:</label>
+                <select id="modelType" onchange="loadModelData()">
+                    <!-- 将由 JavaScript 填充 -->
+                </select>
+            </div>
+            <div>
+                <label for="gpuMemory">GPU显存大小 (GB):</label>
+                <input type="number" id="gpuMemory" min="1" step="1" oninput="updateGpuMemory(this.value)">
+            </div>
+            <div>
+                <label for="quantization">量化方式:</label>
+                <select id="quantization" onchange="calculateCompatibility()">
+                    <option value="Q4_K_M">4-bit 量化 (最小内存)</option>
+                    <option value="Q8_0">8-bit 量化 (平衡)</option>
+                    <option value="FP16">16-bit 精度 (最高质量)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="memory-info">
+            <p>模型描述：</p>
+            <div id="modelDescription">
                 <!-- 将由 JavaScript 填充 -->
-            </select>
+            </div>
         </div>
-        <div>
-            <label for="gpuMemory">GPU显存大小 (GB):</label>
-            <input type="number" id="gpuMemory" min="1" step="1" oninput="updateGpuMemory(this.value)">
-        </div>
-        <div>
-            <label for="quantization">量化方式:</label>
-            <select id="quantization" onchange="calculateCompatibility()">
-                <option value="Q4_K_M">4-bit 量化 (最小内存)</option>
-                <option value="Q8_0">8-bit 量化 (平衡)</option>
-                <option value="FP16">16-bit 精度 (最高质量)</option>
-            </select>
-        </div>
-    </div>
 
-    <div class="memory-info">
-        <p>模型描述：</p>
-        <div id="modelDescription">
+        <table id="modelTable">
+            <thead>
+            <tr>
+                <th>模型</th>
+                <th>大小标签</th>
+                <th>文件大小</th>
+                <th>量化方式</th>
+                <th>预估显存需求</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="modelTableBody">
             <!-- 将由 JavaScript 填充 -->
+            </tbody>
+        </table>
+
+        <div class="memory-info">
+            <p>注意：</p>
+            <ul>
+                <li>实际显存使用可能因具体环境而异，建议预留20%余量</li>
+                <li>使用模型前请确保已安装 Ollama。复制安装命令前请先访问 <a href="https://ollama.com" target="_blank">ollama.com</a> 按照说明完成安装</li>
+            </ul>
         </div>
     </div>
 
-    <table id="modelTable">
-        <thead>
-        <tr>
-            <th>模型</th>
-            <th>大小标签</th>
-            <th>文件大小</th>
-            <th>量化方式</th>
-            <th>预估显存需求</th>
-            <th>状态</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody id="modelTableBody">
-        <!-- 将由 JavaScript 填充 -->
-        </tbody>
-    </table>
+    <div id="toastContainer" class="toast-container"></div>
 
-    <div class="memory-info">
-        <p>注意：</p>
-        <ul>
-            <li>实际显存使用可能因具体环境而异，建议预留20%余量</li>
-            <li>使用模型前请确保已安装 Ollama。复制安装命令前请先访问 <a href="https://ollama.com" target="_blank">ollama.com</a> 按照说明完成安装</li>
-        </ul>
-    </div>
-</div>
+    <script>
+        // 页面静态文本翻译字典
+        const translations = {
+            'zh': {
+                'title': 'LLM 模型显存计算器',
+                'modelType': '选择模型系列:',
+                'gpuMemory': 'GPU显存大小 (GB):',
+                'quantization': '量化方式:',
+                'modelDescription': '模型描述：',
+                'notes': '注意：',
+                'note1': '实际显存使用可能因具体环境而异，建议预留20%余量',
+                'note2': '使用模型前请确保已安装 Ollama。复制安装命令前请先访问 <a href="https://ollama.com" target="_blank">ollama.com</a> 按照说明完成安装'
+            },
+            'en': {
+                'title': 'LLM VRAM Calculator',
+                'modelType': 'Select Model Series:',
+                'gpuMemory': 'GPU Memory Size (GB):',
+                'quantization': 'Quantization:',
+                'modelDescription': 'Model Description:',
+                'notes': 'Notes:',
+                'note1': 'Actual VRAM usage may vary depending on the environment, recommend reserving 20% margin',
+                'note2': 'Please ensure Ollama is installed before using the model. Visit <a href="https://ollama.com" target="_blank">ollama.com</a> for installation instructions before copying the command'
+            }
+        };
 
-<div id="toastContainer" class="toast-container"></div>
+        // 表格标题（下标对应表格各列）
+        const tableHeaderMapping = {
+            'zh': ["模型", "大小标签", "文件大小", "量化方式", "预估显存需求", "状态", "操作"],
+            'en': ["Model", "Size Label", "File Size", "Quantization", "Estimated VRAM", "Status", "Actions"]
+        };
 
-<script>
-    // 量化方式显示名称映射
-    const QUANT_DISPLAY_NAMES = {
-        'BASE': '基础版本 (无量化)',
-        'FP16': 'Float16 精度 (16位浮点)',
-        'Q8_0': '8-bit 量化 (INT8)',
-        'Q6_K': '6-bit 量化 (INT6)',
-        'Q5_K_M': '5-bit 量化 (INT5)',
-        'Q4_K_M': '4-bit 量化 (INT4)',
-        'Q3_K_M': '3-bit 量化 (INT3)',
-        'Q2_K': '2-bit 量化 (INT2)'
-    };
+        // 量化方式显示名称（中文和英文）
+        const QUANT_DISPLAY_NAMES_ZH = {
+            'BASE': '基础版本 (无量化)',
+            'FP16': 'Float16 精度 (16位浮点)',
+            'Q8_0': '8-bit 量化 (INT8)',
+            'Q6_K': '6-bit 量化 (INT6)',
+            'Q5_K_M': '5-bit 量化 (INT5)',
+            'Q4_K_M': '4-bit 量化 (INT4)',
+            'Q3_K_M': '3-bit 量化 (INT3)',
+            'Q2_K': '2-bit 量化 (INT2)'
+        };
+        const QUANT_DISPLAY_NAMES_EN = {
+            'BASE': 'Base (No Quantization)',
+            'FP16': 'Float16 Precision (16-bit float)',
+            'Q8_0': '8-bit Quantization (INT8)',
+            'Q6_K': '6-bit Quantization (INT6)',
+            'Q5_K_M': '5-bit Quantization (INT5)',
+            'Q4_K_M': '4-bit Quantization (INT4)',
+            'Q3_K_M': '3-bit Quantization (INT3)',
+            'Q2_K': '2-bit Quantization (INT2)'
+        };
 
-    // 量化方式的详细描述
-    const QUANT_DESCRIPTIONS = {
-        'BASE': '原始模型，无量化压缩，需要最大显存',
-        'FP16': '16位浮点精度，保持较高精度，适合专业显卡',
-        'Q8_0': '8位量化，平衡性能与质量',
-        'Q6_K': '6位量化，较好的压缩比与性能平衡',
-        'Q5_K_M': '5位量化，更高压缩比',
-        'Q4_K_M': '4位量化，高压缩比，适合消费级显卡',
-        'Q3_K_M': '3位量化，超高压缩比',
-        'Q2_K': '2位量化，最大压缩比，可能影响性能'
-    };
+        // 量化方式描述（中文和英文）
+        const QUANT_DESCRIPTIONS_ZH = {
+            'BASE': '原始模型，无量化压缩，需要最大显存',
+            'FP16': '16位浮点精度，保持较高精度，适合专业显卡',
+            'Q8_0': '8位量化，平衡性能与质量',
+            'Q6_K': '6位量化，较好的压缩比与性能平衡',
+            'Q5_K_M': '5位量化，更高压缩比',
+            'Q4_K_M': '4位量化，高压缩比，适合消费级显卡',
+            'Q3_K_M': '3位量化，超高压缩比',
+            'Q2_K': '2位量化，最大压缩比，可能影响性能'
+        };
+        const QUANT_DESCRIPTIONS_EN = {
+            'BASE': 'Original model, no quantization, maximum VRAM required',
+            'FP16': 'Float16 precision, maintains high accuracy, suitable for professional GPUs',
+            'Q8_0': '8-bit quantization, balances performance and quality',
+            'Q6_K': '6-bit quantization, balanced compression and performance',
+            'Q5_K_M': '5-bit quantization, higher compression ratio',
+            'Q4_K_M': '4-bit quantization, high compression ratio, suitable for consumer GPUs',
+            'Q3_K_M': '3-bit quantization, ultra-high compression ratio',
+            'Q2_K': '2-bit quantization, maximum compression, may affect performance'
+        };
 
-    // 加载配置文件
-    async function loadConfig() {
-        try {
-            const response = await fetch('config.json');
-            return await response.json();
-        } catch (error) {
-            console.error('加载配置文件失败:', error);
-            return null;
+        // 当前语言变量
+        let currentLanguage = 'zh';
+        window.currentConfig = null; // 保存配置文件数据
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+            updateLanguage();
         }
-    }
 
-    // 初始化模型选择下拉列表
-    async function initializeModelSelect() {
-        const config = await loadConfig();
-        if (!config) return;
+        function updateLanguage() {
+            // 使用翻译字典更新所有静态文本
+            const t = translations[currentLanguage];
 
-        const select = document.getElementById('modelType');
-        select.innerHTML = config.models.map(model =>
-            `<option value="${model.output_file}">${model.name}</option>`
-        ).join('');
+            // 更新页面 <title> 标签
+            document.title = t.title;
+            // 更新 <h1> 标签内的标题（切换语言时修改该部分）
+            document.querySelector('h1').textContent = t.title;
+            
+            // 更新其它标签与提示文本
+            document.querySelector('label[for="modelType"]').textContent = t.modelType;
+            document.querySelector('label[for="gpuMemory"]').textContent = t.gpuMemory;
+            document.querySelector('label[for="quantization"]').textContent = t.quantization;
+            
+            // 更新"模型描述"及"注意"的标题
+            // 假设页面中有两个 .memory-info 区块，第一个为模型描述标题，第二个为注意事项标题
+            const memoryInfoHeaders = document.querySelectorAll('.memory-info > p');
+            if (memoryInfoHeaders.length >= 2) {
+                memoryInfoHeaders[0].textContent = t.modelDescription; // 第一个 info 区块中的标题
+                memoryInfoHeaders[1].textContent = t.notes;             // 第二个 info 区块中的标题
+            }
+            
+            // 更新注意事项列表内容
+            const noteItems = document.querySelectorAll('.memory-info ul li');
+            if (noteItems.length >= 2) {
+                noteItems[0].textContent = t.note1;
+                noteItems[1].innerHTML = t.note2;
+            }
 
-        // 加载第一个模型的数据
-        loadModelData();
-    }
+            // 如果配置已加载，则更新下拉框内容（JSON中的模型名称支持中英文）
+            if (window.currentConfig) {
+                updateModelSelectFromConfig(window.currentConfig);
+            }
+            // 更新模型描述区域，根据配置重新渲染模型描述内容
+            updateModelDescription();
 
-    // 加载选中模型的数据和描述
-    async function loadModelData() {
-        const select = document.getElementById('modelType');
-        const selectedOption = select.selectedOptions[0];
-        const modelFile = selectedOption.value;
+            // 重新计算兼容性，表格中的模型名称、描述等将根据当前语言显示
+            if (window.currentModelData) {
+                calculateCompatibility();
+            }
 
-        try {
-            // 加载配置文件获取描述
+            // 更新表格标题
+            const headers = tableHeaderMapping[currentLanguage];
+            const ths = document.querySelectorAll('#modelTable thead th');
+            ths.forEach((th, idx) => { th.textContent = headers[idx]; });
+
+            // 根据当前语言更新语言切换按钮文字：
+            // 当前为中文时按钮显示 "English"，当前为英文时按钮显示 "中文"
+            document.querySelector('.language-btn').textContent = currentLanguage === 'zh' ? "English" : "中文";
+        }
+
+        // 新增函数：更新模型描述区域，依据当前配置和选中的模型更新描述内容
+        function updateModelDescription() {
+            if (window.currentConfig) {
+                const select = document.getElementById('modelType');
+                if (select.selectedOptions.length > 0) {
+                    const modelFile = select.selectedOptions[0].value;
+                    const selectedModel = window.currentConfig.models.find(model => model.output_file === modelFile);
+                    if (selectedModel) {
+                        // 根据当前语言显示对应的模型描述
+                        const desc = (currentLanguage === 'en' && selectedModel.description_en) ? selectedModel.description_en : selectedModel.description;
+                        document.getElementById('modelDescription').textContent = desc;
+                    }
+                }
+            }
+        }
+
+        // 加载配置文件
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.json');
+                return await response.json();
+            } catch (error) {
+                console.error('加载配置文件失败:', error);
+                return null;
+            }
+        }
+
+        // 根据当前语言更新模型选择下拉列表
+        function updateModelSelectFromConfig(config) {
+            const select = document.getElementById('modelType');
+            select.innerHTML = config.models.map(model =>
+                `<option value="${model.output_file}">${ currentLanguage === 'en' && model.name_en ? model.name_en : model.name }</option>`
+            ).join('');
+            // 加载当前选中的模型数据
+            loadModelData();
+        }
+
+        // 初始化模型选择，下拉列表内容由配置文件指定
+        async function initializeModelSelect() {
             const config = await loadConfig();
-            const selectedModel = config.models.find(model => model.output_file === modelFile);
-
-            // 更新模型描述
-            if (selectedModel) {
-                document.getElementById('modelDescription').textContent = selectedModel.description;
-            }
-
-            // 加载模型数据
-            const response = await fetch(`modeldata/cleaned/${modelFile}`);
-            const data = await response.json();
-            window.currentModelData = data;
-
-            updateQuantizationOptions();
-            calculateCompatibility();
-        } catch (error) {
-            console.error('加载模型数据失败:', error);
+            if (!config) return;
+            window.currentConfig = config;
+            updateModelSelectFromConfig(config);
         }
-    }
 
-    // 计算量化方式下拉选择
-    function updateQuantizationOptions() {
-        if (!window.currentModelData) return;
+        // 加载选中的模型数据，同时支持中英文描述（要求配置中的模型数据增加 description_en 字段）
+        async function loadModelData() {
+            const select = document.getElementById('modelType');
+            const selectedOption = select.selectedOptions[0];
+            const modelFile = selectedOption.value;
 
-        // 获取当前模型所有可用的量化方式
-        const availableQuants = [...new Set(window.currentModelData.map(model => model.quantization))];
-        availableQuants.sort((a, b) => {
-            // 自定义排序顺序：BASE > FP16 > Q8_0 > Q6_K > Q5_K_M > Q4_K_M > Q3_K_M > Q2_K
-            const order = {
-                'BASE': 0,
-                'FP16': 1,
-                'Q8_0': 2,
-                'Q6_K': 3,
-                'Q5_K_M': 4,
-                'Q4_K_M': 5,
-                'Q3_K_M': 6,
-                'Q2_K': 7
-            };
-            return order[a] - order[b];
-        });
+            try {
+                const config = window.currentConfig || await loadConfig();
+                const selectedModel = config.models.find(model => model.output_file === modelFile);
 
-        const select = document.getElementById('quantization');
-        const currentValue = select.value;
+                // 根据当前语言选择对应的模型描述
+                if (selectedModel) {
+                    const desc = (currentLanguage === 'en' && selectedModel.description_en) ? selectedModel.description_en : selectedModel.description;
+                    document.getElementById('modelDescription').textContent = desc;
+                }
 
-        // 生成新的选项
-        select.innerHTML = availableQuants.map(quant =>
-            `<option value="${quant}"
-                 title="${QUANT_DESCRIPTIONS[quant] || ''}"
-                 ${currentValue === quant ? 'selected' : ''}>
-            ${QUANT_DISPLAY_NAMES[quant] || quant}
-        </option>`
-        ).join('');
+                // 加载模型数据（如果需要支持多语言，建议模型数据也包含对应字段，如 model_en ）
+                const response = await fetch(`modeldata/cleaned/${modelFile}`);
+                const data = await response.json();
+                window.currentModelData = data;
 
-        // 如果当前没有选中的量化方式
-        if (!currentValue || !availableQuants.includes(currentValue)) {
-            // 检查是否有4bit量化选项
-            const has4bit = availableQuants.some(quant => quant === 'Q4_K_M');
-            if (has4bit) {
-                // 如果有4bit量化，选择它
-                select.value = 'Q4_K_M';
+                updateQuantizationOptions();
+                calculateCompatibility();
+            } catch (error) {
+                console.error('加载模型数据失败:', error);
+            }
+        }
+
+        function updateQuantizationOptions() {
+            if (!window.currentModelData) return;
+            const availableQuants = [...new Set(window.currentModelData.map(model => model.quantization))];
+            availableQuants.sort((a, b) => {
+                const order = { 'BASE': 0, 'FP16': 1, 'Q8_0': 2, 'Q6_K': 3, 'Q5_K_M': 4, 'Q4_K_M': 5, 'Q3_K_M': 6, 'Q2_K': 7 };
+                return order[a] - order[b];
+            });
+            const quantDisplayNames = currentLanguage === 'en' ? QUANT_DISPLAY_NAMES_EN : QUANT_DISPLAY_NAMES_ZH;
+            const quantDescriptions = currentLanguage === 'en' ? QUANT_DESCRIPTIONS_EN : QUANT_DESCRIPTIONS_ZH;
+            const select = document.getElementById('quantization');
+            const currentValue = select.value;
+            select.innerHTML = availableQuants.map(quant =>
+                `<option value="${quant}"
+                         title="${quantDescriptions[quant] || ''}"
+                         ${currentValue === quant ? 'selected' : ''}>
+                    ${quantDisplayNames[quant] || quant}
+                </option>`
+            ).join('');
+            if (!currentValue || !availableQuants.includes(currentValue)) {
+                const has4bit = availableQuants.some(quant => quant === 'Q4_K_M');
+                select.value = has4bit ? 'Q4_K_M' : availableQuants[0];
+            }
+        }
+
+        function calculateMemoryRequirement(fileSize, quantization) {
+            const sizeMatch = fileSize.match(/(\d+\.?\d*)\s*(GB|TB)/i);
+            if (!sizeMatch) return 0.5;
+            let size = parseFloat(sizeMatch[1]);
+            if (sizeMatch[2].toUpperCase() === 'TB') {
+                size *= 1024;
+            }
+            let memoryRequired;
+            switch (quantization.toUpperCase()) {
+                case 'FP16': memoryRequired = size * 2; break;
+                case 'Q8_0': memoryRequired = size * 1.5; break;
+                case 'Q4_K_M': memoryRequired = size * 1.2; break;
+                default: memoryRequired = size * 1.2;
+            }
+            return Math.max(memoryRequired, 0.5);
+        }
+
+        function calculateCompatibility() {
+            if (!window.currentModelData) {
+                console.error('没有可用的模型数据');
+                return;
+            }
+            const gpuMemory = parseFloat(document.getElementById('gpuMemory').value);
+            const selectedQuant = document.getElementById('quantization').value;
+            const tbody = document.getElementById('modelTableBody');
+            tbody.innerHTML = '';
+
+            const filteredModels = window.currentModelData.filter(model =>
+                model.quantization.toUpperCase() === selectedQuant.toUpperCase()
+            );
+
+            filteredModels.forEach(model => {
+                const memoryRequired = calculateMemoryRequirement(model.file_size, model.quantization);
+                const isCompatible = memoryRequired <= gpuMemory;
+                const ollamaCommand = `ollama pull ${model.model}`;
+                const modelDisplayName = (currentLanguage === 'en' && model.model_en) ? model.model_en : model.model;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>
+                        <a href="${model.url}" 
+                           class="model-link" 
+                           target="_blank" 
+                           title="${currentLanguage === 'en' ? 'Click to view model details' : '点击查看模型详情'}">
+                            ${modelDisplayName}
+                        </a>
+                    </td>
+                    <td>${model.size_label}</td>
+                    <td>${model.file_size}</td>
+                    <td>${ currentLanguage === 'en'
+                            ? (QUANT_DISPLAY_NAMES_EN[model.quantization] || model.quantization)
+                            : (QUANT_DISPLAY_NAMES_ZH[model.quantization] || model.quantization)}</td>
+                    <td>${memoryRequired.toFixed(1)} GB</td>
+                    <td class="${isCompatible ? 'success' : 'warning'}">
+                        ${isCompatible ? (currentLanguage === 'en' ? '✓ Compatible' : '✓ 可运行') : (currentLanguage === 'en' ? '✗ Insufficient VRAM' : '✗ 显存不足')}
+                    </td>
+                    <td>
+                        <div class="tooltip">
+                            <button class="copy-btn" onclick="copyCommand('${ollamaCommand}', '${modelDisplayName}')" title="${currentLanguage === 'en' ? 'Copy install command' : '复制安装命令'}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            <span class="tooltiptext">${currentLanguage === 'en' ? 'Copy install command' : '复制安装命令'}</span>
+                        </div>
+                    </td>
+                `;
+                if (isCompatible) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        async function copyCommand(command, modelName) {
+            try {
+                await navigator.clipboard.writeText(command);
+                showToast(modelName);
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
+        }
+
+        function showToast(modelName) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+                <span>${currentLanguage === 'en' ? `Copied install command for ${modelName}` : `已复制模型 ${modelName} 的安装命令`}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function loadGpuMemorySettings() {
+            const savedMemory = localStorage.getItem('gpuMemory');
+            const gpuMemoryInput = document.getElementById('gpuMemory');
+            if (savedMemory) {
+                gpuMemoryInput.value = savedMemory;
             } else {
-                // 如果没有4bit量化，选择第一个可用的量化方式
-                select.value = availableQuants[0];
+                gpuMemoryInput.value = 24;
+                localStorage.setItem('gpuMemory', '24');
             }
         }
-    }
 
-    // 计算显存需求
-    function calculateMemoryRequirement(fileSize, quantization) {
-        const sizeMatch = fileSize.match(/(\d+\.?\d*)\s*(GB|TB)/i);
-        if (!sizeMatch) return 0.5; // 最小返回0.5GB
-
-        let size = parseFloat(sizeMatch[1]);
-        if (sizeMatch[2].toUpperCase() === 'TB') {
-            size *= 1024;
+        function updateGpuMemory(value) {
+            localStorage.setItem('gpuMemory', value);
+            calculateCompatibility();
         }
 
-        let memoryRequired;
-        switch (quantization.toUpperCase()) {
-            case 'FP16':
-                memoryRequired = size * 2;
-                break;
-            case 'Q8_0':
-                memoryRequired = size * 1.5;
-                break;
-            case 'Q4_K_M':
-                memoryRequired = size * 1.2;
-                break;
-            default:
-                memoryRequired = size * 1.2;
+        async function initializePage() {
+            loadGpuMemorySettings();
+            await initializeModelSelect();
         }
 
-        // 设置最小显存需求为0.5GB
-        return Math.max(memoryRequired, 0.5);
-    }
-
-    // 计算兼容性并更新表格
-    function calculateCompatibility() {
-        if (!window.currentModelData) {
-            console.error('没有可用的模型数据');
-            return;
-        }
-
-        const gpuMemory = parseFloat(document.getElementById('gpuMemory').value);
-        const selectedQuant = document.getElementById('quantization').value;
-        const tbody = document.getElementById('modelTableBody');
-        tbody.innerHTML = '';
-
-        const filteredModels = window.currentModelData.filter(model =>
-            model.quantization.toUpperCase() === selectedQuant.toUpperCase()
-        );
-
-        filteredModels.forEach(model => {
-            const memoryRequired = calculateMemoryRequirement(model.file_size, model.quantization);
-            const isCompatible = memoryRequired <= gpuMemory;
-
-            // 构建 ollama 命令
-            const ollamaCommand = `ollama pull ${model.model}`;
-
-            const row = tbody.insertRow();
-            row.innerHTML = `
-            <td>
-                <a href="${model.url}" 
-                   class="model-link" 
-                   target="_blank" 
-                   title="点击查看模型详情">
-                    ${model.model}
-                </a>
-            </td>
-            <td>${model.size_label}</td>
-            <td>${model.file_size}</td>
-            <td>${QUANT_DISPLAY_NAMES[model.quantization] || model.quantization}</td>
-            <td>${memoryRequired.toFixed(1)} GB</td>
-            <td class="${isCompatible ? 'success' : 'warning'}">
-                ${isCompatible ? '✓ 可运行' : '✗ 显存不足'}
-            </td>
-            <td>
-                <div class="tooltip">
-                    <button class="copy-btn" onclick="copyCommand('${ollamaCommand}', '${model.model}')" title="复制安装命令">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                    <span class="tooltiptext">复制安装命令</span>
-                </div>
-            </td>
-        `;
-
-            if (isCompatible) {
-                row.classList.add('highlight');
-            }
-        });
-    }
-
-    // 显示 Toast 提示
-    function showToast(modelName) {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 6L9 17l-5-5"></path>
-            </svg>
-            <span>已复制模型 ${modelName} 的安装命令</span>
-        `;
-
-        container.appendChild(toast);
-
-        // 3秒后移除提示
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
-
-    // 更新复制命令函数
-    async function copyCommand(command, modelName) {
-        try {
-            await navigator.clipboard.writeText(command);
-            showToast(modelName);
-        } catch (err) {
-            console.error('复制失败:', err);
-        }
-    }
-
-    // 从本地存储加载GPU显存设置
-    function loadGpuMemorySettings() {
-        const savedMemory = localStorage.getItem('gpuMemory');
-        const gpuMemoryInput = document.getElementById('gpuMemory');
-        if (savedMemory) {
-            gpuMemoryInput.value = savedMemory;
-        } else {
-            // 默认值设为24
-            gpuMemoryInput.value = 24;
-            localStorage.setItem('gpuMemory', '24');
-        }
-    }
-
-    // 更新GPU显存设置
-    function updateGpuMemory(value) {
-        localStorage.setItem('gpuMemory', value);
-        calculateCompatibility();
-    }
-
-    // 初始化页面
-    async function initializePage() {
-        // 加载GPU显存设置
-        loadGpuMemorySettings();
-        // 初始化模型选择
-        await initializeModelSelect();
-    }
-
-    // 页面加载时初始化
-    document.addEventListener('DOMContentLoaded', initializePage);
-</script>
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
 </body>
 </html>
