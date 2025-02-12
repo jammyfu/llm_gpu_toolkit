@@ -13,6 +13,15 @@
             "output_file": "deepseek_r1_models.json"
         },
         {
+            "name": "deepseek v3",
+            "key": "deepseek",
+            "version": "v3",
+            "description": "DeepSeek V3: 作为 DeepSeek 迭代版本，DeepSeek V3 是一个大型语言模型，旨在各个领域都有卓越表现。可能具有更强的推理能力、更广阔的知识覆盖范围和更高的生成质量。它可能在自然语言处理的各项任务中表现出色，例如文本生成、翻译、问答等，并具备强大的代码生成和理解能力。DeepSeek V3 的目标是成为一个通用且强大的 AI 模型。",
+            "base_url": "https://ollama.com/library/deepseek-v3",
+            "tags_url": "https://ollama.com/library/deepseek-v3/tags",
+            "output_file": "deepseek_v3_models.json"
+        },
+        {
             "name": "qwen 2.5",
             "key": "qwen",
             "version": "2.5",

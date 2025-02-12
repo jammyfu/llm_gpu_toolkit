@@ -1,0 +1,30 @@
+[
+  {
+    "model": "deepseek-v3:671b-qwen-distill-fp16",
+    "size_label": "671B",
+    "file_size": "1.3TB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/deepseek-v3:671b-qwen-distill-fp16"
+  },
+  {
+    "model": "deepseek-v3:671b-qwen-distill-q8_0",
+    "size_label": "671B",
+    "file_size": "713GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/deepseek-v3:671b-qwen-distill-q8_0"
+  },
+  {
+    "model": "deepseek-v3:671b",
+    "size_label": "671B",
+    "file_size": "404GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/deepseek-v3:671b"
+  },
+  {
+    "model": "deepseek-v3:671b-qwen-distill-q4_k_m",
+    "size_label": "671B",
+    "file_size": "404GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/deepseek-v3:671b-qwen-distill-q4_k_m"
+  }
+]
