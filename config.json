@@ -1,0 +1,25 @@
+{
+    "output_dirs": {
+        "cleaned": "modeldata/cleaned"
+    },
+    "models": [
+        {
+            "name": "deepseek r1",
+            "key": "deepseek",
+            "version": "r1",
+            "description": "DeepSeek R1: 作为一个由 DeepSeek 公司开发的模型，DeepSeek R1 预计在代码生成、理解和数学推理方面拥有显著优势，尤其擅长解决复杂的编程问题和逻辑推理挑战。",
+            "base_url": "https://ollama.com/library/deepseek-r1",
+            "tags_url": "https://ollama.com/library/deepseek-r1/tags",
+            "output_file": "deepseek_r1_models.json"
+        },
+        {
+            "name": "qwen 2.5",
+            "key": "qwen",
+            "version": "2.5",
+            "description": "Qwen 2.5: 作为阿里巴巴 Qwen 系列的升级版本，Qwen 2.5 是一款通用的语言模型，在中文处理、创造性文本生成和指令遵循方面表现出色，能够广泛应用于各种自然语言任务，尤其擅长理解和生成流畅、自然的中文文本。",
+            "base_url": "https://ollama.com/library/qwen2.5",
+            "tags_url": "https://ollama.com/library/qwen2.5/tags",
+            "output_file": "qwen_2.5_models.json"
+        }
+    ]
+}
