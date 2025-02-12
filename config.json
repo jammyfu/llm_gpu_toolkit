@@ -31,6 +31,15 @@
             "output_file": "qwen_2.5_coder_models.json"
         },
         {
+            "name": "qwen2 math",
+            "key": "qwen",
+            "version": "2-math",
+            "description": "Qwen2-Math: 作为 Qwen2 系列的专门数学模型，Qwen2-Math 预计在数学问题求解、数学公式理解和数学推理等方面表现出色。它可能经过专门的数学数据集训练，能够处理各种数学问题，从算术到微积分，甚至更高级的数学领域。它旨在帮助学生、研究人员和专业人士解决数学难题，并提供数学领域的智能助手服务。",
+            "base_url": "https://ollama.com/library/qwen2-math",
+            "tags_url": "https://ollama.com/library/qwen2-math/tags",
+            "output_file": "qwen2_math_models.json"
+        },
+        {
             "name": "llama 3.3",
             "key": "llama",
             "version": "3.3",

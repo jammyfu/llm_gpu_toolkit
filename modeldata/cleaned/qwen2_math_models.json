@@ -1,0 +1,128 @@
+[
+  {
+    "model": "qwen2-math:1.5b-instruct-fp16",
+    "size_label": "1.5B",
+    "file_size": "3.1GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2-math:1.5b-instruct-fp16"
+  },
+  {
+    "model": "qwen2-math:1.5b-instruct-q8_0",
+    "size_label": "1.5B",
+    "file_size": "1.6GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2-math:1.5b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2-math:1.5b",
+    "size_label": "1.5B",
+    "file_size": "935MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:1.5b"
+  },
+  {
+    "model": "qwen2-math:1.5b-q4_k_m",
+    "size_label": "1.5B",
+    "file_size": "935MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:1.5b-q4_k_m"
+  },
+  {
+    "model": "qwen2-math:1.5b-instruct",
+    "size_label": "1.5B",
+    "file_size": "935MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:1.5b-instruct"
+  },
+  {
+    "model": "qwen2-math:1.5b-instruct-q4_k_m",
+    "size_label": "1.5B",
+    "file_size": "935MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:1.5b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2-math:7b-instruct-fp16",
+    "size_label": "7B",
+    "file_size": "15GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2-math:7b-instruct-fp16"
+  },
+  {
+    "model": "qwen2-math:7b-instruct-q8_0",
+    "size_label": "7B",
+    "file_size": "8.1GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2-math:7b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2-math:7b",
+    "size_label": "7B",
+    "file_size": "4.4GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:7b"
+  },
+  {
+    "model": "qwen2-math:7b-q4_k_m",
+    "size_label": "7B",
+    "file_size": "4.4GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:7b-q4_k_m"
+  },
+  {
+    "model": "qwen2-math:7b-instruct",
+    "size_label": "7B",
+    "file_size": "4.4GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:7b-instruct"
+  },
+  {
+    "model": "qwen2-math:7b-instruct-q4_k_m",
+    "size_label": "7B",
+    "file_size": "4.4GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:7b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2-math:72b-instruct-fp16",
+    "size_label": "72B",
+    "file_size": "145GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2-math:72b-instruct-fp16"
+  },
+  {
+    "model": "qwen2-math:72b-instruct-q8_0",
+    "size_label": "72B",
+    "file_size": "77GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2-math:72b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2-math:72b",
+    "size_label": "72B",
+    "file_size": "41GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:72b"
+  },
+  {
+    "model": "qwen2-math:72b-q4_k_m",
+    "size_label": "72B",
+    "file_size": "41GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:72b-q4_k_m"
+  },
+  {
+    "model": "qwen2-math:72b-instruct",
+    "size_label": "72B",
+    "file_size": "41GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:72b-instruct"
+  },
+  {
+    "model": "qwen2-math:72b-instruct-q4_k_m",
+    "size_label": "72B",
+    "file_size": "41GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2-math:72b-instruct-q4_k_m"
+  }
+]

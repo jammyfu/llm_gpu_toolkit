@@ -4,6 +4,7 @@ import urllib3
 import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
+import os
 
 # 禁用 SSL 警告
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -208,13 +209,18 @@ class ModelProcessor:
         """处理指定类型的模型"""
         output_file = self.get_file_path(model_config['output_file'])
 
+        # 检查文件是否已存在
+        if os.path.exists(output_file):
+            print(f"\n{model_config['name']}模型数据已存在于 {output_file}，跳过抓取...")
+            return
+
         try:
             # 从 fetch_model_data 获取清理后的模型数据
             cleaned_models = self.fetch_model_data(model_config)
 
             # 定义量化方式的排序优先级
             quant_priority = {
-                "BASE": 0,  # 基础模型优先
+                "BASE": 0,
                 "FP16": 1,
                 "Q8_0": 2,
                 "Q6_K": 3,
@@ -231,9 +237,9 @@ class ModelProcessor:
 
             # 按模型大小和量化方式排序
             cleaned_models.sort(key=lambda x: (
-                float(x["size_label"].replace("B", "")),  # 首先按模型大小排序
-                quant_priority.get(x["quantization"], 999),  # 然后按量化方式排序
-                len(x["model"])  # 最后按模型名称长度排序
+                float(x["size_label"].replace("B", "")),
+                quant_priority.get(x["quantization"], 999),
+                len(x["model"])
             ))
 
             # 输出结果
@@ -328,7 +334,20 @@ class ModelProcessor:
 
 def main():
     processor = ModelProcessor()
+    
+    # 显示处理开始信息
+    print("\n开始处理模型数据...")
+    print("已配置的模型:")
+    for model in processor.config['models']:
+        print(f"- {model['name']}")
+    
+    # 处理每个模型
     for model_config in processor.config['models']:
+        output_file = processor.get_file_path(model_config['output_file'])
+        if os.path.exists(output_file):
+            print(f"\n跳过 {model_config['name']} - 数据文件已存在: {output_file}")
+            continue
+            
         print(f"\n处理 {model_config['name']} 模型...")
         processor.process_model(model_config)
 
