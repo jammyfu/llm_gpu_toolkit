@@ -170,36 +170,73 @@
     <script>
         // 量化方式显示名称映射
         const QUANT_DISPLAY_NAMES = {
+            'BASE': '基础版本 (无量化)',
             'FP16': 'Float16 精度 (16位浮点)',
             'Q8_0': '8-bit 量化 (INT8)',
-            'Q4_K_M': '4-bit 量化 (INT4)'
+            'Q6_K': '6-bit 量化 (INT6)',
+            'Q5_K_M': '5-bit 量化 (INT5)',
+            'Q4_K_M': '4-bit 量化 (INT4)',
+            'Q3_K_M': '3-bit 量化 (INT3)',
+            'Q2_K': '2-bit 量化 (INT2)'
         };
 
-        // 在下拉框中显示的详细说明
-        const quantizationOptions = [
-            {
-                value: 'Q4_K_M',
-                text: '4-bit 量化 (最小内存)',
-                description: '最大压缩比，适合消费级显卡'
-            },
-            {
-                value: 'Q8_0',
-                text: '8-bit 量化 (平衡)',
-                description: '平衡性能与质量'
-            },
-            {
-                value: 'FP16',
-                text: 'Float16 精度 (最高质量)',
-                description: '完整精度，适合专业显卡'
-            }
-        ];
+        // 量化方式的详细描述
+        const QUANT_DESCRIPTIONS = {
+            'BASE': '原始模型，无量化压缩，需要最大显存',
+            'FP16': '16位浮点精度，保持较高精度，适合专业显卡',
+            'Q8_0': '8位量化，平衡性能与质量',
+            'Q6_K': '6位量化，较好的压缩比与性能平衡',
+            'Q5_K_M': '5位量化，更高压缩比',
+            'Q4_K_M': '4位量化，高压缩比，适合消费级显卡',
+            'Q3_K_M': '3位量化，超高压缩比',
+            'Q2_K': '2位量化，最大压缩比，可能影响性能'
+        };
 
-        // 初始化下拉框
-        function initializeQuantizationSelect() {
+        // 更新量化选择下拉框
+        function updateQuantizationOptions() {
+            if (!window.currentModelData) return;
+            
+            // 获取当前模型所有可用的量化方式
+            const availableQuants = [...new Set(window.currentModelData.map(model => model.quantization))];
+            availableQuants.sort((a, b) => {
+                // 自定义排序顺序：BASE > FP16 > Q8_0 > Q6_K > Q5_K_M > Q4_K_M > Q3_K_M > Q2_K
+                const order = {
+                    'BASE': 0,
+                    'FP16': 1,
+                    'Q8_0': 2,
+                    'Q6_K': 3,
+                    'Q5_K_M': 4,
+                    'Q4_K_M': 5,
+                    'Q3_K_M': 6,
+                    'Q2_K': 7
+                };
+                return order[a] - order[b];
+            });
+
             const select = document.getElementById('quantization');
-            select.innerHTML = quantizationOptions.map(opt => 
-                `<option value="${opt.value}" title="${opt.description}">${opt.text}</option>`
+            const currentValue = select.value;
+            
+            // 生成新的选项
+            select.innerHTML = availableQuants.map(quant => 
+                `<option value="${quant}" 
+                         title="${QUANT_DESCRIPTIONS[quant] || ''}"
+                         ${currentValue === quant ? 'selected' : ''}>
+                    ${QUANT_DISPLAY_NAMES[quant] || quant}
+                </option>`
             ).join('');
+
+            // 如果当前没有选中的量化方式
+            if (!currentValue || !availableQuants.includes(currentValue)) {
+                // 检查是否有4bit量化选项
+                const has4bit = availableQuants.some(quant => quant === 'Q4_K_M');
+                if (has4bit) {
+                    // 如果有4bit量化，选择它
+                    select.value = 'Q4_K_M';
+                } else {
+                    // 如果没有4bit量化，选择第一个可用的量化方式
+                    select.value = availableQuants[0];
+                }
+            }
         }
 
         // 加载配置文件
@@ -247,6 +284,9 @@
                 const response = await fetch(`modeldata/cleaned/${modelFile}`);
                 const data = await response.json();
                 window.currentModelData = data;
+                
+                // 更新量化选项后再计算兼容性
+                updateQuantizationOptions();
                 calculateCompatibility();
             } catch (error) {
                 console.error('加载模型数据失败:', error);
