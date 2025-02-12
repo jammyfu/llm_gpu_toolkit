@@ -31,7 +31,7 @@
             background-color: #f8f9fa;
         }
         tr:hover {
-            background-color: #f8f9fa;
+            background-color: #ffffff !important;
         }
         .memory-info {
             margin-top: 20px;
@@ -40,7 +40,7 @@
             border-radius: 4px;
         }
         .highlight {
-            background-color: #e2f3ff !important;
+            background-color: #e2f3ff;
         }
         #gpuMemory {
             padding: 8px;
@@ -112,6 +112,137 @@
         .memory-info {
             margin: 20px 0;
         }
+        /* 复制按钮样式 */
+        .copy-btn {
+            cursor: pointer;
+            padding: 6px;
+            background: none;
+            border: none;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+        
+        .copy-btn:hover {
+            color: #28a745;  /* 绿色 */
+            background-color: rgba(40, 167, 69, 0.1);  /* 非常浅的绿色背景 */
+        }
+        
+        /* 提示框样式 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* 调整最后一列的宽度和对齐方式 */
+        #modelTable th:last-child,
+        #modelTable td:last-child {
+            width: 60px;
+            text-align: center;
+        }
+
+        /* 移除按钮的默认样式 */
+        .copy-btn:focus {
+            outline: none;
+        }
+
+        /* 移除按钮点击时的背景色 */
+        .copy-btn:active {
+            background-color: rgba(40, 167, 69, 0.15);  /* 点击时稍微深一点的背景 */
+        }
+
+        /* 表格基本样式 */
+        tr {
+            transition: background-color 0.3s ease;
+        }
+
+        /* 普通行的悬停样式 */
+        tr:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        /* 高亮行的基本样式 */
+        .highlight {
+            background-color: #e2f3ff;
+        }
+
+        /* 高亮行的悬停样式 */
+        tr.highlight:hover {
+            background-color: #d1e9ff !important;
+        }
+
+        /* Toast 提示框样式 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-out 2.7s;
+            max-width: 400px;
+        }
+
+        .toast svg {
+            margin-right: 8px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -155,6 +286,7 @@
                     <th>量化方式</th>
                     <th>预估显存需求</th>
                     <th>状态</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody id="modelTableBody">
@@ -166,6 +298,8 @@
             <p>注意：实际显存使用可能因具体环境而异，建议预留20%余量</p>
         </div>
     </div>
+
+    <div id="toastContainer" class="toast-container"></div>
 
     <script>
         // 量化方式显示名称映射
@@ -334,7 +468,6 @@
             const tbody = document.getElementById('modelTableBody');
             tbody.innerHTML = '';
 
-            // 过滤选中量化方式的模型
             const filteredModels = window.currentModelData.filter(model => 
                 model.quantization.toUpperCase() === selectedQuant.toUpperCase()
             );
@@ -342,6 +475,9 @@
             filteredModels.forEach(model => {
                 const memoryRequired = calculateMemoryRequirement(model.file_size, model.quantization);
                 const isCompatible = memoryRequired <= gpuMemory;
+                
+                // 构建 ollama 命令
+                const ollamaCommand = `ollama pull ${model.model}`;
 
                 const row = tbody.insertRow();
                 row.innerHTML = `
@@ -360,12 +496,53 @@
                     <td class="${isCompatible ? 'success' : 'warning'}">
                         ${isCompatible ? '✓ 可运行' : '✗ 显存不足'}
                     </td>
+                    <td>
+                        <div class="tooltip">
+                            <button class="copy-btn" onclick="copyCommand('${ollamaCommand}', '${model.model}')" title="复制安装命令">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            <span class="tooltiptext">复制安装命令</span>
+                        </div>
+                    </td>
                 `;
 
                 if (isCompatible) {
                     row.classList.add('highlight');
                 }
             });
+        }
+
+        // 显示 Toast 提示
+        function showToast(modelName) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+                <span>已复制模型 ${modelName} 的安装命令</span>
+            `;
+            
+            container.appendChild(toast);
+
+            // 3秒后移除提示
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 更新复制命令函数
+        async function copyCommand(command, modelName) {
+            try {
+                await navigator.clipboard.writeText(command);
+                showToast(modelName);
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
         }
 
         // 从本地存储加载GPU显存设置
