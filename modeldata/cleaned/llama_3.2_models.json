@@ -1,0 +1,366 @@
+[
+  {
+    "model": "llama3.2:1b",
+    "size_label": "1B",
+    "file_size": "1.3GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2:1b"
+  },
+  {
+    "model": "llama3.2:1b-instruct",
+    "size_label": "1B",
+    "file_size": "733MB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct"
+  },
+  {
+    "model": "llama3.2:1b-fp16",
+    "size_label": "1B",
+    "file_size": "2.5GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2:1b-fp16"
+  },
+  {
+    "model": "llama3.2:1b-instruct-fp16",
+    "size_label": "1B",
+    "file_size": "2.5GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-fp16"
+  },
+  {
+    "model": "llama3.2:1b-q8_0",
+    "size_label": "1B",
+    "file_size": "1.3GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2:1b-q8_0"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q8_0",
+    "size_label": "1B",
+    "file_size": "1.3GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q8_0"
+  },
+  {
+    "model": "llama3.2:1b-q6_k",
+    "size_label": "1B",
+    "file_size": "1.0GB",
+    "quantization": "Q6_K",
+    "url": "https://ollama.com/library/llama3.2:1b-q6_k"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q6_k",
+    "size_label": "1B",
+    "file_size": "1.0GB",
+    "quantization": "Q6_K",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q6_k"
+  },
+  {
+    "model": "llama3.2:1b-q5_k_m",
+    "size_label": "1B",
+    "file_size": "912MB",
+    "quantization": "Q5_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-q5_k_m"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q5_k_m",
+    "size_label": "1B",
+    "file_size": "912MB",
+    "quantization": "Q5_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q5_k_m"
+  },
+  {
+    "model": "llama3.2:1b-q5_1",
+    "size_label": "1B",
+    "file_size": "953MB",
+    "quantization": "Q5_1",
+    "url": "https://ollama.com/library/llama3.2:1b-q5_1"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q5_1",
+    "size_label": "1B",
+    "file_size": "953MB",
+    "quantization": "Q5_1",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q5_1"
+  },
+  {
+    "model": "llama3.2:1b-q5_0",
+    "size_label": "1B",
+    "file_size": "893MB",
+    "quantization": "Q5_0",
+    "url": "https://ollama.com/library/llama3.2:1b-q5_0"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q5_0",
+    "size_label": "1B",
+    "file_size": "893MB",
+    "quantization": "Q5_0",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q5_0"
+  },
+  {
+    "model": "llama3.2:1b-q4_k_m",
+    "size_label": "1B",
+    "file_size": "808MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-q4_k_m"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q4_k_m",
+    "size_label": "1B",
+    "file_size": "808MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q4_k_m"
+  },
+  {
+    "model": "llama3.2:1b-q4_k_s",
+    "size_label": "1B",
+    "file_size": "776MB",
+    "quantization": "Q4_K_S",
+    "url": "https://ollama.com/library/llama3.2:1b-q4_k_s"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q4_k_s",
+    "size_label": "1B",
+    "file_size": "776MB",
+    "quantization": "Q4_K_S",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q4_k_s"
+  },
+  {
+    "model": "llama3.2:1b-q4_0",
+    "size_label": "1B",
+    "file_size": "771MB",
+    "quantization": "Q4_0",
+    "url": "https://ollama.com/library/llama3.2:1b-q4_0"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q4_0",
+    "size_label": "1B",
+    "file_size": "771MB",
+    "quantization": "Q4_0",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q4_0"
+  },
+  {
+    "model": "llama3.2:1b-q3_k_m",
+    "size_label": "1B",
+    "file_size": "691MB",
+    "quantization": "Q3_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-q3_k_m"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q3_k_m",
+    "size_label": "1B",
+    "file_size": "691MB",
+    "quantization": "Q3_K_M",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q3_k_m"
+  },
+  {
+    "model": "llama3.2:1b-q3_k_s",
+    "size_label": "1B",
+    "file_size": "642MB",
+    "quantization": "Q3_K_S",
+    "url": "https://ollama.com/library/llama3.2:1b-q3_k_s"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q3_k_s",
+    "size_label": "1B",
+    "file_size": "642MB",
+    "quantization": "Q3_K_S",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q3_k_s"
+  },
+  {
+    "model": "llama3.2:1b-q2_k",
+    "size_label": "1B",
+    "file_size": "581MB",
+    "quantization": "Q2_K",
+    "url": "https://ollama.com/library/llama3.2:1b-q2_k"
+  },
+  {
+    "model": "llama3.2:1b-instruct-q2_k",
+    "size_label": "1B",
+    "file_size": "581MB",
+    "quantization": "Q2_K",
+    "url": "https://ollama.com/library/llama3.2:1b-instruct-q2_k"
+  },
+  {
+    "model": "llama3.2:3b",
+    "size_label": "3B",
+    "file_size": "2.0GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2:3b"
+  },
+  {
+    "model": "llama3.2:3b-instruct",
+    "size_label": "3B",
+    "file_size": "1.8GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct"
+  },
+  {
+    "model": "llama3.2:3b-fp16",
+    "size_label": "3B",
+    "file_size": "6.4GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2:3b-fp16"
+  },
+  {
+    "model": "llama3.2:3b-instruct-fp16",
+    "size_label": "3B",
+    "file_size": "6.4GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-fp16"
+  },
+  {
+    "model": "llama3.2:3b-q8_0",
+    "size_label": "3B",
+    "file_size": "3.4GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2:3b-q8_0"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q8_0",
+    "size_label": "3B",
+    "file_size": "3.4GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q8_0"
+  },
+  {
+    "model": "llama3.2:3b-q6_k",
+    "size_label": "3B",
+    "file_size": "2.6GB",
+    "quantization": "Q6_K",
+    "url": "https://ollama.com/library/llama3.2:3b-q6_k"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q6_k",
+    "size_label": "3B",
+    "file_size": "2.6GB",
+    "quantization": "Q6_K",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q6_k"
+  },
+  {
+    "model": "llama3.2:3b-q5_k_m",
+    "size_label": "3B",
+    "file_size": "2.3GB",
+    "quantization": "Q5_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-q5_k_m"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q5_k_m",
+    "size_label": "3B",
+    "file_size": "2.3GB",
+    "quantization": "Q5_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q5_k_m"
+  },
+  {
+    "model": "llama3.2:3b-q5_1",
+    "size_label": "3B",
+    "file_size": "2.4GB",
+    "quantization": "Q5_1",
+    "url": "https://ollama.com/library/llama3.2:3b-q5_1"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q5_1",
+    "size_label": "3B",
+    "file_size": "2.4GB",
+    "quantization": "Q5_1",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q5_1"
+  },
+  {
+    "model": "llama3.2:3b-q5_0",
+    "size_label": "3B",
+    "file_size": "2.3GB",
+    "quantization": "Q5_0",
+    "url": "https://ollama.com/library/llama3.2:3b-q5_0"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q5_0",
+    "size_label": "3B",
+    "file_size": "2.3GB",
+    "quantization": "Q5_0",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q5_0"
+  },
+  {
+    "model": "llama3.2:3b-q4_k_m",
+    "size_label": "3B",
+    "file_size": "2.0GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-q4_k_m"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q4_k_m",
+    "size_label": "3B",
+    "file_size": "2.0GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q4_k_m"
+  },
+  {
+    "model": "llama3.2:3b-q4_k_s",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_K_S",
+    "url": "https://ollama.com/library/llama3.2:3b-q4_k_s"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q4_k_s",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_K_S",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q4_k_s"
+  },
+  {
+    "model": "llama3.2:3b-q4_0",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_0",
+    "url": "https://ollama.com/library/llama3.2:3b-q4_0"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q4_0",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_0",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q4_0"
+  },
+  {
+    "model": "llama3.2:3b-q3_k_m",
+    "size_label": "3B",
+    "file_size": "1.7GB",
+    "quantization": "Q3_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-q3_k_m"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q3_k_m",
+    "size_label": "3B",
+    "file_size": "1.7GB",
+    "quantization": "Q3_K_M",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q3_k_m"
+  },
+  {
+    "model": "llama3.2:3b-q3_k_s",
+    "size_label": "3B",
+    "file_size": "1.5GB",
+    "quantization": "Q3_K_S",
+    "url": "https://ollama.com/library/llama3.2:3b-q3_k_s"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q3_k_s",
+    "size_label": "3B",
+    "file_size": "1.5GB",
+    "quantization": "Q3_K_S",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q3_k_s"
+  },
+  {
+    "model": "llama3.2:3b-q2_k",
+    "size_label": "3B",
+    "file_size": "1.4GB",
+    "quantization": "Q2_K",
+    "url": "https://ollama.com/library/llama3.2:3b-q2_k"
+  },
+  {
+    "model": "llama3.2:3b-instruct-q2_k",
+    "size_label": "3B",
+    "file_size": "1.4GB",
+    "quantization": "Q2_K",
+    "url": "https://ollama.com/library/llama3.2:3b-instruct-q2_k"
+  }
+]

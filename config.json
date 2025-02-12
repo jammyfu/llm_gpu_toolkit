@@ -20,6 +20,42 @@
             "base_url": "https://ollama.com/library/qwen2.5",
             "tags_url": "https://ollama.com/library/qwen2.5/tags",
             "output_file": "qwen_2.5_models.json"
+        },
+        {
+            "name": "qwen 2.5-coder",
+            "key": "qwen",
+            "version": "2.5-coder",
+            "description": "Qwen2.5-Coder: 作为 Qwen 系列的专门代码模型，Qwen2.5-Coder 预计在代码生成、代码理解、代码修复和代码翻译等方面表现出色，能够帮助开发者提高编程效率，并支持多种编程语言和开发任务。它可能还具备强大的代码补全、错误检测和代码优化能力，旨在成为一款高效实用的编码助手。",
+            "base_url": "https://ollama.com/library/qwen2.5-coder",
+            "tags_url": "https://ollama.com/library/qwen2.5-coder/tags",
+            "output_file": "qwen_2.5_coder_models.json"
+        },
+        {
+            "name": "llama 3.3",
+            "key": "llama",
+            "version": "3.3",
+            "description": "Llama 3.3: 作为 Meta Llama 系列的迭代版本，Llama 3.3 是一款强调开放性和性能的大型语言模型，预计在通用语言理解、生成和对话交互方面有显著提升，并在多语言支持、知识广度和推理能力上表现出色，尤其擅长处理各种复杂的自然语言任务并提供高质量的回复。",
+            "base_url": "https://ollama.com/library/llama3.3",
+            "tags_url": "https://ollama.com/library/llama3.3/tags",
+            "output_file": "llama_3.3_models.json"
+        },
+        {
+            "name": "llama 3.2-vision",
+            "key": "llama",
+            "version": "3.2-vision",
+            "description": "Llama 3.2-Vision: 作为 Meta Llama 系列的视觉增强版本，Llama 3.2-Vision 是一款多模态模型，融合了强大的语言理解能力和图像处理能力，擅长理解图像内容、执行视觉相关的指令，并能在视觉问答、图像描述和视觉推理等任务中展现卓越性能。",
+            "base_url": "https://ollama.com/library/llama3.2-vision",
+            "tags_url": "https://ollama.com/library/llama3.2-vision/tags",
+            "output_file": "llama_3.2_vision_models.json"
+        },
+        {
+            "name": "llama 3.2",
+            "key": "llama",
+            "version": "3.2",
+            "description": "Llama 3.2: 作为 Meta Llama 系列的迭代版本，Llama 3.2 是一款注重性能和效率的大型语言模型，预计在各种自然语言处理任务上都有所提升，尤其擅长在保证高质量输出的同时，降低计算成本和资源消耗。",
+            "base_url": "https://ollama.com/library/llama3.2",
+            "tags_url": "https://ollama.com/library/llama3.2/tags",
+            "output_file": "llama_3.2_models.json"
         }
     ]
 }

@@ -1,0 +1,58 @@
+[
+  {
+    "model": "llama3.2-vision:11b",
+    "size_label": "11B",
+    "file_size": "7.9GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2-vision:11b"
+  },
+  {
+    "model": "llama3.2-vision:11b-instruct-fp16",
+    "size_label": "11B",
+    "file_size": "21GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2-vision:11b-instruct-fp16"
+  },
+  {
+    "model": "llama3.2-vision:11b-instruct-q8_0",
+    "size_label": "11B",
+    "file_size": "12GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2-vision:11b-instruct-q8_0"
+  },
+  {
+    "model": "llama3.2-vision:11b-instruct-q4_k_m",
+    "size_label": "11B",
+    "file_size": "7.9GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2-vision:11b-instruct-q4_k_m"
+  },
+  {
+    "model": "llama3.2-vision:90b",
+    "size_label": "90B",
+    "file_size": "55GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/llama3.2-vision:90b"
+  },
+  {
+    "model": "llama3.2-vision:90b-instruct-fp16",
+    "size_label": "90B",
+    "file_size": "177GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/llama3.2-vision:90b-instruct-fp16"
+  },
+  {
+    "model": "llama3.2-vision:90b-instruct-q8_0",
+    "size_label": "90B",
+    "file_size": "95GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/llama3.2-vision:90b-instruct-q8_0"
+  },
+  {
+    "model": "llama3.2-vision:90b-instruct-q4_k_m",
+    "size_label": "90B",
+    "file_size": "55GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/llama3.2-vision:90b-instruct-q4_k_m"
+  }
+]

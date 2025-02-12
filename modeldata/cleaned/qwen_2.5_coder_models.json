@@ -1,0 +1,338 @@
+[
+  {
+    "model": "qwen2.5-coder:0.5b-fp16",
+    "size_label": "0.5B",
+    "file_size": "994MB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-instruct-fp16",
+    "size_label": "0.5B",
+    "file_size": "994MB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-q8_0",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-instruct-q8_0",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-q4_k_m",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-instruct",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:0.5b-instruct-q4_k_m",
+    "size_label": "0.5B",
+    "file_size": "531MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:0.5b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-fp16",
+    "size_label": "1.5B",
+    "file_size": "3.1GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-instruct-fp16",
+    "size_label": "1.5B",
+    "file_size": "3.1GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-q8_0",
+    "size_label": "1.5B",
+    "file_size": "1.6GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-instruct-q8_0",
+    "size_label": "1.5B",
+    "file_size": "1.6GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b",
+    "size_label": "1.5B",
+    "file_size": "986MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-q4_k_m",
+    "size_label": "1.5B",
+    "file_size": "986MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-instruct",
+    "size_label": "1.5B",
+    "file_size": "986MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:1.5b-instruct-q4_k_m",
+    "size_label": "1.5B",
+    "file_size": "986MB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:1.5b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:3b-fp16",
+    "size_label": "3B",
+    "file_size": "6.2GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:3b-instruct-fp16",
+    "size_label": "3B",
+    "file_size": "6.2GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:3b-q8_0",
+    "size_label": "3B",
+    "file_size": "3.3GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:3b-instruct-q8_0",
+    "size_label": "3B",
+    "file_size": "3.3GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:3b",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b"
+  },
+  {
+    "model": "qwen2.5-coder:3b-q4_k_m",
+    "size_label": "3B",
+    "file_size": "1.9GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:3b-instruct",
+    "size_label": "3B",
+    "file_size": "1.3GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:3b-instruct-q4_k_m",
+    "size_label": "3B",
+    "file_size": "1.3GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:3b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:7b-fp16",
+    "size_label": "7B",
+    "file_size": "15GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:7b-instruct-fp16",
+    "size_label": "7B",
+    "file_size": "15GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:7b-q8_0",
+    "size_label": "7B",
+    "file_size": "8.1GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:7b-instruct-q8_0",
+    "size_label": "7B",
+    "file_size": "8.1GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:7b",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b"
+  },
+  {
+    "model": "qwen2.5-coder:7b-q4_k_m",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:7b-instruct",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:7b-instruct-q4_k_m",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:7b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:14b-fp16",
+    "size_label": "14B",
+    "file_size": "30GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:14b-instruct-fp16",
+    "size_label": "14B",
+    "file_size": "30GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:14b-q8_0",
+    "size_label": "14B",
+    "file_size": "16GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:14b-instruct-q8_0",
+    "size_label": "14B",
+    "file_size": "16GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:14b",
+    "size_label": "14B",
+    "file_size": "9.0GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b"
+  },
+  {
+    "model": "qwen2.5-coder:14b-q4_k_m",
+    "size_label": "14B",
+    "file_size": "9.0GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:14b-instruct",
+    "size_label": "14B",
+    "file_size": "5.8GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:14b-instruct-q4_k_m",
+    "size_label": "14B",
+    "file_size": "5.8GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:14b-instruct-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:32b-fp16",
+    "size_label": "32B",
+    "file_size": "66GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:32b-instruct-fp16",
+    "size_label": "32B",
+    "file_size": "66GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-instruct-fp16"
+  },
+  {
+    "model": "qwen2.5-coder:32b-q8_0",
+    "size_label": "32B",
+    "file_size": "35GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:32b-instruct-q8_0",
+    "size_label": "32B",
+    "file_size": "35GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-instruct-q8_0"
+  },
+  {
+    "model": "qwen2.5-coder:32b",
+    "size_label": "32B",
+    "file_size": "20GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b"
+  },
+  {
+    "model": "qwen2.5-coder:32b-q4_k_m",
+    "size_label": "32B",
+    "file_size": "20GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-q4_k_m"
+  },
+  {
+    "model": "qwen2.5-coder:32b-instruct",
+    "size_label": "32B",
+    "file_size": "12GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-instruct"
+  },
+  {
+    "model": "qwen2.5-coder:32b-instruct-q4_k_m",
+    "size_label": "32B",
+    "file_size": "12GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_k_m"
+  }
+]

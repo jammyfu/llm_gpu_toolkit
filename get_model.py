@@ -42,6 +42,8 @@ class ModelProcessor:
             return self._clean_deepseek_model(base_size, model_id, model_version)
         elif model_type == "qwen":
             return self._clean_qwen_model(base_size, model_id, model_version)
+        elif model_type == "llama":
+            return self._clean_llama_model(base_size, model_id, model_version)
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 
@@ -68,6 +70,74 @@ class ModelProcessor:
         extended_model = base_model  # Qwen 使用相同的基础名称
 
         return self._process_quantization(base_model, extended_model, base_url, model_id)
+
+    def _clean_llama_model(self, base_size, model_id, model_version):
+        """处理 Llama 模型 ID"""
+        # 处理 vision 模型的特殊情况
+        if 'vision' in model_version.lower():
+            # 从模型ID中提取大小信息
+            size_match = re.search(r'(\d+)b', model_id.lower())
+            if size_match:
+                base_size = f"{size_match.group(1)}b"
+            base_model = f"llama{model_version}:{base_size}"
+        else:
+            # 普通 Llama 模型
+            base_model = f"llama{model_version}:{base_size}"
+        
+        # 处理 instruct 变体
+        if 'instruct' in model_id.lower():
+            base_model += '-instruct'
+        
+        base_url = f"https://ollama.com/library/{base_model}"
+        extended_model = base_model
+
+        # 处理量化版本
+        if 'q2_k' in model_id.lower():
+            quant = 'Q2_K'
+            extended_model += '-q2_k'
+        elif 'q3_k_m' in model_id.lower():
+            quant = 'Q3_K_M'
+            extended_model += '-q3_k_m'
+        elif 'q3_k_s' in model_id.lower():
+            quant = 'Q3_K_S'
+            extended_model += '-q3_k_s'
+        elif 'q4_k_m' in model_id.lower():
+            quant = 'Q4_K_M'
+            extended_model += '-q4_k_m'
+        elif 'q4_k_s' in model_id.lower():
+            quant = 'Q4_K_S'
+            extended_model += '-q4_k_s'
+        elif 'q4_0' in model_id.lower():
+            quant = 'Q4_0'
+            extended_model += '-q4_0'
+        elif 'q5_0' in model_id.lower():
+            quant = 'Q5_0'
+            extended_model += '-q5_0'
+        elif 'q5_1' in model_id.lower():
+            quant = 'Q5_1'
+            extended_model += '-q5_1'
+        elif 'q5_k_m' in model_id.lower():
+            quant = 'Q5_K_M'
+            extended_model += '-q5_k_m'
+        elif 'q6_k' in model_id.lower():
+            quant = 'Q6_K'
+            extended_model += '-q6_k'
+        elif 'q8_0' in model_id.lower():
+            quant = 'Q8_0'
+            extended_model += '-q8_0'
+        elif 'fp16' in model_id.lower():
+            quant = 'FP16'
+            extended_model += '-fp16'
+        else:
+            quant = 'BASE'
+        
+        extended_url = f"https://ollama.com/library/{extended_model}"
+        
+        # 对于非量化版本，返回基础模型信息
+        if quant == 'BASE':
+            return base_model, base_model, base_url, base_url, quant
+        else:
+            return None, extended_model, None, extended_url, quant
 
     def _process_quantization(self, base_model, extended_model, base_url, model_id):
         """处理量化信息"""
@@ -142,11 +212,28 @@ class ModelProcessor:
             # 从 fetch_model_data 获取清理后的模型数据
             cleaned_models = self.fetch_model_data(model_config)
 
+            # 定义量化方式的排序优先级
+            quant_priority = {
+                "BASE": 0,  # 基础模型优先
+                "FP16": 1,
+                "Q8_0": 2,
+                "Q6_K": 3,
+                "Q5_K_M": 4,
+                "Q5_1": 5,
+                "Q5_0": 6,
+                "Q4_K_M": 7,
+                "Q4_K_S": 8,
+                "Q4_0": 9,
+                "Q3_K_M": 10,
+                "Q3_K_S": 11,
+                "Q2_K": 12
+            }
+
             # 按模型大小和量化方式排序
             cleaned_models.sort(key=lambda x: (
-                float(x["size_label"].replace("B", "")),
-                {"FP16": 0, "Q8_0": 1, "Q4_K_M": 2}[x["quantization"]],
-                len(x["model"])
+                float(x["size_label"].replace("B", "")),  # 首先按模型大小排序
+                quant_priority.get(x["quantization"], 999),  # 然后按量化方式排序
+                len(x["model"])  # 最后按模型名称长度排序
             ))
 
             # 输出结果
