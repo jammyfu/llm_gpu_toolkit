@@ -9,13 +9,13 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #ffffff;
         }
         .container {
-            background-color: white;
+            background-color: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         table {
             width: 100%;
@@ -28,19 +28,20 @@
             border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #f8f9fa;
+            background-color: #ffffff;
         }
         tr:hover {
-            background-color: #ffffff !important;
+            background-color: #f0f7ff !important;
         }
         .memory-info {
             margin-top: 20px;
             padding: 15px;
-            background-color: #e9ecef;
+            background-color: #ffffff;
             border-radius: 4px;
+            border: 1px solid #e9ecef;
         }
         .highlight {
-            background-color: #e2f3ff;
+            background-color: #e8f4ff;
         }
         #gpuMemory {
             padding: 8px;
@@ -103,10 +104,11 @@
         
         #modelDescription {
             padding: 15px;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
             border-radius: 4px;
             line-height: 1.6;
             margin-bottom: 20px;
+            border: 1px solid #e9ecef;
         }
         
         .memory-info {
@@ -194,7 +196,7 @@
 
         /* 高亮行的悬停样式 */
         tr.highlight:hover {
-            background-color: #d1e9ff !important;
+            background-color: #e0f0ff !important;
         }
 
         /* Toast 提示框样式 */
@@ -241,6 +243,76 @@
             to {
                 transform: translateX(100%);
                 opacity: 0;
+            }
+        }
+
+        /* 添加响应式设计样式 */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .control-panel {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* 增大下拉菜单和输入框的触摸区域 */
+            .control-panel select,
+            .control-panel input {
+                padding: 12px;
+                font-size: 16px; /* 防止iOS自动缩放 */
+                height: 44px; /* 最小触摸区域 */
+            }
+            
+            /* 调整表格在手机上的显示 */
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            /* 优化按钮触摸区域 */
+            .copy-btn {
+                padding: 8px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+            
+            /* 调整提示文本大小 */
+            .tooltip .tooltiptext {
+                font-size: 14px;
+                width: 140px;
+                margin-left: -70px;
+            }
+            
+            /* 优化模型描述区域 */
+            #modelDescription {
+                font-size: 14px;
+                padding: 12px;
+            }
+            
+            /* 调整注意事项文本 */
+            .memory-info {
+                font-size: 14px;
+            }
+            
+            /* 优化Toast提示 */
+            .toast {
+                max-width: 300px;
+                font-size: 14px;
+                padding: 10px 20px;
             }
         }
     </style>
