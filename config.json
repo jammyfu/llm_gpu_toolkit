@@ -74,6 +74,15 @@
             "base_url": "https://ollama.com/library/llama3.2",
             "tags_url": "https://ollama.com/library/llama3.2/tags",
             "output_file": "llama_3.2_models.json"
+        },
+        {
+            "name": "openthinker",
+            "key": "openthinker",
+            "version": "",
+            "description": "OpenThinker: OpenThinker 是一个基于 Qwen2.5 微调的模型系列。它是在 OpenThoughts-114k 数据集上训练的，该数据集是通过蒸馏 DeepSeek-R1 模型生成的。在某些基准测试中，OpenThinker 的表现优于 DeepSeek-R1 蒸馏模型。OpenThinker 模型大小为 320 亿参数 (32B)，主要被设计成一个研究工具，旨在促进对涌现能力和对齐技术的研究。它可以在本地运行，方便研究和实验。",
+            "base_url": "https://ollama.com/library/openthinker",
+            "tags_url": "https://ollama.com/library/openthinker/tags",
+            "output_file": "openthinker_models.json"
         }
     ]
 }

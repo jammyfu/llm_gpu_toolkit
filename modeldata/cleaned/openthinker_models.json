@@ -1,0 +1,65 @@
+[
+  {
+    "model": "openthinker:7b",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/openthinker:7b"
+  },
+  {
+    "model": "openthinker:7b-fp16",
+    "size_label": "7B",
+    "file_size": "15GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/openthinker:7b-fp16"
+  },
+  {
+    "model": "openthinker:7b-q8_0",
+    "size_label": "7B",
+    "file_size": "8.1GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/openthinker:7b-q8_0"
+  },
+  {
+    "model": "openthinker:7b-q4_k_m",
+    "size_label": "7B",
+    "file_size": "4.7GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/openthinker:7b-q4_k_m"
+  },
+  {
+    "model": "openthinker:32b",
+    "size_label": "32B",
+    "file_size": "4.7GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/openthinker:32b"
+  },
+  {
+    "model": "openthinker:32b",
+    "size_label": "32B",
+    "file_size": "20GB",
+    "quantization": "BASE",
+    "url": "https://ollama.com/library/openthinker:32b"
+  },
+  {
+    "model": "openthinker:32b-fp16",
+    "size_label": "32B",
+    "file_size": "66GB",
+    "quantization": "FP16",
+    "url": "https://ollama.com/library/openthinker:32b-fp16"
+  },
+  {
+    "model": "openthinker:32b-q8_0",
+    "size_label": "32B",
+    "file_size": "35GB",
+    "quantization": "Q8_0",
+    "url": "https://ollama.com/library/openthinker:32b-q8_0"
+  },
+  {
+    "model": "openthinker:32b-q4_k_m",
+    "size_label": "32B",
+    "file_size": "20GB",
+    "quantization": "Q4_K_M",
+    "url": "https://ollama.com/library/openthinker:32b-q4_k_m"
+  }
+]
