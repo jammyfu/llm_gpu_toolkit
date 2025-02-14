@@ -8,6 +8,7 @@
             "key": "deepseek",
             "version": "r1",
             "description": "DeepSeek R1: 作为一个由 DeepSeek 公司开发的模型，DeepSeek R1 预计在代码生成、理解和数学推理方面拥有显著优势，尤其擅长解决复杂的编程问题和逻辑推理挑战。",
+            "description_en": "DeepSeek R1: Developed by DeepSeek, this model is expected to excel in code generation, comprehension, and mathematical reasoning, particularly adept at addressing complex programming challenges and logical deduction tasks.",
             "base_url": "https://ollama.com/library/deepseek-r1",
             "tags_url": "https://ollama.com/library/deepseek-r1/tags",
             "output_file": "deepseek_r1_models.json"
@@ -17,6 +18,7 @@
             "key": "deepseek",
             "version": "v3",
             "description": "DeepSeek V3: 作为 DeepSeek 迭代版本，DeepSeek V3 是一个大型语言模型，旨在各个领域都有卓越表现。可能具有更强的推理能力、更广阔的知识覆盖范围和更高的生成质量。它可能在自然语言处理的各项任务中表现出色，例如文本生成、翻译、问答等，并具备强大的代码生成和理解能力。DeepSeek V3 的目标是成为一个通用且强大的 AI 模型。",
+            "description_en": "DeepSeek V3: As an iteration of DeepSeek, this large-scale language model is designed to excel across many domains. It potentially features enhanced reasoning, broader knowledge coverage, and superior generation quality, performing well in tasks like text generation, translation, and Q&A, along with robust code generation and comprehension.",
             "base_url": "https://ollama.com/library/deepseek-v3",
             "tags_url": "https://ollama.com/library/deepseek-v3/tags",
             "output_file": "deepseek_v3_models.json"
@@ -35,6 +37,7 @@
             "key": "qwen",
             "version": "2.5",
             "description": "Qwen 2.5: 作为阿里巴巴 Qwen 系列的升级版本，Qwen 2.5 是一款通用的语言模型，在中文处理、创造性文本生成和指令遵循方面表现出色，能够广泛应用于各种自然语言任务，尤其擅长理解和生成流畅、自然的中文文本。",
+            "description_en": "Qwen 2.5: As an upgraded version of Alibaba's Qwen series, this general-purpose language model excels in Chinese text processing, creative text generation, and following instructions, being particularly proficient at generating fluent and natural Chinese content.",
             "base_url": "https://ollama.com/library/qwen2.5",
             "tags_url": "https://ollama.com/library/qwen2.5/tags",
             "output_file": "qwen_2.5_models.json"
@@ -44,6 +47,7 @@
             "key": "qwen",
             "version": "2.5-coder",
             "description": "Qwen2.5-Coder: 作为 Qwen 系列的专门代码模型，Qwen2.5-Coder 预计在代码生成、代码理解、代码修复和代码翻译等方面表现出色，能够帮助开发者提高编程效率，并支持多种编程语言和开发任务。它可能还具备强大的代码补全、错误检测和代码优化能力，旨在成为一款高效实用的编码助手。",
+            "description_en": "Qwen2.5-Coder: As a dedicated code model in the Qwen series, this model is expected to excel in code generation, comprehension, debugging, and translation, thereby improving developers' efficiency while supporting various programming languages and tasks.",
             "base_url": "https://ollama.com/library/qwen2.5-coder",
             "tags_url": "https://ollama.com/library/qwen2.5-coder/tags",
             "output_file": "qwen_2.5_coder_models.json"
@@ -53,6 +57,7 @@
             "key": "qwen",
             "version": "2-math",
             "description": "Qwen2-Math: 作为 Qwen2 系列的专门数学模型，Qwen2-Math 预计在数学问题求解、数学公式理解和数学推理等方面表现出色。它可能经过专门的数学数据集训练，能够处理各种数学问题，从算术到微积分，甚至更高级的数学领域。它旨在帮助学生、研究人员和专业人士解决数学难题，并提供数学领域的智能助手服务。",
+            "description_en": "Qwen2-Math: As a specialized math model in the Qwen2 series, it is expected to excel in solving mathematical problems, understanding formulas, and performing accurate mathematical reasoning.",
             "base_url": "https://ollama.com/library/qwen2-math",
             "tags_url": "https://ollama.com/library/qwen2-math/tags",
             "output_file": "qwen2_math_models.json"
@@ -62,6 +67,7 @@
             "key": "llama",
             "version": "3.3",
             "description": "Llama 3.3: 作为 Meta Llama 系列的迭代版本，Llama 3.3 是一款强调开放性和性能的大型语言模型，预计在通用语言理解、生成和对话交互方面有显著提升，并在多语言支持、知识广度和推理能力上表现出色，尤其擅长处理各种复杂的自然语言任务并提供高质量的回复。",
+            "description_en": "Llama 3.3: As an iteration of Meta's Llama series, this language model emphasizes openness and performance, and is expected to significantly improve general language understanding, generation, and conversational interactions.",
             "base_url": "https://ollama.com/library/llama3.3",
             "tags_url": "https://ollama.com/library/llama3.3/tags",
             "output_file": "llama_3.3_models.json"
@@ -71,6 +77,7 @@
             "key": "llama",
             "version": "3.2-vision",
             "description": "Llama 3.2-Vision: 作为 Meta Llama 系列的视觉增强版本，Llama 3.2-Vision 是一款多模态模型，融合了强大的语言理解能力和图像处理能力，擅长理解图像内容、执行视觉相关的指令，并能在视觉问答、图像描述和视觉推理等任务中展现卓越性能。",
+            "description_en": "Llama 3.2-Vision: As the vision-enhanced version of Meta's Llama series, this multimodal model integrates strong language comprehension with image processing capabilities.",
             "base_url": "https://ollama.com/library/llama3.2-vision",
             "tags_url": "https://ollama.com/library/llama3.2-vision/tags",
             "output_file": "llama_3.2_vision_models.json"
@@ -80,6 +87,7 @@
             "key": "llama",
             "version": "3.2",
             "description": "Llama 3.2: 作为 Meta Llama 系列的迭代版本，Llama 3.2 是一款注重性能和效率的大型语言模型，预计在各种自然语言处理任务上都有所提升，尤其擅长在保证高质量输出的同时，降低计算成本和资源消耗。",
+            "description_en": "Llama 3.2: As an iteration of Meta's Llama series, this model focuses on performance and efficiency, striving to deliver high-quality output while reducing computational costs.",
             "base_url": "https://ollama.com/library/llama3.2",
             "tags_url": "https://ollama.com/library/llama3.2/tags",
             "output_file": "llama_3.2_models.json"
