@@ -1,198 +1,254 @@
 [
   {
-    "model": "deepseek-r1:1.5b-qwen-distill-fp16",
+    "model": "deepseek-r1:1.5b-fp16",
     "size_label": "1.5B",
     "file_size": "3.6GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:1.5b-qwen-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:1.5b-fp16",
+    "model_id": "b3e50d21d5a9"
   },
   {
-    "model": "deepseek-r1:1.5b-qwen-distill-q8_0",
+    "model": "deepseek-r1:1.5b-q8_0",
     "size_label": "1.5B",
     "file_size": "1.9GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:1.5b-qwen-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:1.5b-q8_0",
+    "model_id": "be5781997fd9"
   },
   {
     "model": "deepseek-r1:1.5b",
     "size_label": "1.5B",
     "file_size": "1.1GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:1.5b"
+    "quantization_info": "默认版本 (Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:1.5b",
+    "model_id": "a42b25d8c10a"
   },
   {
-    "model": "deepseek-r1:1.5b-qwen-distill-q4_k_m",
+    "model": "deepseek-r1:1.5b-q4_k_m",
     "size_label": "1.5B",
     "file_size": "1.1GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:1.5b-qwen-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:1.5b-q4_k_m",
+    "model_id": "a42b25d8c10a"
   },
   {
-    "model": "deepseek-r1:7b-qwen-distill-fp16",
+    "model": "deepseek-r1:7b-fp16",
     "size_label": "7B",
     "file_size": "15GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:7b-qwen-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:7b-fp16",
+    "model_id": "fb45459f46e6"
   },
   {
-    "model": "deepseek-r1:7b-qwen-distill-q8_0",
+    "model": "deepseek-r1:7b-q8_0",
     "size_label": "7B",
     "file_size": "8.1GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:7b-qwen-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:7b-q8_0",
+    "model_id": "0bcb1414f90e"
   },
   {
-    "model": "deepseek-r1:7b",
+    "model": "deepseek-r1:latest",
     "size_label": "7B",
     "file_size": "4.7GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:7b"
+    "quantization_info": "默认版本 (Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:latest",
+    "model_id": "0a8c26691023"
   },
   {
-    "model": "deepseek-r1:7b-qwen-distill-q4_k_m",
+    "model": "deepseek-r1:7b-q4_k_m",
     "size_label": "7B",
     "file_size": "4.7GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:7b-qwen-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:7b-q4_k_m",
+    "model_id": "0a8c26691023"
   },
   {
-    "model": "deepseek-r1:8b-llama-distill-fp16",
+    "model": "deepseek-r1:8b-fp16",
     "size_label": "8B",
     "file_size": "16GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:8b-llama-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:8b-fp16",
+    "model_id": "b15636d30796"
   },
   {
-    "model": "deepseek-r1:8b-llama-distill-q8_0",
+    "model": "deepseek-r1:8b-q8_0",
     "size_label": "8B",
     "file_size": "8.5GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:8b-llama-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:8b-q8_0",
+    "model_id": "0db4dcd4c434"
   },
   {
-    "model": "deepseek-r1:8b",
+    "model": "deepseek-r1:8b-q4_k_m",
     "size_label": "8B",
     "file_size": "4.9GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:8b"
+    "quantization_info": "默认版本 (通常对应 Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:8b-q4_k_m",
+    "model_id": "28f8fd6cdc67"
   },
   {
-    "model": "deepseek-r1:8b-llama-distill-q4_k_m",
+    "model": "deepseek-r1:8b-q4_k_m",
     "size_label": "8B",
     "file_size": "4.9GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:8b-llama-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:8b-q4_k_m",
+    "model_id": "28f8fd6cdc67"
   },
   {
-    "model": "deepseek-r1:14b-qwen-distill-fp16",
+    "model": "deepseek-r1:14b-fp16",
     "size_label": "14B",
     "file_size": "30GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:14b-qwen-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:14b-fp16",
+    "model_id": "1f1bddb1a1a2"
   },
   {
-    "model": "deepseek-r1:14b-qwen-distill-q8_0",
+    "model": "deepseek-r1:14b-q8_0",
     "size_label": "14B",
     "file_size": "16GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:14b-qwen-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:14b-q8_0",
+    "model_id": "022efe288297"
   },
   {
-    "model": "deepseek-r1:14b",
+    "model": "deepseek-r1:14b-q4_k_m",
     "size_label": "14B",
     "file_size": "9.0GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:14b"
+    "quantization_info": "默认版本 (通常对应 Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:14b-q4_k_m",
+    "model_id": "ea35dfe18182"
   },
   {
-    "model": "deepseek-r1:14b-qwen-distill-q4_k_m",
+    "model": "deepseek-r1:14b-q4_k_m",
     "size_label": "14B",
     "file_size": "9.0GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:14b-qwen-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:14b-q4_k_m",
+    "model_id": "ea35dfe18182"
   },
   {
-    "model": "deepseek-r1:32b-qwen-distill-fp16",
+    "model": "deepseek-r1:32b-fp16",
     "size_label": "32B",
     "file_size": "66GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:32b-qwen-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:32b-fp16",
+    "model_id": "141ef25faf00"
   },
   {
-    "model": "deepseek-r1:32b-qwen-distill-q8_0",
+    "model": "deepseek-r1:32b-q8_0",
     "size_label": "32B",
     "file_size": "35GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:32b-qwen-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:32b-q8_0",
+    "model_id": "aed2818831dd"
   },
   {
-    "model": "deepseek-r1:32b",
+    "model": "deepseek-r1:32b-q4_k_m",
     "size_label": "32B",
     "file_size": "20GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:32b"
+    "quantization_info": "默认版本 (通常对应 Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:32b-q4_k_m",
+    "model_id": "38056bbcbb2d"
   },
   {
-    "model": "deepseek-r1:32b-qwen-distill-q4_k_m",
+    "model": "deepseek-r1:32b-q4_k_m",
     "size_label": "32B",
     "file_size": "20GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:32b-qwen-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:32b-q4_k_m",
+    "model_id": "38056bbcbb2d"
   },
   {
-    "model": "deepseek-r1:70b-llama-distill-fp16",
+    "model": "deepseek-r1:70b-fp16",
     "size_label": "70B",
     "file_size": "141GB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:70b-llama-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:70b-fp16",
+    "model_id": "5c3319143a79"
   },
   {
-    "model": "deepseek-r1:70b-llama-distill-q8_0",
+    "model": "deepseek-r1:70b-q8_0",
     "size_label": "70B",
     "file_size": "75GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:70b-llama-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:70b-q8_0",
+    "model_id": "cc1ba146470d"
   },
   {
-    "model": "deepseek-r1:70b",
+    "model": "deepseek-r1:70b-q4_k_m",
     "size_label": "70B",
     "file_size": "43GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:70b"
+    "quantization_info": "默认版本 (通常对应 Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:70b-q4_k_m",
+    "model_id": "0c1615a8ca32"
   },
   {
-    "model": "deepseek-r1:70b-llama-distill-q4_k_m",
+    "model": "deepseek-r1:70b-q4_k_m",
     "size_label": "70B",
     "file_size": "43GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:70b-llama-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:70b-q4_k_m",
+    "model_id": "0c1615a8ca32"
   },
   {
-    "model": "deepseek-r1:671b-qwen-distill-fp16",
+    "model": "deepseek-r1:671b-fp16",
     "size_label": "671B",
     "file_size": "1.3TB",
     "quantization": "FP16",
-    "url": "https://ollama.com/library/deepseek-r1:671b-qwen-distill-fp16"
+    "quantization_info": "FP16 量化",
+    "url": "https://ollama.com/library/deepseek-r1:671b-fp16",
+    "model_id": "3e2622881ef5"
   },
   {
-    "model": "deepseek-r1:671b-qwen-distill-q8_0",
+    "model": "deepseek-r1:671b-q8_0",
     "size_label": "671B",
     "file_size": "713GB",
     "quantization": "Q8_0",
-    "url": "https://ollama.com/library/deepseek-r1:671b-qwen-distill-q8_0"
+    "quantization_info": "Q8_0 量化",
+    "url": "https://ollama.com/library/deepseek-r1:671b-q8_0",
+    "model_id": "ab9331000874"
   },
   {
-    "model": "deepseek-r1:671b",
+    "model": "deepseek-r1:671b-q4_k_m",
     "size_label": "671B",
     "file_size": "404GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:671b"
+    "quantization_info": "默认版本 (通常对应 Q4_K_M)",
+    "url": "https://ollama.com/library/deepseek-r1:671b-q4_k_m",
+    "model_id": "739e1b229ad7"
   },
   {
-    "model": "deepseek-r1:671b-qwen-distill-q4_k_m",
+    "model": "deepseek-r1:671b-q4_k_m",
     "size_label": "671B",
     "file_size": "404GB",
     "quantization": "Q4_K_M",
-    "url": "https://ollama.com/library/deepseek-r1:671b-qwen-distill-q4_k_m"
+    "quantization_info": "Q4_K_M 量化",
+    "url": "https://ollama.com/library/deepseek-r1:671b-q4_k_m",
+    "model_id": "739e1b229ad7"
   }
 ]

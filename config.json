@@ -1,6 +1,6 @@
 {
     "output_dirs": {
-        "cleaned": "modeldata/cleaned"
+        "cleaned": "modeldata/new"
     },
     "models": [
         {

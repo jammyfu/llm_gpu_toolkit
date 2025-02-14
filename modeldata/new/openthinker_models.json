@@ -1,0 +1,101 @@
+[
+  {
+    "model": "7b-q8_0",
+    "url": "https://ollama.com/library/openthinker:7b-q8_0",
+    "is_default": false,
+    "model_id": "a0b1973d2ae4",
+    "file_size": "8.1GB",
+    "arch": "qwen2",
+    "parameters": "7.62B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "32b-q8_0",
+    "url": "https://ollama.com/library/openthinker:32b-q8_0",
+    "is_default": false,
+    "model_id": "58ba37ade26f",
+    "file_size": "35GB",
+    "arch": "qwen2",
+    "parameters": "32.8B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "7b",
+    "url": "https://ollama.com/library/openthinker:7b",
+    "is_default": true,
+    "model_id": "aaffe05a5e2e",
+    "file_size": "4.7GB",
+    "arch": "qwen2",
+    "parameters": "7.62B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "32b",
+    "url": "https://ollama.com/library/openthinker:32b",
+    "is_default": true,
+    "model_id": "b3f4e577e166",
+    "file_size": "20GB",
+    "arch": "qwen2",
+    "parameters": "32.8B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "latest",
+    "url": "https://ollama.com/library/openthinker:latest",
+    "is_default": true,
+    "model_id": "aaffe05a5e2e",
+    "file_size": "4.7GB",
+    "arch": "qwen2",
+    "parameters": "7.62B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "7b-q4_K_M",
+    "url": "https://ollama.com/library/openthinker:7b-q4_K_M",
+    "is_default": false,
+    "model_id": "aaffe05a5e2e",
+    "file_size": "4.7GB",
+    "arch": "qwen2",
+    "parameters": "7.62B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "32b-q4_K_M",
+    "url": "https://ollama.com/library/openthinker:32b-q4_K_M",
+    "is_default": false,
+    "model_id": "b3f4e577e166",
+    "file_size": "20GB",
+    "arch": "qwen2",
+    "parameters": "32.8B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "7b-fp16",
+    "url": "https://ollama.com/library/openthinker:7b-fp16",
+    "is_default": false,
+    "model_id": "51b87c56a25a",
+    "file_size": "15GB",
+    "arch": "qwen2",
+    "parameters": "7.62B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  },
+  {
+    "model": "32b-fp16",
+    "url": "https://ollama.com/library/openthinker:32b-fp16",
+    "is_default": false,
+    "model_id": "fe656527fabb",
+    "file_size": "66GB",
+    "arch": "qwen2",
+    "parameters": "32.8B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  }
+]
