@@ -60,9 +60,10 @@ class ModelProcessor:
                 base_size = '32b'  # 默认大小
         elif not size_match:
             print(f"警告：模型 ID '{model_id}' 中未找到大小信息。")
-            return None, None, None, None, None
+            return None, None, None, None, None, None
         else:
             base_size = size_match.group(1)
+
         handler = self.model_type_handlers.get(model_type)
         if handler:
             return handler(base_size, model_id, model_version)
@@ -74,6 +75,8 @@ class ModelProcessor:
         # 构建基础模型名称和URL
         base_model = f"deepseek-{model_version}:{base_size}"
         base_url = f"https://ollama.com/library/{base_model}"
+        quant = 'BASE'
+        quant_info = "基础版本 (无量化)"
 
         # 构建扩展模型名称
         architecture = '-qwen' if base_size not in ['8b', '70b'] else '-llama'
@@ -87,6 +90,8 @@ class ModelProcessor:
         base_model = f"qwen{model_version}:{base_size}"
         if 'instruct' in model_id.lower():
             base_model += '-instruct'
+        quant = 'BASE'
+        quant_info = "基础版本 (无量化)"
 
         base_url = f"https://ollama.com/library/{base_model}"
         extended_model = base_model  # Qwen 使用相同的基础名称
@@ -96,6 +101,8 @@ class ModelProcessor:
     def _clean_llama_model(self, base_size, model_id, model_version):
         """处理 Llama 模型 ID"""
         # 处理 vision 模型的特殊情况
+        quant = 'BASE'
+        quant_info = "基础版本 (无量化)"
         if 'vision' in model_version.lower():
             # 从模型ID中提取大小信息
             size_match = re.search(r'(\d+)b', model_id.lower())
@@ -116,92 +123,135 @@ class ModelProcessor:
         # 处理量化版本
         if 'q2_k' in model_id.lower():
             quant = 'Q2_K'
+            quant_info = "Q2_K 量化"
             extended_model += '-q2_k'
         elif 'q3_k_m' in model_id.lower():
             quant = 'Q3_K_M'
+            quant_info = "Q3_K_M 量化"
             extended_model += '-q3_k_m'
         elif 'q3_k_s' in model_id.lower():
             quant = 'Q3_K_S'
+            quant_info = "Q3_K_S 量化"
             extended_model += '-q3_k_s'
         elif 'q4_k_m' in model_id.lower():
             quant = 'Q4_K_M'
+            quant_info = "Q4_K_M 量化"
             extended_model += '-q4_k_m'
         elif 'q4_k_s' in model_id.lower():
             quant = 'Q4_K_S'
+            quant_info = "Q4_K_S 量化"
             extended_model += '-q4_k_s'
         elif 'q4_0' in model_id.lower():
             quant = 'Q4_0'
+            quant_info = "Q4_0 量化"
             extended_model += '-q4_0'
         elif 'q5_0' in model_id.lower():
             quant = 'Q5_0'
+            quant_info = "Q5_0 量化"
             extended_model += '-q5_0'
         elif 'q5_1' in model_id.lower():
             quant = 'Q5_1'
+            quant_info = "Q5_1 量化"
             extended_model += '-q5_1'
         elif 'q5_k_m' in model_id.lower():
             quant = 'Q5_K_M'
+            quant_info = "Q5_K_M 量化"
             extended_model += '-q5_k_m'
         elif 'q6_k' in model_id.lower():
             quant = 'Q6_K'
+            quant_info = "Q6_K 量化"
             extended_model += '-q6_k'
         elif 'q8_0' in model_id.lower():
             quant = 'Q8_0'
+            quant_info = "Q8_0 量化"
             extended_model += '-q8_0'
         elif 'fp16' in model_id.lower():
             quant = 'FP16'
+            quant_info = "FP16 量化"
             extended_model += '-fp16'
         else:
             quant = 'BASE'
+            quant_info = "基础版本 (无量化)"
 
         extended_url = f"https://ollama.com/library/{extended_model}"
 
         # 对于非量化版本，返回基础模型信息
         if quant == 'BASE':
-            return base_model, base_model, base_url, base_url, quant
+            return base_model, base_model, base_url, base_url, quant, quant_info
         else:
-            return None, extended_model, None, extended_url, quant
+            return None, extended_model, None, extended_url, quant, quant_info
 
     def _clean_openthinker_model(self, base_size, model_id, model_version):
         """处理 Openthinker 模型 ID"""
         # 默认量化类型
         quant = 'BASE'
+        quant_info = "基础版本 (无量化)"
         extended_model = f"openthinker:{base_size}" # 默认是openthinker:32b
         base_model = extended_model
 
         # 根据模型 ID 确定量化类型
         if 'q4_k_m' in model_id.lower():
             quant = 'Q4_K_M'
+            quant_info = "Q4_K_M 量化"
             extended_model = f"{base_model}-q4_k_m" # 量化之后的是openthinker:32b-q4_k_m
         elif 'q8_0' in model_id.lower():
             quant = 'Q8_0'
+            quant_info = "Q8_0 量化"
             extended_model = f"{base_model}-q8_0"
         elif 'fp16' in model_id.lower():
             quant = 'FP16'
+            quant_info = "FP16 量化"
             extended_model = f"{base_model}-fp16"
 
         # 构建模型 URL
         base_url = f"https://ollama.com/library/{base_model}"
         extended_url = f"https://ollama.com/library/{extended_model}"
 
-        return base_model, extended_model, base_url, extended_url, quant
+        return base_model, extended_model, base_url, extended_url, quant, quant_info
 
     def _process_quantization(self, base_model, extended_model, base_url, model_id):
         """处理量化信息"""
+        quant = 'BASE'  # 默认量化类型
+        quant_info = "基础版本 (无量化)"
+
+        # 哈希值与量化类型的映射
+        hash_to_quant = {
+            "aaffe05a5e2e": ("Q4_K_M", "Q4_K_M 量化"),  # 示例：哈希值 "aaffe05a5e2e" 对应 "Q4_K_M" 量化
+            "another_hash": ("Q8_0", "Q8_0 量化"),  # 添加更多哈希值和量化类型的对应关系
+        }
+
         if 'fp16' in model_id.lower():
             quant = 'FP16'
-            extended_model += '-fp16'
+            extended_model = f"{base_model}-fp16" if base_model else f"{extended_model}-fp16"
             extended_url = f"https://ollama.com/library/{extended_model}"
-            return None, extended_model, None, extended_url, quant
+            quant_info = "FP16 量化"
         elif 'q8_0' in model_id.lower():
             quant = 'Q8_0'
-            extended_model += '-q8_0'
+            extended_model = f"{base_model}-q8_0" if base_model else f"{extended_model}-q8_0"
             extended_url = f"https://ollama.com/library/{extended_model}"
-            return None, extended_model, None, extended_url, quant
-        else:
+            quant_info = "Q8_0 量化"
+        elif 'q4_k_m' in model_id.lower():
             quant = 'Q4_K_M'
-            extended_model += '-q4_k_m'
+            extended_model = f"{base_model}-q4_k_m" if base_model else f"{extended_model}-q4_k_m"
             extended_url = f"https://ollama.com/library/{extended_model}"
-            return base_model, extended_model, base_url, extended_url, quant
+            quant_info = "Q4_K_M 量化"
+        else:
+            # 尝试从哈希值映射中获取量化信息
+            if model_id in hash_to_quant:
+                quant, quant_info = hash_to_quant[model_id]
+                extended_model = f"{base_model}-{quant.lower()}" if base_model else f"{extended_model}-{quant.lower()}"
+                extended_url = f"https://ollama.com/library/{extended_model}"
+            else:
+                # 如果没有匹配的量化类型，则保持 base 模型
+                extended_model = base_model
+                extended_url = base_url
+                quant_info = "基础版本 (无量化)"
+
+        # 如果有量化信息，则返回 None 作为 base_model，否则返回原始的 base_model
+        if quant != 'BASE':
+            return None, extended_model, None, extended_url, quant, quant_info
+        else:
+            return base_model, extended_model, base_url, extended_url, quant, quant_info
 
     def parse_model_info(self, json_data, model_type, model_version):
         """解析和清理模型信息"""
@@ -217,9 +267,14 @@ class ModelProcessor:
             try:
                 print(f"正在处理模型: {model['model']}")  # 添加日志
 
-                base_model, extended_model, base_url, extended_url, quant = self.clean_model_id(model['model'], model_type, model_version)
+                result = self.clean_model_id(model['model'], model_type, model_version)
+                if result:
+                    base_model, extended_model, base_url, extended_url, quant, quant_info = result
+                else:
+                    print(f"跳过模型 {model['model']}，因为 clean_model_id 返回 None")
+                    continue
 
-                print(f"clean_model_id 返回: base_model={base_model}, extended_model={extended_model}, quant={quant}")  # 添加日志
+                print(f"clean_model_id 返回: base_model={base_model}, extended_model={extended_model}, quant={quant}, quant_info={quant_info}")  # 添加日志
 
                 if not extended_model:
                     print(f"跳过模型 {model['model']}，因为 extended_model 为 None")  # 添加日志
@@ -244,6 +299,7 @@ class ModelProcessor:
                             "size_label": size_label,
                             "file_size": file_size,  # 使用原始文件大小
                             "quantization": quant,
+                            "quantization_info": quant_info,
                             "url": base_url
                         }
 
@@ -254,6 +310,7 @@ class ModelProcessor:
                         "size_label": size_label,
                         "file_size": file_size,  # 使用原始文件大小
                         "quantization": quant,
+                         "quantization_info": quant_info,
                         "url": extended_url  # 使用正确的extended_url
                     }
             except Exception as e:
@@ -287,11 +344,17 @@ class ModelProcessor:
                 model_version = model_config['version']
 
                 print(f"正在清理模型 ID: {model_name}, model_id: {model_id}")
-                base_model, extended_model, base_url, extended_url, quant = self.clean_model_id(
+                result = self.clean_model_id(
                     model_name,  # 将模型名称传递给 clean_model_id
                     model_type,
                     model_version
                 )
+
+                if result:
+                    base_model, extended_model, base_url, extended_url, quant, quant_info = result
+                else:
+                    print(f"跳过 {model_name}，因为无法清理模型 ID")
+                    continue
 
                 if extended_model:
                     # 将其他信息添加到清理后的模型中
@@ -300,7 +363,9 @@ class ModelProcessor:
                         "size_label": self.get_size_label(extended_model),  # 使用辅助函数获取大小标签
                         "file_size": file_size,
                         "quantization": quant,
-                        "url": extended_url
+                        "quantization_info": quant_info,
+                        "url": extended_url,
+                        "model_id": model_id  # 保存哈希值
                     }
                     cleaned_models.append(cleaned_model)
                 else:
@@ -416,7 +481,7 @@ class ModelProcessor:
                 if model_id and file_size:
                     model_data = {
                         "model": model_name,
-                        "model_id": model_id,
+                        "model_id": model_id,  # 保存哈希值
                         "file_size": file_size
                     }
                     print(f"添加数据: {model_data}")
@@ -432,6 +497,111 @@ class ModelProcessor:
         except Exception as e:
             print(f"发生未预期的错误：{e}")
             return []
+
+    # 新增一个通用方法，用于获取页面中所有模型数据
+    def fetch_and_parse_models(self, tags_url, max_models=None):
+        """从指定URL获取并解析模型数据，支持返回指定数量的模型，并根据哈希校验量化信息，同时访问模型链接获取更多参数"""
+        models = []
+        # 定制请求头（可根据需要调整）
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        try:
+            response = requests.get(tags_url, headers=headers, verify=False)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            model_divs = soup.find_all("div", class_="flex px-4 py-3")
+            # 哈希值和量化类型映射（根据实际情况扩展）
+            hash_to_quant = {
+                "aaffe05a5e2e": ("Q4_K_M", "Q4_K_M 量化"),
+                "another_hash": ("Q8_0", "Q8_0 量化"),
+            }
+            count = 0
+            for div in model_divs:
+                if max_models and count >= max_models:
+                    break
+                # 获取模型名称和对应链接
+                a = div.find("a", class_="group")
+                if not a:
+                    continue
+                model_name = a.get_text(strip=True)
+                relative_url = a.get("href")
+                full_url = ("https://ollama.com" + relative_url) if relative_url.startswith("/") else relative_url
+
+                # 获取包含哈希值、文件大小等信息的元素
+                info_div = div.find("div", class_="flex items-baseline space-x-1 text-[13px] text-neutral-500")
+                if not info_div:
+                    continue
+                span = info_div.find("span")
+                if not span:
+                    continue
+
+                # 提取哈希值（位于 font-mono 的 span 内）
+                hash_span = span.find("span", class_="font-mono")
+                if not hash_span:
+                    continue
+                hash_val = hash_span.get_text(strip=True)
+
+                # 利用分隔符 '•' 提取文件大小（通常为第二部分）
+                parts = span.get_text(" ", strip=True).split("•")
+                file_size = parts[1].strip() if len(parts) > 1 else None
+
+                # 构建初步模型数据
+                model_info = {
+                    "model": model_name,
+                    "model_id": hash_val,
+                    "file_size": file_size,
+                    "url": full_url,
+                }
+
+                # 根据哈希值校验量化信息
+                if hash_val in hash_to_quant:
+                    quant, quant_info = hash_to_quant[hash_val]
+                    model_info["quantization"] = quant
+                    model_info["quantization_info"] = quant_info
+                else:
+                    model_info["quantization"] = "BASE"
+                    model_info["quantization_info"] = "基础版本 (无量化)"
+
+                # 访问对应链接获取更多详细参数
+                additional_params = self.fetch_model_parameters(full_url)
+                if additional_params:
+                    model_info.update(additional_params)
+
+                models.append(model_info)
+                count += 1
+
+            return models
+
+        except Exception as e:
+            print(f"Error fetching models from {tags_url}: {e}")
+            return []
+
+    # 新增辅助方法，访问模型链接以获取更多参数
+    def fetch_model_parameters(self, model_url):
+        """进入模型链接页面，解析并返回更多附加的参数"""
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        try:
+            response = requests.get(model_url, headers=headers, verify=False)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            additional_params = {}
+            # 示例：假设页面中存在 class 为 "additional-params" 的div，其中包含更多参数
+            params_div = soup.find("div", class_="additional-params")
+            if params_div:
+                for p in params_div.find_all("p"):
+                    key_tag = p.find("strong")
+                    if key_tag:
+                        key = key_tag.get_text(strip=True).rstrip(":")
+                        # 获取紧跟在 key 后的文本作为值
+                        value = key_tag.next_sibling.strip() if key_tag.next_sibling else ""
+                        additional_params[key] = value
+            return additional_params
+        except Exception as e:
+            print(f"Error fetching additional parameters from {model_url}: {e}")
+            return {}
 
 def main():
     processor = ModelProcessor()
