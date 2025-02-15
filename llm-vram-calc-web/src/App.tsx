@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Form, InputNumber, Select, Card, message, Tooltip, Switch, theme, Button, Space, QRCode } from 'antd';
+import { Form, InputNumber, Select, Card, message, Tooltip, Switch, theme, Button, Space, QRCode, Table } from 'antd';
 import { SunOutlined, MoonOutlined, TranslationOutlined, CheckOutlined, ClearOutlined } from '@ant-design/icons';
 import { ConfigProvider } from 'antd';
 import 'antd/dist/reset.css';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import type { ColumnsType } from 'antd/es/table';
+import type { DefaultOptionType } from 'antd/es/select';
 
 // 定义主题接口
 interface ThemeInterface {
@@ -216,43 +218,49 @@ const MemoryActions = styled.div`
 
 interface ModelData {
   name: string;
-  key: string;
-  version: string;
-  description: string;
-  description_en?: string;
-  base_url: string;
-  tags_url: string;
-  output_file: string;
+  model: string;
+  url: string;
+  is_default: boolean;
+  model_id: string;
+  file_size: string;
+  arch: string;
+  parameters: string;
+  quantization: string;
+  quantization_info: string;
 }
 
 interface Config {
   output_dirs: {
     dirs: string;
   };
-  models: ModelData[];
+  models: ModelConfig[];
 }
 
 interface ModelDetail {
-  name: string;
-  parameters: number;
-  file_size: string;
-  quantization: string;
-  is_default: boolean;
-  quantization_info: string;
+  model: string;           // 具体模型名称，如 "671b-q8_0"
+  url: string;             // 模型链接
+  is_default: boolean;     // 是否默认
+  model_id: string;        // 模型ID
+  file_size: string;       // 文件大小
+  arch: string;            // 架构
+  parameters: string;      // 参数量
+  quantization: string;    // 量化方式
+  quantization_info: string; // 量化信息
+  configName?: string;     // 来自 config 的模型名称，用于匹配
 }
 
 interface ModelConfig {
-  name: string;
-  output_file: string;
-  description: string;
-  description_en?: string;
+  name: string;           // 模型名称，如 "deepseek-r1"
+  output_file: string;    // JSON 文件路径，如 "model/deepseek_r1_models.json"
+  description: string;    // 中文描述
+  description_en?: string; // 英文描述
 }
 
 // 更新下拉选项类型定义
 interface DropdownOption {
-  label?: React.ReactNode;
-  value?: string;
-  type?: 'divider';
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
 }
 
 const QRCodeContainer = styled.div`
@@ -276,6 +284,17 @@ const QRCodeContainer = styled.div`
   }
 `;
 
+// 表格数据结构
+interface TableModelInfo {
+  key: string;
+  model: string;
+  arch: string;
+  parameters: string;
+  file_size: string;
+  quantization: string;
+  quantization_info: string;
+}
+
 function App() {
   const [config, setConfig] = useState<Config | null>(null);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
@@ -289,6 +308,62 @@ function App() {
   const [modelDetails, setModelDetails] = useState<ModelDetail[]>([]);
   const [selectedQuant, setSelectedQuant] = useState<string>('');
   const [quantOptions, setQuantOptions] = useState<{ label: string; value: string }[]>([]);
+  const [tableData, setTableData] = useState<TableModelInfo[]>([]);
+
+  const columns: ColumnsType<TableModelInfo> = [
+    {
+      title: language === 'zh' ? '模型名称' : 'Model Name',
+      dataIndex: 'model',
+      key: 'model',
+      width: 200,
+      fixed: 'left',
+      sorter: (a, b) => a.model.localeCompare(b.model),
+      render: (text) => text,
+    },
+    {
+      title: language === 'zh' ? '架构' : 'Architecture',
+      dataIndex: 'arch',
+      key: 'arch',
+      width: 120,
+      sorter: (a, b) => a.arch.localeCompare(b.arch),
+    },
+    {
+      title: language === 'zh' ? '参数量' : 'Parameters',
+      dataIndex: 'parameters',
+      key: 'parameters',
+      width: 120,
+      sorter: (a, b) => {
+        const aValue = parseFloat(a.parameters.replace(/[^0-9.]/g, ''));
+        const bValue = parseFloat(b.parameters.replace(/[^0-9.]/g, ''));
+        return aValue - bValue;
+      },
+    },
+    {
+      title: language === 'zh' ? '文件大小' : 'File Size',
+      dataIndex: 'file_size',
+      key: 'file_size',
+      width: 120,
+      sorter: (a, b) => {
+        const aValue = parseFloat(a.file_size.replace(/[^0-9.]/g, ''));
+        const bValue = parseFloat(b.file_size.replace(/[^0-9.]/g, ''));
+        return aValue - bValue;
+      },
+    },
+    {
+      title: language === 'zh' ? '量化方式' : 'Quantization',
+      dataIndex: 'quantization',
+      key: 'quantization',
+      width: 150,
+      sorter: (a, b) => a.quantization.localeCompare(b.quantization),
+    },
+    {
+      title: language === 'zh' ? '量化信息' : 'Quantization Info',
+      dataIndex: 'quantization_info',
+      key: 'quantization_info',
+      width: 300,
+      sorter: (a, b) => a.quantization_info.localeCompare(b.quantization_info),
+    }
+  ];
 
   useEffect(() => {
     fetch(`${process.env.PUBLIC_URL}/modeldata/config.json`)
@@ -307,7 +382,6 @@ function App() {
   useEffect(() => {
     if (!config || selectedModels.length === 0) return;
     
-    // 获取所有选中模型的详细信息
     const fetchModelDetails = async () => {
       try {
         const allDetails: ModelDetail[] = [];
@@ -319,12 +393,13 @@ function App() {
           const modelDataPath = `${process.env.PUBLIC_URL}/${config.output_dirs.dirs}/${model.output_file}`;
           const response = await fetch(modelDataPath);
           const data: ModelDetail[] = await response.json();
-          allDetails.push(...data);
+          const annotatedDetails = data.map(detail => ({ ...detail, configName: modelName }));
+          allDetails.push(...annotatedDetails);
         }
 
         setModelDetails(allDetails);
         
-        // 提取所有模型的量化选项并去重
+        // 提取量化选项
         const uniqueQuants = Array.from(new Set(allDetails.map(detail => detail.quantization)));
         const options = uniqueQuants.map(quant => ({
           label: quant,
@@ -333,9 +408,12 @@ function App() {
         
         setQuantOptions(options);
         
-        // 设置默认选项
+        // 设置默认量化选项
         const defaultQuant = allDetails.find(detail => detail.is_default)?.quantization;
         setSelectedQuant(defaultQuant || options[0]?.value || '');
+
+        console.log('Model Details:', allDetails);
+        console.log('Quant Options:', options);
       } catch (err) {
         console.error('加载模型详情失败', err);
       }
@@ -354,7 +432,7 @@ function App() {
 
       const description = language === 'zh' ? model.description : model.description_en || model.description;
       const modelDetail = modelDetails.find(
-        detail => detail.name === model.name && detail.quantization === selectedQuant
+        detail => detail.model === model.name && detail.quantization === selectedQuant
       );
 
       if (modelDetail) {
@@ -366,6 +444,28 @@ function App() {
 
     setCalcResult(descriptions.join('\n\n'));
   }, [config, selectedModels, selectedQuant, language, modelDetails]);
+
+  // 更新表格数据
+  useEffect(() => {
+    if (!modelDetails.length || !selectedQuant) return;
+    
+    const newTableData = modelDetails
+      .filter(detail => selectedModels.includes(detail.configName!) && detail.quantization === selectedQuant)
+      .map(detail => ({
+        key: `${detail.model}-${detail.quantization}`,
+        model: `${detail.configName}:${detail.model}`,
+        arch: detail.arch,
+        parameters: detail.parameters,
+        file_size: detail.file_size,
+        quantization: detail.quantization,
+        quantization_info: detail.quantization_info
+      }));
+
+    setTableData(newTableData);
+    console.log('Selected Models:', selectedModels);
+    console.log('Selected Quant:', selectedQuant);
+    console.log('Table Data:', newTableData);
+  }, [modelDetails, selectedQuant, selectedModels]);
 
   // 添加标题更新效果
   useEffect(() => {
@@ -409,58 +509,69 @@ function App() {
     setGpuMemory(48);
   };
 
+  // 更新自定义选项渲染函数，修复类型错误
+  const customOptionRender = (
+    oriOption: DefaultOptionType,
+    info: { index: number }
+  ): React.ReactNode => {
+    // 将 DefaultOptionType 转换为 DropdownOption，并确保 label 存在
+    const option = oriOption as DropdownOption;
+    return (
+      <div style={{ 
+        padding: '0.25rem 0.75rem',
+        color: isDarkMode ? '#ffffff' : '#000000',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        height: '2rem'
+      }}>
+        {option.icon}
+        {option.label || option.value}
+      </div>
+    );
+  };
+
   // 更新下拉菜单选项
   const dropdownOptions = useMemo((): DropdownOption[] => {
     if (!config) return [];
 
     return [
       {
-        label: (
-          <div style={{ 
-            padding: '0.25rem 0.75rem',
-            color: isDarkMode ? '#ffffff' : '#000000',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            height: '2rem'
-          }}>
-            <CheckOutlined /> {language === 'zh' ? "全选" : "Select All"}
-          </div>
-        ),
-        value: '__select_all__'
+        label: language === 'zh' ? "全选" : "Select All",
+        value: '__select_all__',
+        icon: <CheckOutlined />
       },
       {
-        label: (
-          <div style={{ 
-            padding: '0.25rem 0.75rem',
-            color: isDarkMode ? '#ffffff' : '#000000',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            height: '2rem'
-          }}>
-            <ClearOutlined /> {language === 'zh' ? "清除" : "Clear"}
-          </div>
-        ),
-        value: '__clear_all__'
+        label: language === 'zh' ? "清除" : "Clear",
+        value: '__clear_all__',
+        icon: <ClearOutlined />
       },
       ...config.models.map(model => ({
-        label: (
-          <div style={{ 
-            padding: '0.25rem 0.75rem',
-            height: '2rem',
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            {model.name}
-          </div>
-        ),
-        value: model.name,
+        label: model.name,
+        value: model.name
       }))
     ];
-  }, [config, language, isDarkMode]);
+  }, [config, language]);
+
+  // 更新选择处理函数
+  const handleModelSelect = (values: string[]) => {
+    if (values.includes('__select_all__')) {
+      handleSelectAll();
+    } else if (values.includes('__clear_all__')) {
+      handleClearAll();
+    } else {
+      setSelectedModels(values);
+      if (values.length === 0) {
+        // 当没有选择模型时，清除所有相关状态
+        setSelectedQuant('');
+        setQuantOptions([]);
+        setModelDetails([]);
+        setTableData([]);
+        setCalcResult('');
+      }
+    }
+  };
 
   return (
     <ThemeProvider theme={{ isDark: isDarkMode }}>
@@ -469,7 +580,7 @@ function App() {
         theme={{
           algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
           token: {
-            colorPrimary: '#1890ff',
+            colorPrimary: '#a9d134',
             fontSize: 16,
           },
         }}
@@ -508,37 +619,15 @@ function App() {
                   <StyledSelect
                     mode="multiple"
                     value={selectedModels}
-                    onChange={(values) => {
-                      if (values.includes('__select_all__')) {
-                        handleSelectAll();
-                      } else if (values.includes('__clear_all__')) {
-                        handleClearAll();
-                      } else {
-                        setSelectedModels(values);
-                        if (values.length === 0) {
-                          setSelectedQuant('');
-                          setQuantOptions([]);
-                          setCalcResult('');
-                        }
-                      }
-                    }}
+                    onChange={handleModelSelect}
                     showSearch
                     filterOption={filterOption}
                     optionFilterProp="children"
                     placeholder={language === 'zh' ? "输入关键字搜索模型" : "Search models"}
-                    options={dropdownOptions as any} // 临时类型断言
+                    options={dropdownOptions}
+                    optionRender={customOptionRender}
                     style={{ width: '100%' }}
                     menuItemSelectedIcon={null}
-                    dropdownRender={(menu) => (
-                      <div
-                        style={{
-                          backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff',
-                          borderRadius: '0.25rem'
-                        }}
-                      >
-                        {menu}
-                      </div>
-                    )}
                   />
                 </Form.Item>
                 <Form.Item 
@@ -548,7 +637,7 @@ function App() {
                   <StyledInputNumber
                     min={1}
                     value={gpuMemory}
-                    onChange={(value) => setGpuMemory(value as number)}
+                    onChange={(value:any) => setGpuMemory(value as number)}
                     style={{ width: '100%' }}
                   />
                 </Form.Item>
@@ -567,9 +656,26 @@ function App() {
                 </Form.Item>
               </FormRow>
             </Form>
+            
+            {tableData.length > 0 && selectedModels.length > 0 && selectedQuant && (
+              <div style={{ marginTop: '1.5rem' }}>
+                <Table
+                  columns={columns}
+                  dataSource={tableData}
+                  pagination={false}
+                  bordered
+                  scroll={{ x: 'max-content' }}
+                  style={{
+                    backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff',
+                    borderRadius: '0.5rem',
+                  }}
+                />
+              </div>
+            )}
+
             {calcResult && (
               <div style={{ 
-                marginTop: '1.25rem',
+                marginTop: '1.5rem',
                 fontSize: '1rem',
                 lineHeight: 1.6,
                 color: isDarkMode ? '#ffffff' : '#000000',
