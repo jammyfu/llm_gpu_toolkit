@@ -312,9 +312,9 @@ type StatusColors = {
 
 // 状态颜色配置
 const statusColors: StatusColors = {
-  'can-run': { color: '#52c41a', bg: '#f6ffed' },
-  'barely-run': { color: '#faad14', bg: '#fffbe6' },
-  'cannot-run': { color: '#ff4d4f', bg: '#fff2f0' }
+  'can-run': { color: '#a9d134', bg: '#f6ffed' },     // 使用主题色
+  'barely-run': { color: '#faad14', bg: '#fffbe6' },  // 保持黄色
+  'cannot-run': { color: '#ff4d4f', bg: '#fff2f0' }   // 保持红色
 };
 
 // 状态排序配置
@@ -412,7 +412,11 @@ function App() {
       render: (text, record: TableModelInfo) => (
         <Tooltip title={language === 'zh' ? '点击跳转到模型页面' : 'Click to view model page'}>
           <span
-            style={{ cursor: 'pointer', color: isDarkMode ? '#a9d134' : '#1890ff' }}
+            style={{ 
+              cursor: 'pointer',
+              color: isDarkMode ? '#a9d134' : '#7c9a2e',  // 暗色模式保持原色，亮色模式使用更深的绿色
+              textDecoration: 'underline' 
+            }}
             onClick={() => {
               window.location.href = record.url;
             }}
@@ -501,34 +505,38 @@ function App() {
       title: language === 'zh' ? '复制命令' : 'Copy Command',
       key: 'copy',
       width: 120,
-      render: (_, record) => (
-        <Button
-          icon={<CopyOutlined />}
-          type="primary"
-          style={{
-            backgroundColor: isDarkMode ? '#a9d134' : '#1890ff',
-            borderColor: isDarkMode ? '#a9d134' : '#1890ff',
-          }}
-          onClick={() => {
-            const parts = record.url.split('/').filter(item => item);
-            const modelNameFromUrl = parts[parts.length - 1];
-            const command = `ollama pull ${modelNameFromUrl}`;
-            navigator.clipboard.writeText(command)
-              .then(() => {
-                messageApi.success(
-                  language === 'zh'
-                    ? `命令复制成功：${modelNameFromUrl}`
-                    : `Command Copied Successfully: ${modelNameFromUrl}`
-                );
-              })
-              .catch(() => {
-                messageApi.error(language === 'zh' ? '复制失败' : 'Copy failed');
-              });
-          }}
-        >
-          {language === 'zh' ? '复制命令' : 'Copy Command'}
-        </Button>
-      )
+      render: (_, record) => {
+        const style = statusColors[record.runStatus];
+        return (
+          <Button
+            icon={<CopyOutlined />}
+            type="primary"
+            style={{
+              backgroundColor: isDarkMode ? style.color : (record.runStatus === 'can-run' ? '#7c9a2e' : style.color),
+              borderColor: isDarkMode ? style.color : (record.runStatus === 'can-run' ? '#7c9a2e' : style.color),
+              opacity: record.runStatus === 'cannot-run' ? 0.7 : 1,
+            }}
+            onClick={() => {
+              const parts = record.url.split('/').filter(item => item);
+              const modelNameFromUrl = parts[parts.length - 1];
+              const command = `ollama pull ${modelNameFromUrl}`;
+              navigator.clipboard.writeText(command)
+                .then(() => {
+                  messageApi.success(
+                    language === 'zh'
+                      ? `命令复制成功：${modelNameFromUrl}`
+                      : `Command Copied Successfully: ${modelNameFromUrl}`
+                  );
+                })
+                .catch(() => {
+                  messageApi.error(language === 'zh' ? '复制失败' : 'Copy failed');
+                });
+            }}
+          >
+            {language === 'zh' ? '复制命令' : 'Copy Command'}
+          </Button>
+        );
+      }
     }
   ];
 
