@@ -1,0 +1,156 @@
+[
+  {
+    "model": "70b-instruct-q8_0",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q8_0",
+    "is_default": false,
+    "model_id": "d5b5e1b84868",
+    "file_size": "75GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "70b-instruct-q6_K",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q6_K",
+    "is_default": false,
+    "model_id": "992c05c90cd8",
+    "file_size": "58GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q6_K",
+    "quantization_info": "Q6_K"
+  },
+  {
+    "model": "70b-instruct-q5_K_M",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q5_K_M",
+    "is_default": false,
+    "model_id": "a495e09a0513",
+    "file_size": "50GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q5_K_M",
+    "quantization_info": "Q5_K_M"
+  },
+  {
+    "model": "70b-instruct-q5_1",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q5_1",
+    "is_default": false,
+    "model_id": "118a0cbe95b2",
+    "file_size": "53GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q5_1",
+    "quantization_info": "Q5_1"
+  },
+  {
+    "model": "70b-instruct-q5_0",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q5_0",
+    "is_default": false,
+    "model_id": "522f1b464c62",
+    "file_size": "49GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q5_0",
+    "quantization_info": "Q5_0"
+  },
+  {
+    "model": "70b",
+    "url": "https://ollama.com/library/llama3.3:70b",
+    "is_default": true,
+    "model_id": "a6eb4748fd29",
+    "file_size": "43GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "latest",
+    "url": "https://ollama.com/library/llama3.3:latest",
+    "is_default": true,
+    "model_id": "a6eb4748fd29",
+    "file_size": "43GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "70b-instruct-q4_K_M",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q4_K_M",
+    "is_default": false,
+    "model_id": "a6eb4748fd29",
+    "file_size": "43GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "70b-instruct-q4_K_S",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q4_K_S",
+    "is_default": false,
+    "model_id": "3d546a04bbd5",
+    "file_size": "40GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q4_K_S",
+    "quantization_info": "Q4_K_S"
+  },
+  {
+    "model": "70b-instruct-q4_0",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q4_0",
+    "is_default": false,
+    "model_id": "e5afe30ba419",
+    "file_size": "40GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q4_0",
+    "quantization_info": "Q4_0"
+  },
+  {
+    "model": "70b-instruct-q3_K_M",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q3_K_M",
+    "is_default": false,
+    "model_id": "151348be3103",
+    "file_size": "34GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q3_K_M",
+    "quantization_info": "Q3_K_M"
+  },
+  {
+    "model": "70b-instruct-q3_K_S",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q3_K_S",
+    "is_default": false,
+    "model_id": "84d6ecd40b42",
+    "file_size": "31GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q3_K_S",
+    "quantization_info": "Q3_K_S"
+  },
+  {
+    "model": "70b-instruct-q2_K",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-q2_K",
+    "is_default": false,
+    "model_id": "a6f03da15cbc",
+    "file_size": "26GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "Q2_K",
+    "quantization_info": "Q2_K"
+  },
+  {
+    "model": "70b-instruct-fp16",
+    "url": "https://ollama.com/library/llama3.3:70b-instruct-fp16",
+    "is_default": false,
+    "model_id": "8fbd361705a0",
+    "file_size": "141GB",
+    "arch": "llama",
+    "parameters": "70.6B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  }
+]
