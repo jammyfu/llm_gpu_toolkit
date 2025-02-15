@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Form, InputNumber, Select, Card, message, Tooltip, Switch, theme, Button, Space, QRCode, Table } from 'antd';
-import { SunOutlined, MoonOutlined, TranslationOutlined, CheckOutlined, ClearOutlined } from '@ant-design/icons';
+import { SunOutlined, MoonOutlined, TranslationOutlined, CheckOutlined, ClearOutlined, CopyOutlined } from '@ant-design/icons';
 import { ConfigProvider } from 'antd';
 import 'antd/dist/reset.css';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
@@ -284,15 +284,65 @@ const QRCodeContainer = styled.div`
   }
 `;
 
-// 表格数据结构
+// 定义运行状态类型
+type RunStatus = 'can-run' | 'barely-run' | 'cannot-run';
+
+// 更新表格数据结构
 interface TableModelInfo {
   key: string;
-  model: string;
+  fullModel: string;
   arch: string;
   parameters: string;
   file_size: string;
   quantization: string;
   quantization_info: string;
+  url: string;
+  runStatus: RunStatus;     // 添加运行状态
+  statusText: string;       // 添加状态文本
+  requiredVram: number;     // 添加所需显存
+}
+
+// 定义状态颜色类型
+type StatusColors = {
+  [key in RunStatus]: {
+    color: string;
+    bg: string;
+  }
+}
+
+// 状态颜色配置
+const statusColors: StatusColors = {
+  'can-run': { color: '#52c41a', bg: '#f6ffed' },
+  'barely-run': { color: '#faad14', bg: '#fffbe6' },
+  'cannot-run': { color: '#ff4d4f', bg: '#fff2f0' }
+};
+
+// 状态排序配置
+const statusOrder: { [key in RunStatus]: number } = {
+  'can-run': 0,
+  'barely-run': 1,
+  'cannot-run': 2
+};
+
+// 添加显存计算函数
+function calculateMemoryRequirement(fileSize: string, quantization: string): number {
+    const sizeMatch = fileSize.match(/(\d+\.?\d*)\s*(GB|TB)/i);
+    if (!sizeMatch) return 0.5;
+    
+    let size = parseFloat(sizeMatch[1]);
+    if (sizeMatch[2].toUpperCase() === 'TB') {
+        size *= 1024;
+    }
+    
+    let memoryRequired;
+    switch (quantization.toUpperCase()) {
+        case 'FP16': memoryRequired = size * 2; break;
+        case 'Q8_0': memoryRequired = size * 1.5; break;
+        case 'Q4_K_M': memoryRequired = size * 1.2; break;
+        default: memoryRequired = size * 1.2;
+    }
+    
+    return Math.max(memoryRequired, 0.5);
 }
 
 function App() {
@@ -310,15 +360,29 @@ function App() {
   const [quantOptions, setQuantOptions] = useState<{ label: string; value: string }[]>([]);
   const [tableData, setTableData] = useState<TableModelInfo[]>([]);
 
+  // 使用 message.useMessage 钩子获取动态提示 API 与 contextHolder
+  const [messageApi, contextHolder] = message.useMessage();
+
   const columns: ColumnsType<TableModelInfo> = [
     {
       title: language === 'zh' ? '模型名称' : 'Model Name',
-      dataIndex: 'model',
-      key: 'model',
+      dataIndex: 'fullModel',
+      key: 'fullModel',
       width: 200,
       fixed: 'left',
-      sorter: (a, b) => a.model.localeCompare(b.model),
-      render: (text) => text,
+      sorter: (a, b) => a.fullModel.localeCompare(b.fullModel),
+      render: (text, record: TableModelInfo) => (
+        <Tooltip title={language === 'zh' ? '点击跳转到模型页面' : 'Click to view model page'}>
+          <span
+            style={{ cursor: 'pointer', color: isDarkMode ? '#a9d134' : '#1890ff' }}
+            onClick={() => {
+              window.location.href = record.url;
+            }}
+          >
+            {text}
+          </span>
+        </Tooltip>
+      ),
     },
     {
       title: language === 'zh' ? '架构' : 'Architecture',
@@ -357,11 +421,76 @@ function App() {
       sorter: (a, b) => a.quantization.localeCompare(b.quantization),
     },
     {
-      title: language === 'zh' ? '量化信息' : 'Quantization Info',
-      dataIndex: 'quantization_info',
-      key: 'quantization_info',
-      width: 300,
-      sorter: (a, b) => a.quantization_info.localeCompare(b.quantization_info),
+      title: language === 'zh' ? '显存估值' : 'VRAM Estimate',
+      dataIndex: 'requiredVram',
+      key: 'requiredVram',
+      width: 120,
+      render: (vram: number) => `${vram.toFixed(1)} GB`,
+      sorter: (a, b) => a.requiredVram - b.requiredVram,
+    },
+    {
+      title: language === 'zh' ? '运行状态' : 'Run Status',
+      key: 'runStatus',
+      width: 120,
+      render: (_, record: TableModelInfo) => {
+        const style = statusColors[record.runStatus];
+        
+        const requiredGPUs = Math.ceil(record.requiredVram / gpuMemory);
+        
+        const tooltipText = language === 'zh' 
+          ? `需要显存: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\n需要 ${requiredGPUs} 张显卡` : ''}`
+          : `Required VRAM: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\nNeeds ${requiredGPUs} GPUs` : ''}`;
+        
+        return (
+          <Tooltip title={<span style={{ whiteSpace: 'pre-line' }}>{tooltipText}</span>}>
+            <span style={{
+              padding: '4px 8px',
+              borderRadius: '4px',
+              backgroundColor: isDarkMode ? 'transparent' : style.bg,
+              color: style.color,
+              border: `1px solid ${style.color}`
+            }}>
+              {record.statusText}
+            </span>
+          </Tooltip>
+        );
+      },
+      sorter: (a: TableModelInfo, b: TableModelInfo) => {
+        return statusOrder[a.runStatus] - statusOrder[b.runStatus];
+      }
+    },
+    {
+      title: language === 'zh' ? '复制命令' : 'Copy Command',
+      key: 'copy',
+      width: 120,
+      render: (_, record) => (
+        <Button
+          icon={<CopyOutlined />}
+          type="primary"
+          style={{
+            backgroundColor: isDarkMode ? '#a9d134' : '#1890ff',
+            borderColor: isDarkMode ? '#a9d134' : '#1890ff',
+          }}
+          onClick={() => {
+            const parts = record.url.split('/').filter(item => item);
+            const modelNameFromUrl = parts[parts.length - 1];
+            const command = `ollama pull ${modelNameFromUrl}`;
+            navigator.clipboard.writeText(command)
+              .then(() => {
+                messageApi.success(
+                  language === 'zh'
+                    ? `命令复制成功：${modelNameFromUrl}`
+                    : `Command Copied Successfully: ${modelNameFromUrl}`
+                );
+              })
+              .catch(() => {
+                messageApi.error(language === 'zh' ? '复制失败' : 'Copy failed');
+              });
+          }}
+        >
+          {language === 'zh' ? '复制命令' : 'Copy Command'}
+        </Button>
+      )
     }
   ];
 
@@ -389,29 +518,40 @@ function App() {
         for (const modelName of selectedModels) {
           const model = config.models.find(m => m.name === modelName);
           if (!model) continue;
-
+          
           const modelDataPath = `${process.env.PUBLIC_URL}/${config.output_dirs.dirs}/${model.output_file}`;
           const response = await fetch(modelDataPath);
           const data: ModelDetail[] = await response.json();
           const annotatedDetails = data.map(detail => ({ ...detail, configName: modelName }));
           allDetails.push(...annotatedDetails);
         }
-
+        
         setModelDetails(allDetails);
         
-        // 提取量化选项
+        // 检查是否存在默认模型
+        const defaultExists = allDetails.some(detail => detail.is_default);
+        // 获取所有量化值并去重
         const uniqueQuants = Array.from(new Set(allDetails.map(detail => detail.quantization)));
-        const options = uniqueQuants.map(quant => ({
+        // 按量化值从小到大排序（假设量化值中包含数值，比如 "8-bit"、"16-bit"）
+        const sortedUniqueQuants = uniqueQuants.sort((a, b) => parseFloat(a) - parseFloat(b));
+        
+        let options = [];
+        if (defaultExists) {
+          options.push({
+            label: language === 'zh' ? "默认" : "Default",
+            value: "default"
+          });
+        }
+        options = options.concat(sortedUniqueQuants.map(quant => ({
           label: quant,
           value: quant
-        }));
+        })));
         
         setQuantOptions(options);
         
-        // 设置默认量化选项
-        const defaultQuant = allDetails.find(detail => detail.is_default)?.quantization;
-        setSelectedQuant(defaultQuant || options[0]?.value || '');
-
+        // 设置默认选中项，如果存在默认模型，则选中 "default"，否则选第一个选项
+        setSelectedQuant(defaultExists ? "default" : options[0]?.value || '');
+        
         console.log('Model Details:', allDetails);
         console.log('Quant Options:', options);
       } catch (err) {
@@ -420,7 +560,7 @@ function App() {
     };
 
     fetchModelDetails();
-  }, [config, selectedModels]);
+  }, [config, selectedModels, language]);
 
   useEffect(() => {
     if (!config || selectedModels.length === 0) return;
@@ -450,22 +590,78 @@ function App() {
     if (!modelDetails.length || !selectedQuant) return;
     
     const newTableData = modelDetails
-      .filter(detail => selectedModels.includes(detail.configName!) && detail.quantization === selectedQuant)
-      .map(detail => ({
-        key: `${detail.model}-${detail.quantization}`,
-        model: `${detail.configName}:${detail.model}`,
-        arch: detail.arch,
-        parameters: detail.parameters,
-        file_size: detail.file_size,
-        quantization: detail.quantization,
-        quantization_info: detail.quantization_info
-      }));
+      .filter(detail => {
+        if (!selectedModels.includes(detail.configName!)) return false;
+        
+        if (selectedQuant === "default") {
+          return detail.is_default;
+        } else {
+          return detail.quantization === selectedQuant;
+        }
+      })
+      .map(detail => {
+        // 使用新的显存计算函数
+        const totalRequiredVram = calculateMemoryRequirement(detail.file_size, detail.quantization);
+        
+        // 确定运行状态
+        let runStatus: RunStatus;
+        let statusText: string;
+        
+        if (totalRequiredVram <= gpuMemory) {
+          runStatus = 'can-run';
+          statusText = language === 'zh' ? '完美运行' : 'Perfect Run';
+        } else if (totalRequiredVram <= gpuMemory * 1.15) {
+          runStatus = 'barely-run';
+          statusText = language === 'zh' ? '满载运行' : 'Full Load';
+        } else {
+          runStatus = 'cannot-run';
+          statusText = language === 'zh' ? '不能运行' : 'Cannot Run';
+        }
 
+        return {
+          key: `${detail.configName}-${detail.model}-${detail.quantization}`,
+          fullModel: `${detail.configName}:${detail.model}`,
+          arch: detail.arch,
+          parameters: detail.parameters,
+          file_size: detail.file_size,
+          quantization: detail.quantization,
+          quantization_info: detail.quantization_info,
+          url: detail.url,
+          runStatus,
+          statusText,
+          requiredVram: totalRequiredVram
+        };
+      });
+
+    // 获取所有量化值并去重
+    const uniqueQuants = Array.from(new Set(modelDetails.map(detail => detail.quantization)));
+    
+    const sortedUniqueQuants = uniqueQuants.sort((a, b) => {
+      const getNumber = (str: string) => {
+        const match = str.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 0;
+      };
+      return getNumber(a) - getNumber(b);
+    });
+    
+    let options = [];
+    const defaultExists = modelDetails.some(detail => detail.is_default);
+    
+    if (defaultExists) {
+      options.push({
+        label: language === 'zh' ? "默认" : "Default",
+        value: "default"
+      });
+    }
+    
+    options = options.concat(sortedUniqueQuants.map(quant => ({
+      label: quant,
+      value: quant
+    })));
+    
+    setQuantOptions(options);
     setTableData(newTableData);
-    console.log('Selected Models:', selectedModels);
-    console.log('Selected Quant:', selectedQuant);
-    console.log('Table Data:', newTableData);
-  }, [modelDetails, selectedQuant, selectedModels]);
+  }, [modelDetails, selectedQuant, selectedModels, language, gpuMemory]);
 
   // 添加标题更新效果
   useEffect(() => {
@@ -575,6 +771,7 @@ function App() {
 
   return (
     <ThemeProvider theme={{ isDark: isDarkMode }}>
+      {contextHolder}
       <GlobalStyle theme={{ isDark: isDarkMode }} />
       <ConfigProvider
         theme={{
