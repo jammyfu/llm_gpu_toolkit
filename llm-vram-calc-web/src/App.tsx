@@ -28,9 +28,15 @@ const GlobalStyle = createGlobalStyle`
 const StyledApp = styled.div<{ $isDark: boolean }>`
   margin: 0 auto;
   padding: 1.25rem; // 20px
-  background-color: ${props => props.$isDark ? '#141414' : '#ffffff'};
-  color: ${props => props.$isDark ? '#ffffff' : '#000000'};
   min-height: 100vh;
+  background: ${props => props.$isDark 
+    ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${process.env.PUBLIC_URL}/images/background/background01_dark.png)`
+    : `linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url(${process.env.PUBLIC_URL}/images/background/background02_light.png)`};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: ${props => props.$isDark ? '#ffffff' : '#000000'};
   font-size: 1rem;
   line-height: 1.6;
   max-width: 135rem; // 2160px
