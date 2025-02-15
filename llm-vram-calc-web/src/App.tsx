@@ -383,10 +383,52 @@ function calculateMemoryRequirement(fileSize: string, quantization: string): num
     return Math.max(memoryRequired, 0.5);
 }
 
+// 本地存储的 key
+const GPU_MEMORY_KEY = 'gpu_memory_setting';
+
+const copyToClipboard = async (text: string, onSuccess: () => void, onError: () => void) => {
+  try {
+    // 优先使用新的 Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      onSuccess();
+      return;
+    }
+
+    // 回退方案：使用传统的 execCommand
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const successful = document.execCommand('copy');
+      textArea.remove();
+      if (successful) {
+        onSuccess();
+      } else {
+        onError();
+      }
+    } catch (err) {
+      textArea.remove();
+      onError();
+    }
+  } catch (err) {
+    onError();
+  }
+};
+
 function App() {
   const [config, setConfig] = useState<Config | null>(null);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
-  const [gpuMemory, setGpuMemory] = useState<number>(24);
+  const [gpuMemory, setGpuMemory] = useState<number | null>(() => {
+    const savedMemory = localStorage.getItem(GPU_MEMORY_KEY);
+    return savedMemory ? Number(savedMemory) : 24;
+  });
   const [calcResult, setCalcResult] = useState<string>('');
   const [language, setLanguage] = useState<'zh' | 'en'>('zh');
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -394,9 +436,10 @@ function App() {
     return savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
   const [modelDetails, setModelDetails] = useState<ModelDetail[]>([]);
-  const [selectedQuant, setSelectedQuant] = useState<string>('');
+  const [selectedQuant, setSelectedQuant] = useState<string>('default');
   const [quantOptions, setQuantOptions] = useState<{ label: string; value: string }[]>([]);
   const [tableData, setTableData] = useState<TableModelInfo[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   // 使用 message.useMessage 钩子获取动态提示 API 与 contextHolder
   const [messageApi, contextHolder] = message.useMessage();
@@ -477,14 +520,21 @@ function App() {
       render: (_, record: TableModelInfo) => {
         const style = statusColors[record.runStatus];
         
-        const requiredGPUs = Math.ceil(record.requiredVram / gpuMemory);
-        
-        const tooltipText = language === 'zh' 
-          ? `需要显存: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\n需要 ${requiredGPUs} 张显卡` : ''}`
-          : `Required VRAM: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\nNeeds ${requiredGPUs} GPUs` : ''}`;
+        const tooltipRender = (record: TableModelInfo) => {
+          const style = statusColors[record.runStatus];
+          // 使用空值合并运算符提供默认值
+          const memoryValue = gpuMemory ?? 24;
+          const requiredGPUs = Math.ceil(record.requiredVram / memoryValue);
+          
+          const tooltipText = language === 'zh' 
+            ? `需要显存: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\n需要 ${requiredGPUs} 张显卡` : ''}`
+            : `Required VRAM: ${record.requiredVram.toFixed(1)}GB${requiredGPUs > 1 ? `\nNeeds ${requiredGPUs} GPUs` : ''}`;
+          
+          return <span style={{ whiteSpace: 'pre-line' }}>{tooltipText}</span>;
+        };
         
         return (
-          <Tooltip title={<span style={{ whiteSpace: 'pre-line' }}>{tooltipText}</span>}>
+          <Tooltip title={tooltipRender(record)}>
             <span style={{
               padding: '4px 8px',
               borderRadius: '4px',
@@ -517,20 +567,35 @@ function App() {
               opacity: record.runStatus === 'cannot-run' ? 0.7 : 1,
             }}
             onClick={() => {
-              const parts = record.url.split('/').filter(item => item);
-              const modelNameFromUrl = parts[parts.length - 1];
-              const command = `ollama pull ${modelNameFromUrl}`;
-              navigator.clipboard.writeText(command)
-                .then(() => {
-                  messageApi.success(
-                    language === 'zh'
-                      ? `命令复制成功：${modelNameFromUrl}`
-                      : `Command Copied Successfully: ${modelNameFromUrl}`
-                  );
-                })
-                .catch(() => {
-                  messageApi.error(language === 'zh' ? '复制失败' : 'Copy failed');
-                });
+              try {
+                const parts = record.url.split('/').filter(item => item);
+                const modelNameFromUrl = parts[parts.length - 1];
+                const command = `ollama pull ${modelNameFromUrl}`;
+
+                copyToClipboard(
+                  command,
+                  () => {
+                    messageApi.success(
+                      language === 'zh'
+                        ? `命令复制成功：${modelNameFromUrl}`
+                        : `Command Copied Successfully: ${modelNameFromUrl}`
+                    );
+                  },
+                  () => {
+                    messageApi.error(
+                      language === 'zh' 
+                        ? '复制失败，请手动复制：' + command
+                        : 'Copy failed, please copy manually: ' + command
+                    );
+                  }
+                );
+              } catch (err) {
+                messageApi.error(
+                  language === 'zh' 
+                    ? '复制失败，请稍后重试'
+                    : 'Copy failed, please try again later'
+                );
+              }
             }}
           >
             {language === 'zh' ? '复制命令' : 'Copy Command'}
@@ -646,25 +711,12 @@ function App() {
         }
       })
       .map(detail => {
-        // 使用修正后的显存计算函数
         const totalRequiredVram = calculateMemoryRequirement(
           detail.file_size,
           detail.quantization
         );
         
-        let runStatus: RunStatus;
-        let statusText: string;
-        
-        if (totalRequiredVram <= gpuMemory) {
-          runStatus = 'can-run';
-          statusText = language === 'zh' ? '完美运行' : 'Perfect Run';
-        } else if (totalRequiredVram <= gpuMemory * 1.2) {
-          runStatus = 'barely-run';
-          statusText = language === 'zh' ? '满载运行' : 'Full Load';
-        } else {
-          runStatus = 'cannot-run';
-          statusText = language === 'zh' ? '不能运行' : 'Cannot Run';
-        }
+        const { runStatus, statusText } = calculateRunStatus(totalRequiredVram);
 
         return {
           key: `${detail.configName}-${detail.model}-${detail.quantization}`,
@@ -740,17 +792,38 @@ function App() {
 
   const handleClearAll = () => {
     setSelectedModels([]);
-    setSelectedQuant('');
+    setSelectedQuant('default');
     setQuantOptions([]);
     setCalcResult('');
   };
 
-  const handleSetMemory24 = () => {
-    setGpuMemory(24);
+  const handleGpuMemoryChange = (value: number | null) => {
+    // 在编辑状态下，直接更新值，不做验证
+    if (isEditing) {
+      setGpuMemory(value);
+      return;
+    }
+    
+    // 非编辑状态下，确保值有效
+    if (value !== null && !isNaN(Number(value))) {
+      setGpuMemory(value);
+    }
   };
 
-  const handleSetMemory48 = () => {
-    setGpuMemory(48);
+  const handleGpuMemoryBlur = () => {
+    setIsEditing(false);
+    
+    // 失焦时，如果值无效则设置为默认值
+    if (gpuMemory === null || isNaN(Number(gpuMemory))) {
+      setGpuMemory(24);
+      localStorage.setItem(GPU_MEMORY_KEY, '24');
+      return;
+    }
+
+    // 确保值在有效范围内
+    let newValue = Math.min(Math.max(Math.floor(Number(gpuMemory)), 1), 128);
+    setGpuMemory(newValue);
+    localStorage.setItem(GPU_MEMORY_KEY, newValue.toString());
   };
 
   // 更新自定义选项渲染函数，修复类型错误
@@ -808,12 +881,35 @@ function App() {
       setSelectedModels(values);
       if (values.length === 0) {
         // 当没有选择模型时，清除所有相关状态
-        setSelectedQuant('');
+        setSelectedQuant('default');
         setQuantOptions([]);
         setModelDetails([]);
         setTableData([]);
         setCalcResult('');
       }
+    }
+  };
+
+  // 在计算运行状态的地方
+  const calculateRunStatus = (totalRequiredVram: number) => {
+    // 使用空值合并运算符提供默认值
+    const memoryValue = gpuMemory ?? 24;
+    
+    if (totalRequiredVram <= memoryValue) {
+      return {
+        runStatus: 'can-run' as const,
+        statusText: language === 'zh' ? '完美运行' : 'Perfect Run'
+      };
+    } else if (totalRequiredVram <= memoryValue * 1.2) {
+      return {
+        runStatus: 'barely-run' as const,
+        statusText: language === 'zh' ? '满载运行' : 'Full Load'
+      };
+    } else {
+      return {
+        runStatus: 'cannot-run' as const,
+        statusText: language === 'zh' ? '不能运行' : 'Cannot Run'
+      };
     }
   };
 
@@ -881,9 +977,19 @@ function App() {
                 >
                   <StyledInputNumber
                     min={1}
+                    max={128}
                     value={gpuMemory}
-                    onChange={(value:any) => setGpuMemory(value as number)}
+                    onChange={handleGpuMemoryChange}
+                    onBlur={handleGpuMemoryBlur}
+                    onFocus={() => setIsEditing(true)}
+                    addonAfter="GB"
                     style={{ width: '100%' }}
+                    keyboard={true}
+                    controls={true}
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    step={1}
                   />
                 </Form.Item>
                 <Form.Item 
