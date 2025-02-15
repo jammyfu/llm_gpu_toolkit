@@ -324,24 +324,62 @@ const statusOrder: { [key in RunStatus]: number } = {
   'cannot-run': 2
 };
 
-// 添加显存计算函数
+// 修复重复的 Q8_0 键
+const QUANTIZATION_BITS: { [key: string]: number } = {
+  'FP32': 32,
+  'FP16': 16,
+  'Q8_0': 8,
+  'Q4_K_M': 4,
+  'Q5_K_M': 5,
+  'Q6_K_M': 6,
+  'Q2_K': 2,
+  'Q3_K_S': 3,
+  'Q3_K_M': 3,
+  'Q3_K_L': 3,
+  'Q4_0': 4,
+  'Q4_1': 4,
+  'Q5_0': 5,
+  'Q5_1': 5,
+  'Q6_K': 6
+};
+
+// 更新显存计算函数
 function calculateMemoryRequirement(fileSize: string, quantization: string): number {
+    // 1. 从文件大小字符串中提取数字和单位
     const sizeMatch = fileSize.match(/(\d+\.?\d*)\s*(GB|TB)/i);
     if (!sizeMatch) return 0.5;
     
+    // 2. 转换文件大小为 GB
     let size = parseFloat(sizeMatch[1]);
     if (sizeMatch[2].toUpperCase() === 'TB') {
-        size *= 1024;
+        size *= 1024; // 转换 TB 到 GB
     }
     
-    let memoryRequired;
+    // 3. 根据量化方式计算显存倍数
+    let memoryMultiplier;
     switch (quantization.toUpperCase()) {
-        case 'FP16': memoryRequired = size * 2; break;
-        case 'Q8_0': memoryRequired = size * 1.5; break;
-        case 'Q4_K_M': memoryRequired = size * 1.2; break;
-        default: memoryRequired = size * 1.2;
+        case 'FP16': 
+            memoryMultiplier = 2.0;
+            break;
+        case 'Q8_0':
+            memoryMultiplier = 1.5;
+            break;
+        case 'Q4_K_M':
+        case 'Q4_0':
+        case 'Q4_1':
+            memoryMultiplier = 1.2;
+            break;
+        default:
+            memoryMultiplier = 1.2; // 默认倍数
     }
     
+    // 4. 计算基础显存需求
+    let memoryRequired = size * memoryMultiplier;
+    
+    // 5. 添加额外开销（KV cache、优化器状态等）
+    memoryRequired *= 1.1; // 额外 10% 用于系统开销
+    
+    // 6. 确保最小显存需求
     return Math.max(memoryRequired, 0.5);
 }
 
@@ -578,7 +616,7 @@ function App() {
       if (modelDetail) {
         return `【${model.name}】\n${description}\n${language === 'zh' ? '量化信息：' : 'Quantization Info: '}${modelDetail.quantization_info}`;
       } else {
-        return `【${model.name}】\n${description}`;
+        return `${description}`;
       }
     }).filter(Boolean);
 
@@ -600,17 +638,19 @@ function App() {
         }
       })
       .map(detail => {
-        // 使用新的显存计算函数
-        const totalRequiredVram = calculateMemoryRequirement(detail.file_size, detail.quantization);
+        // 使用修正后的显存计算函数
+        const totalRequiredVram = calculateMemoryRequirement(
+          detail.file_size,
+          detail.quantization
+        );
         
-        // 确定运行状态
         let runStatus: RunStatus;
         let statusText: string;
         
         if (totalRequiredVram <= gpuMemory) {
           runStatus = 'can-run';
           statusText = language === 'zh' ? '完美运行' : 'Perfect Run';
-        } else if (totalRequiredVram <= gpuMemory * 1.15) {
+        } else if (totalRequiredVram <= gpuMemory * 1.2) {
           runStatus = 'barely-run';
           statusText = language === 'zh' ? '满载运行' : 'Full Load';
         } else {
