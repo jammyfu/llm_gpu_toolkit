@@ -31,15 +31,14 @@ const StyledApp = styled.div<{ $isDark: boolean }>`
   min-height: 100vh;
   background: ${props => props.$isDark 
     ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${process.env.PUBLIC_URL}/images/background/background01_dark.png)`
-    : `linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url(${process.env.PUBLIC_URL}/images/background/background02_light.png)`};
+    : `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${process.env.PUBLIC_URL}/images/background/background02_light.png)`};
   background-size: cover;
-  background-position: center;
+  background-position: right;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: ${props => props.$isDark ? '#ffffff' : '#000000'};
   font-size: 1rem;
   line-height: 1.6;
-  max-width: 135rem; // 2160px
   
   @media (max-width: 48rem) { // 768px
     padding: 0.625rem; // 10px
@@ -91,16 +90,16 @@ const TopBar = styled.div`
   }
 `;
 
-const ContentCard = styled(Card)`
-  .ant-card-body {
-    padding: 1.5rem;
-  }
-
-  @media (max-width: 48rem) {
-    .ant-card-body {
-      padding: 1rem;
-    }
-  }
+const ContentCard = styled.div`
+  margin: 1rem;
+  padding: 1.5rem;
+  max-width: 2160px;
+  margin-left: auto;
+  margin-right: auto;
+  background: ${props => props.theme.isDark ? 'rgba(0, 0, 0, 0.6)' : '#ffffff'};
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 `;
 
 const StyledCard = styled(Card)`
@@ -558,7 +557,7 @@ function App() {
       }
     },
     {
-      title: language === 'zh' ? '复制命令' : 'Copy Command',
+      title: language === 'zh' ? '安装模型' : 'Install Model',
       key: 'copy',
       width: 120,
       render: (_, record) => {
@@ -604,7 +603,7 @@ function App() {
               }
             }}
           >
-            {language === 'zh' ? '复制命令' : 'Copy Command'}
+            {language === 'zh' ? '复制' : 'Copy'}
           </Button>
         );
       }
@@ -771,7 +770,7 @@ function App() {
 
   // 添加标题更新效果
   useEffect(() => {
-    document.title = language === 'zh' ? 'LLM 模型显存计算器' : 'LLM Model VRAM Calculator';
+    document.title = language === 'zh' ? '📟 LLM 模型显存计算器' : '📟 LLM Model VRAM Calculator';
   }, [language]);
 
   const handleThemeChange = (checked: boolean) => {
@@ -935,7 +934,7 @@ function App() {
         <StyledApp $isDark={isDarkMode}>
           <TopBar>
             <h1 className="title">
-              {language === 'zh' ? "LLM 模型显存计算器" : "LLM Model VRAM Calculator"}
+              {language === 'zh' ? "📟 LLM 模型显存计算器" : "📟 LLM Model VRAM Calculator"}
             </h1>
             <div className="controls">
               <Switch
