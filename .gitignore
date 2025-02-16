@@ -20,7 +20,6 @@ Thumbs.db
 node_modules/
 
 # 打包输出目录
-build/
 dist/
 
 # 日志文件
