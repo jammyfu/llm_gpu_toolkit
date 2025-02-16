@@ -13,6 +13,7 @@ import {
   Table,
   Typography,
   Space,
+  Spin,
 } from "antd";
 import {
   SunOutlined,
@@ -27,6 +28,10 @@ import "antd/dist/reset.css";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import type { ColumnsType } from "antd/es/table";
 import type { DefaultOptionType } from "antd/es/select";
+import { Helmet } from 'react-helmet-async';
+import { ModelSelection } from "../model/ModelSelection";
+import { Link } from 'react-router-dom';
+import CopyrightPage from "./CopyrightPage";
 
 const { Title, Paragraph } = Typography;
 
@@ -55,8 +60,8 @@ const StyledApp = styled.div<{ $isDark: boolean }>`
   min-height: 100vh;
   background: ${(props) =>
     props.$isDark
-      ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${process.env.PUBLIC_URL}/images/background/background01_dark.png)`
-      : `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${process.env.PUBLIC_URL}/images/background/background02_light.png)`};
+      ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${process.env.PUBLIC_URL}/images/background/background01_dark.jpg)`
+      : `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${process.env.PUBLIC_URL}/images/background/background02_light.jpg)`};
   background-size: cover;
   background-position: right;
   background-repeat: no-repeat;
@@ -536,6 +541,13 @@ const LanguageSwitch = styled.div`
   }
 `;
 
+const CopyrightLink = styled.div`
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: ${props => props.theme.isDark ? '#ffffff' : '#000000'};
+`;
+
 function LLMCalculatorPage() {
   const [config, setConfig] = useState<Config | null>(null);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
@@ -558,6 +570,7 @@ function LLMCalculatorPage() {
   >([]);
   const [tableData, setTableData] = useState<TableModelInfo[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // 使用 message.useMessage 钩子获取动态提示 API 与 contextHolder
   const [messageApi, contextHolder] = message.useMessage();
@@ -569,6 +582,7 @@ function LLMCalculatorPage() {
       key: "fullModel",
       width: 200,
       fixed: "left",
+      align: "right", 
       sorter: (a, b) => a.fullModel.localeCompare(b.fullModel),
       render: (text, record: TableModelInfo) => (
         <Tooltip
@@ -598,6 +612,7 @@ function LLMCalculatorPage() {
       dataIndex: "arch",
       key: "arch",
       width: 120,
+      align: "right", 
       sorter: (a, b) => a.arch.localeCompare(b.arch),
     },
     {
@@ -605,6 +620,7 @@ function LLMCalculatorPage() {
       dataIndex: "parameters",
       key: "parameters",
       width: 120,
+      align: "right", 
       sorter: (a, b) => {
         const aValue = parseFloat(a.parameters.replace(/[^0-9.]/g, ""));
         const bValue = parseFloat(b.parameters.replace(/[^0-9.]/g, ""));
@@ -616,6 +632,7 @@ function LLMCalculatorPage() {
       dataIndex: "file_size",
       key: "file_size",
       width: 120,
+      align: "right", 
       sorter: (a, b) => {
         const aValue = parseFloat(a.file_size.replace(/[^0-9.]/g, ""));
         const bValue = parseFloat(b.file_size.replace(/[^0-9.]/g, ""));
@@ -627,6 +644,7 @@ function LLMCalculatorPage() {
       dataIndex: "quantization",
       key: "quantization",
       width: 150,
+      align: "right", 
       sorter: (a, b) => a.quantization.localeCompare(b.quantization),
     },
     {
@@ -634,13 +652,45 @@ function LLMCalculatorPage() {
       dataIndex: "requiredVram",
       key: "requiredVram",
       width: 120,
+      align: "right", 
       render: (vram: number) => `${vram.toFixed(1)} GB`,
       sorter: (a, b) => a.requiredVram - b.requiredVram,
     },
     {
-      title: language === "zh" ? "运行状态" : "Run Status",
-      key: "runStatus",
+      title: language === "zh" ? "所需显卡" : "Required GPUs",
+      key: "requiredGPUs",
       width: 120,
+      align: "center", 
+      render: (_, record: TableModelInfo) => {
+        const requiredGPUs = Math.ceil(record.requiredVram / (gpuMemory ?? 24));
+        const style = statusColors[record.runStatus];
+        
+        return (
+          <span
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              backgroundColor: isDarkMode ? "transparent" : "#f0f0f0",
+              color: requiredGPUs > 1 ? style.color : (isDarkMode ? "#ffffff" : "#000000"),
+              border: `1px solid ${requiredGPUs > 1 ? style.color : (isDarkMode ? "#434343" : "#d9d9d9")}`,
+            }}
+          >
+            {`GPU×${requiredGPUs}`}
+          </span>
+        );
+      },
+      sorter: (a: TableModelInfo, b: TableModelInfo) => {
+        const gpuMemoryValue = gpuMemory ?? 24;
+        const aGPUs = Math.ceil(a.requiredVram / gpuMemoryValue);
+        const bGPUs = Math.ceil(b.requiredVram / gpuMemoryValue);
+        return aGPUs - bGPUs;
+      },
+    },
+    {
+      title: language === "zh" ? "单卡运行状态" : "Single GPU Run Status",
+      key: "runStatus",
+      width: 150,
+      align: "center", 
       render: (_, record: TableModelInfo) => {
         const style = statusColors[record.runStatus];
 
@@ -686,6 +736,7 @@ function LLMCalculatorPage() {
       title: language === "zh" ? "安装模型" : "Install Model",
       key: "copy",
       width: 120,
+      align: "center", 
       render: (_, record) => {
         const style = statusColors[record.runStatus];
         return (
@@ -744,19 +795,25 @@ function LLMCalculatorPage() {
     },
   ];
 
+  // 加载配置
   useEffect(() => {
-    fetch(`${process.env.PUBLIC_URL}/modeldata/config.json`)
-      .then((response) => response.json())
+    const modelSelection = new ModelSelection(`${process.env.PUBLIC_URL}/modeldata/config.json`);
+    setLoading(true); // 开始加载
+    modelSelection.loadConfig()
       .then((data: Config) => {
         setConfig(data);
         if (data.models.length > 0) {
           setSelectedModels([data.models[0].name]);
         }
       })
-      .catch((err) => {
-        console.error("加载配置失败", err);
+      .catch((error: Error) => {
+        console.error("加载配置失败", error);
+        messageApi.error("加载配置失败");
+      })
+      .finally(() => {
+        setLoading(false); // 结束加载
       });
-  }, []);
+  }, [messageApi]);
 
   useEffect(() => {
     if (!config || selectedModels.length === 0) return;
@@ -1106,6 +1163,52 @@ function LLMCalculatorPage() {
         }}
       >
         <StyledApp $isDark={isDarkMode}>
+          <Helmet>
+            <title>大语言模型显存计算器 | AI 工具 | LLM 相关工具</title>
+            <meta name="description" content="本工具为开发者提供大语言模型（LLM）显存计算器，帮助 AI 开发者和研究者评估运行大语言模型所需的 GPU 显存。支持各种量化模型，如 GPTQ、GGUF 等。" />
+            <meta name="keywords" content="LLM,大语言模型,显存计算器,GPU显存,AI工具,深度学习,机器学习,VRAM计算,量化模型,GPTQ,GGUF,Llama,ChatGLM,Qwen,百川,通义千问" />
+            
+            {/* Open Graph 标签 */}
+            <meta property="og:title" content="大语言模型显存计算器 | LLM VRAM Calculator" />
+            <meta property="og:description" content="帮助开发者计算运行大语言模型所需的 GPU 显存，支持多种模型和量化方案。" />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={window.location.href} />
+            
+            {/* Twitter 卡片 */}
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:title" content="LLM VRAM Calculator" />
+            <meta name="twitter:description" content="Calculate GPU VRAM requirements for running Large Language Models." />
+            
+            {/* 其他有用的元标签 */}
+            <meta name="author" content="JammyFu" />
+            <meta name="application-name" content="LLM VRAM Calculator" />
+            <meta name="robots" content="index, follow" />
+            <meta name="googlebot" content="index, follow" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta httpEquiv="Content-Language" content={language === "zh" ? "zh-CN" : "en"} />
+            
+            {/* 结构化数据 */}
+            <script type="application/ld+json">
+              {JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "LLM VRAM Calculator",
+                "description": "GPU memory calculator for Large Language Models",
+                "applicationCategory": "DeveloperApplication",
+                "operatingSystem": "Any",
+                "author": {
+                  "@type": "Person",
+                  "name": "JammyFu"
+                },
+                "inLanguage": ["zh-CN", "en"],
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "USD"
+                }
+              })}
+            </script>
+          </Helmet>
           <TopBar>
             <h1 className="title">
               {language === "zh"
@@ -1141,138 +1244,123 @@ function LLMCalculatorPage() {
           </TopBar>
 
           <ContentCard>
-            <Form layout="vertical" size="large">
-              <FormRow>
-                <Form.Item
-                  label={language === "zh" ? "选择模型" : "Select Models"}
-                  style={{ marginBottom: "1.25rem" }}
-                >
-                  <StyledSelect
-                    mode="multiple"
-                    value={selectedModels}
-                    onChange={handleModelSelect}
-                    showSearch
-                    filterOption={filterOption}
-                    optionFilterProp="children"
-                    placeholder={
-                      language === "zh" ? "输入关键字搜索模型" : "Search models"
+            <Spin spinning={loading} tip={language === "zh" ? "加载中..." : "Loading..."}>
+              <Form layout="vertical" size="large">
+                <FormRow>
+                  <Form.Item
+                    label={language === "zh" ? "选择模型" : "Select Models"}
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <StyledSelect
+                      mode="multiple"
+                      value={selectedModels}
+                      onChange={handleModelSelect}
+                      showSearch
+                      filterOption={filterOption}
+                      optionFilterProp="children"
+                      placeholder={
+                        language === "zh" ? "输入关键字搜索模型" : "Search models"
+                      }
+                      options={dropdownOptions}
+                      optionRender={customOptionRender}
+                      style={{ width: "100%" }}
+                      menuItemSelectedIcon={null}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={
+                      language === "zh" ? "GPU 显存 (GB)" : "GPU Memory (GB)"
                     }
-                    options={dropdownOptions}
-                    optionRender={customOptionRender}
-                    style={{ width: "100%" }}
-                    menuItemSelectedIcon={null}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={
-                    language === "zh" ? "GPU 显存 (GB)" : "GPU Memory (GB)"
-                  }
-                  style={{ marginBottom: "1.25rem" }}
-                >
-                  <StyledInputNumber
-                    min={1}
-                    max={128}
-                    value={gpuMemory}
-                    onChange={handleGpuMemoryChange}
-                    onBlur={handleGpuMemoryBlur}
-                    onFocus={() => setIsEditing(true)}
-                    addonAfter="GB"
-                    style={{ width: "100%" }}
-                    keyboard={true}
-                    controls={true}
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    step={1}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={language === "zh" ? "量化方式" : "Quantization"}
-                  style={{ marginBottom: "1.25rem" }}
-                >
-                  <StyledSelect
-                    value={selectedQuant}
-                    onChange={setSelectedQuant}
-                    placeholder={
-                      language === "zh" ? "选择量化方式" : "Select quantization"
-                    }
-                    options={quantOptions}
-                    style={{ width: "100%" }}
-                    disabled={
-                      !selectedModels.length || quantOptions.length === 0
-                    }
-                  />
-                </Form.Item>
-              </FormRow>
-            </Form>
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <StyledInputNumber
+                      min={1}
+                      max={128}
+                      value={gpuMemory}
+                      onChange={handleGpuMemoryChange}
+                      onBlur={handleGpuMemoryBlur}
+                      onFocus={() => setIsEditing(true)}
+                      addonAfter="GB"
+                      style={{ width: "100%" }}
+                      keyboard={true}
+                      controls={true}
+                      type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      step={1}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={language === "zh" ? "量化方式" : "Quantization"}
+                    style={{ marginBottom: "1.25rem" }}
+                  >
+                    <StyledSelect
+                      value={selectedQuant}
+                      onChange={setSelectedQuant}
+                      placeholder={
+                        language === "zh" ? "选择量化方式" : "Select quantization"
+                      }
+                      options={quantOptions}
+                      style={{ width: "100%" }}
+                      disabled={
+                        !selectedModels.length || quantOptions.length === 0
+                      }
+                    />
+                  </Form.Item>
+                </FormRow>
+              </Form>
 
-            {tableData.length > 0 &&
-              selectedModels.length > 0 &&
-              selectedQuant && (
+              {tableData.length > 0 &&
+                selectedModels.length > 0 &&
+                selectedQuant && (
+                  <div style={{ marginTop: "1.5rem" }}>
+                    <Table
+                      columns={columns}
+                      dataSource={tableData}
+                      pagination={false}
+                      bordered
+                      scroll={{ x: "max-content" }}
+                      style={{
+                        backgroundColor: isDarkMode ? "#1f1f1f" : "#ffffff",
+                        borderRadius: "0.5rem",
+                      }}
+                    />
+                  </div>
+                )}
+
+              {calcResult && (
                 <div style={{ marginTop: "1.5rem" }}>
-                  <Table
-                    columns={columns}
-                    dataSource={tableData}
-                    pagination={false}
-                    bordered
-                    scroll={{ x: "max-content" }}
+                  <div
                     style={{
-                      backgroundColor: isDarkMode ? "#1f1f1f" : "#ffffff",
+                      fontSize: "1rem",
+                      lineHeight: 1.6,
+                      color: isDarkMode ? "#ffffff" : "#000000", 
+                      backgroundColor: isDarkMode ? "#1f1f1f" : "#f5f5f5",
+                      padding: "1rem",
                       borderRadius: "0.5rem",
+                      border: `1px solid ${isDarkMode ? "#303030" : "#e8e8e8"}`,
                     }}
-                  />
+                  >
+                    <h2 style={{
+                      fontSize: "1.5rem",
+                      fontWeight: "bold",
+                      marginBottom: "1rem",
+                      color: isDarkMode ? "#ffffff" : "#000000"
+                    }}>
+                      {language === "zh" ? "模型介绍" : "Model Introduction"}
+                    </h2>
+                    {calcResult.split("\n\n").map((description, index) => (
+                      <React.Fragment key={index}>
+                        {renderModelDescription(description)}
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
               )}
-
-            {calcResult && (
-              <div style={{ marginTop: "1.5rem" }}>
-                <div
-                  style={{
-                    fontSize: "1rem",
-                    lineHeight: 1.6,
-                    color: isDarkMode ? "#ffffff" : "#000000", 
-                    backgroundColor: isDarkMode ? "#1f1f1f" : "#f5f5f5",
-                    padding: "1rem",
-                    borderRadius: "0.5rem",
-                    border: `1px solid ${isDarkMode ? "#303030" : "#e8e8e8"}`,
-                  }}
-                >
-                  <h2 style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                    color: isDarkMode ? "#ffffff" : "#000000"
-                  }}>
-                    {language === "zh" ? "模型介绍" : "Model Introduction"}
-                  </h2>
-                  {calcResult.split("\n\n").map((description, index) => (
-                    <React.Fragment key={index}>
-                      {renderModelDescription(description)}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-            )}
+            </Spin>
           </ContentCard>
 
-          <QRCodeContainer>
-            <div className="qr-title">
-              {language === "zh" ? "扫描二维码访问" : "Scan QR Code to Visit"}
-            </div>
-            <div className="qr-code">
-              <QRCode
-                value="http://192.168.50.240:3000"
-                size={128}
-                errorLevel="H"
-                bordered={false}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f1f1f" : "#ffffff",
-                  padding: "1rem",
-                  borderRadius: "0.5rem",
-                }}
-              />
-            </div>
-          </QRCodeContainer>
+          <CopyrightPage />
         </StyledApp>
       </ConfigProvider>
     </ThemeProvider>
