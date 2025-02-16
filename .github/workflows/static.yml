@@ -18,21 +18,21 @@ jobs:
           node-version: 18  # 或者你的项目需要的 Node.js 版本
 
       - name: Install dependencies
-        working-directory: ./llm_gpu_toolkit/llm-vram-calc-web  # 指定工作目录
+        working-directory: ./llm-vram-calc-web  # Corrected path
         run: yarn install
 
       - name: Build project
-        working-directory: ./llm_gpu_toolkit/llm-vram-calc-web  # 指定工作目录
+        working-directory: ./llm-vram-calc-web  # Corrected path
         run: yarn build
 
       - name: Create docs directory
-        run: mkdir -p ./llm_gpu_toolkit/docs
+        run: mkdir -p ./docs
 
       - name: Copy build to docs
-        run: cp -r ./llm_gpu_toolkit/llm-vram-calc-web/build/. ./llm_gpu_toolkit/docs/
+        run: cp -r ./llm-vram-calc-web/build/. ./docs/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./llm_gpu_toolkit/docs #指定 docs 的文件夹
+          folder: ./docs #指定 docs 的文件夹
           branch: gh-pages  # 部署到 gh-pages 分支，如果直接使用 docs 目录可删除此行
