@@ -9,9 +9,10 @@ import {
   Switch,
   theme,
   Button,
-  Space,
   QRCode,
   Table,
+  Typography,
+  Space,
 } from "antd";
 import {
   SunOutlined,
@@ -26,6 +27,8 @@ import "antd/dist/reset.css";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import type { ColumnsType } from "antd/es/table";
 import type { DefaultOptionType } from "antd/es/select";
+
+const { Title, Paragraph } = Typography;
 
 // 定义主题接口
 interface ThemeInterface {
@@ -407,8 +410,25 @@ function calculateMemoryRequirement(
     case "Q4_1":
       memoryMultiplier = 1.2;
       break;
+    case "Q5_K_M":
+    case "Q5_0":
+    case "Q5_1":
+      memoryMultiplier = 1.3;
+      break;
+    case "Q6_K_M":
+    case "Q6_K":
+      memoryMultiplier = 1.4;
+      break;
+    case "Q2_K":
+      memoryMultiplier = 1.1;
+      break;
+    case "Q3_K_S":
+    case "Q3_K_M":
+    case "Q3_K_L":
+      memoryMultiplier = 1.15;
+      break;
     default:
-      memoryMultiplier = 1.2; // 默认倍数
+      memoryMultiplier = 1.0;
   }
 
   // 4. 计算基础显存需求
@@ -463,6 +483,58 @@ const copyToClipboard = async (
     onError();
   }
 };
+
+// 更新样式组件
+const ModelDescription = styled.div`
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid ${props => props.theme.isDark ? '#303030' : '#e8e8e8'};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const ModelTitle = styled(Title)`
+  &.ant-typography {
+    color: ${props => props.theme.isDark ? '#ffffff' : '#000000'};
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+`;
+
+const ModelContent = styled(Paragraph)`
+  &.ant-typography {
+    color: ${props => props.theme.isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)'};
+    margin-bottom: 0;
+    white-space: pre-wrap;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+`;
+
+// 添加响应式语言切换组件
+const LanguageSwitch = styled.div`
+  // 移动端样式
+  @media (max-width: 768px) {
+    .desktop-switch {
+      display: none;
+    }
+    .mobile-switch {
+      display: block;
+    }
+  }
+
+  // 桌面端样式
+  @media (min-width: 769px) {
+    .desktop-switch {
+      display: block;
+    }
+    .mobile-switch {
+      display: none;
+    }
+  }
+`;
 
 function LLMCalculatorPage() {
   const [config, setConfig] = useState<Config | null>(null);
@@ -857,7 +929,9 @@ function LLMCalculatorPage() {
   };
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "zh" ? "en" : "zh"));
+    const newLang = language === "zh" ? "en" : "zh";
+    setLanguage(newLang);
+    localStorage.setItem("language", newLang);
   };
 
   const filterOption = (
@@ -999,6 +1073,25 @@ function LLMCalculatorPage() {
     }
   };
 
+  // 渲染模型描述
+  const renderModelDescription = (description: string) => {
+    // 使用正则表达式匹配标题和内容
+    const match = description.match(/^(.*?):\s*([\s\S]*)$/);
+    
+    if (!match) {
+      return null;
+    }
+
+    const [_, title, content] = match;
+
+    return (
+      <ModelDescription>
+        <ModelTitle level={4}>{title}</ModelTitle>
+        <ModelContent>{content.trim()}</ModelContent>
+      </ModelDescription>
+    );
+  };
+
   return (
     <ThemeProvider theme={{ isDark: isDarkMode }}>
       {contextHolder}
@@ -1026,17 +1119,24 @@ function LLMCalculatorPage() {
                 checkedChildren={<MoonOutlined style={{ fontSize: "1rem" }} />}
                 unCheckedChildren={<SunOutlined style={{ fontSize: "1rem" }} />}
               />
-              <Tooltip
-                title={language === "zh" ? "Switch to English" : "切换到中文"}
-              >
-                <div
-                  className="icon-button"
-                  onClick={toggleLanguage}
-                  style={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                >
-                  <TranslationOutlined style={{ fontSize: "1.125rem" }} />
-                </div>
-              </Tooltip>
+              <LanguageSwitch>
+                {/* 桌面端显示 */}
+                <Switch
+                  className="desktop-switch"
+                  checkedChildren="中"
+                  unCheckedChildren="En"
+                  checked={language === "zh"}
+                  onChange={toggleLanguage}
+                />
+                {/* 移动端显示 */}
+                <Switch
+                  className="mobile-switch"
+                  checkedChildren={<TranslationOutlined />}
+                  unCheckedChildren={<TranslationOutlined />}
+                  checked={language === "zh"}
+                  onChange={toggleLanguage}
+                />
+              </LanguageSwitch>
             </div>
           </TopBar>
 
@@ -1125,32 +1225,32 @@ function LLMCalculatorPage() {
               )}
 
             {calcResult && (
-              <div
-                style={{
-                  marginTop: "1.5rem",
-                  fontSize: "1rem",
-                  lineHeight: 1.6,
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                  backgroundColor: isDarkMode ? "#1f1f1f" : "#f5f5f5",
-                  padding: "1rem",
-                  borderRadius: "0.5rem",
-                  border: `1px solid ${isDarkMode ? "#303030" : "#e8e8e8"}`,
-                }}
-              >
-                {calcResult.split("\n\n").map((paragraph, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      marginBottom:
-                        index < calcResult.split("\n\n").length - 1
-                          ? "1rem"
-                          : 0,
-                      whiteSpace: "pre-wrap",
-                    }}
-                  >
-                    {paragraph}
-                  </p>
-                ))}
+              <div style={{ marginTop: "1.5rem" }}>
+                <div
+                  style={{
+                    fontSize: "1rem",
+                    lineHeight: 1.6,
+                    color: isDarkMode ? "#ffffff" : "#000000", 
+                    backgroundColor: isDarkMode ? "#1f1f1f" : "#f5f5f5",
+                    padding: "1rem",
+                    borderRadius: "0.5rem",
+                    border: `1px solid ${isDarkMode ? "#303030" : "#e8e8e8"}`,
+                  }}
+                >
+                  <h2 style={{
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                    marginBottom: "1rem",
+                    color: isDarkMode ? "#ffffff" : "#000000"
+                  }}>
+                    {language === "zh" ? "模型介绍" : "Model Introduction"}
+                  </h2>
+                  {calcResult.split("\n\n").map((description, index) => (
+                    <React.Fragment key={index}>
+                      {renderModelDescription(description)}
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
             )}
           </ContentCard>
