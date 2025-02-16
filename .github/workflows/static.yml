@@ -23,7 +23,7 @@ jobs:
 
       - name: Build project
         working-directory: ./llm-vram-calc-web  # Corrected path
-        run: yarn build
+        run: CI=false yarn build
 
       - name: Create docs directory
         run: mkdir -p ./docs
