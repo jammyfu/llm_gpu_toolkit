@@ -31,29 +31,15 @@ jobs:
       - name: Copy build to docs
         run: cp -r ./llm-vram-calc-web/build/. ./docs/
 
-      - name: Reinstall Git
+      - name: Fix broken dependencies and install git
         run: |
           sudo apt-get update
+          sudo apt-get -y install --fix-broken
           sudo apt-get purge -y git
-          sudo apt-get install -y git
+          sudo apt-get update
+          sudo apt-get -y install git
 
-      - name: Update Git and set path (alternative)
-        run: |
-          echo "::add-path::/usr/bin"
-
-      - name: Reset Git config (user level)
-        run: |
-          git config --unset-all core.hooksPath
-
-      - name: Clean up previous worktree (aggressive)
-        run: |
-          if [ -d github-pages-deploy-action-temp-deployment-folder ]; then
-            git worktree prune
-            git worktree list
-            sudo rm -rf github-pages-deploy-action-temp-deployment-folder
-          fi
-
-      - name: Deploy to GitHub Pages (alternative)
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
