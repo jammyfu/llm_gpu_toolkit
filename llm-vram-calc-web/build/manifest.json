@@ -1,0 +1,35 @@
+{
+  "short_name": "LLM VRAM Calc",
+  "name": "LLM VRAM Calculator",
+  "description": "大语言模型显存计算器 | LLM VRAM Calculator",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "images/logo/main_logo_192.jpg",
+      "type": "image/jpg",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/logo/main_logo_512.jpg",
+      "type": "image/jpg",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#a9d134",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "categories": ["utilities", "productivity", "developer tools"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope": "/"
+}
