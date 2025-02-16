@@ -1,61 +1,38 @@
-name: Deploy static content to Pages
+name: Deploy to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+    branches:
+      - main  # 或者你的主分支
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Customize the following steps
-      - name: Setup Node.js environment
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # 或者你需要的Node版本
+          node-version: 18  # 或者你的项目需要的 Node.js 版本
 
       - name: Install dependencies
-        run: npm install  # 或者 yarn install, pnpm install
+        working-directory: ./llm_gpu_toolkit/llm-vram-calc-web  # 指定工作目录
+        run: yarn install
 
-      - name: Build
-        run: npm run build  # 或者 yarn build, pnpm build
-        env:
-          CI: false  # 解决 Create React App 可能出现的 CI 错误
+      - name: Build project
+        working-directory: ./llm_gpu_toolkit/llm-vram-calc-web  # 指定工作目录
+        run: yarn build
 
-      # 将构建目录移动到仓库根目录
-      - name: Move Build Directory
-        run: |
-          mv llm-vram-calc-web/build build
-          rm -rf llm-vram-calc-web  # 可选，删除原来的 llm-vram-calc-web 目录
+      - name: Create docs directory
+        run: mkdir -p ./llm_gpu_toolkit/docs
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './build' # 构建后的目录
+      - name: Copy build to docs
+        run: cp -r ./llm_gpu_toolkit/llm-vram-calc-web/build/. ./llm_gpu_toolkit/docs/
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./llm_gpu_toolkit/docs #指定 docs 的文件夹
+          branch: gh-pages  # 部署到 gh-pages 分支，如果直接使用 docs 目录可删除此行
