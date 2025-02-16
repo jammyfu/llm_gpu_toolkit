@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 或者你的主分支
+      - main
 
 jobs:
   deploy:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # 或者你的项目需要的 Node.js 版本
+          node-version: 18
 
       - name: Install dependencies
         working-directory: ./llm-vram-calc-web
@@ -31,19 +31,22 @@ jobs:
       - name: Copy build to docs
         run: cp -r ./llm-vram-calc-web/build/. ./docs/
 
-      - name: Clean up previous worktree (if any)
+      - name: Reset Git config
+        run: |
+          git config --global --unset-all core.hooksPath
+
+      - name: Clean up previous worktree (aggressive)
         run: |
           if [ -d github-pages-deploy-action-temp-deployment-folder ]; then
+            git worktree prune
+            git worktree list
             sudo rm -rf github-pages-deploy-action-temp-deployment-folder
           fi
 
-      - name: Update Git
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy to GitHub Pages (alternative)
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          folder: ./docs #指定 docs 的文件夹
-          branch: gh-pages  # 部署到 gh-pages 分支，如果直接使用 docs 目录可删除此行
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages # 如果要推送到 gh-pages 分支
+
