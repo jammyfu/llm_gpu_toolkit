@@ -31,9 +31,19 @@ jobs:
       - name: Copy build to docs
         run: cp -r ./llm-vram-calc-web/build/. ./docs/
 
-      - name: Reset Git config
+      - name: Reinstall Git
         run: |
-          git config --global --unset-all core.hooksPath
+          sudo apt-get update
+          sudo apt-get purge -y git
+          sudo apt-get install -y git
+
+      - name: Update Git and set path (alternative)
+        run: |
+          echo "::add-path::/usr/bin"
+
+      - name: Reset Git config (user level)
+        run: |
+          git config --unset-all core.hooksPath
 
       - name: Clean up previous worktree (aggressive)
         run: |
@@ -49,4 +59,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           publish_branch: gh-pages # 如果要推送到 gh-pages 分支
-
