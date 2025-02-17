@@ -15,18 +15,6 @@ const StyledCard = styled(Card)`
 const CopyrightPage: React.FC = () => {
   return (
     <>
-      <Helmet>
-        <title>Copyright © 2025 JammyFu. All rights reserved.</title>
-        <meta
-          name="description"
-          content="LLM VRAM Calculator 的版权信息和开源声明。由 JammyFu 开发的大语言模型显存计算工具。"
-        />
-        <meta
-          name="keywords"
-          content="版权信息,开源项目,MIT许可证,LLM工具,AI开发者工具"
-        />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
       <Paragraph style={{ textAlign: "center", marginTop: "20px" }}>
         <Text type="secondary">
           Copyright © {new Date().getFullYear()} JammyFu. All rights reserved.
