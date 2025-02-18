@@ -6,9 +6,9 @@
     "model_id": "085a1fdae525",
     "file_size": "7.9GB",
     "arch": "mllama",
-    "parameters": "895M",
-    "quantization": "F16",
-    "quantization_info": "Default (F16)"
+    "parameters": "11B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
   },
   {
     "model": "90b",
@@ -17,9 +17,9 @@
     "model_id": "d2a5e64c56a9",
     "file_size": "55GB",
     "arch": "mllama",
-    "parameters": "926M",
-    "quantization": "F16",
-    "quantization_info": "Default (F16)"
+    "parameters": "90B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
   },
   {
     "model": "latest",
@@ -28,9 +28,9 @@
     "model_id": "085a1fdae525",
     "file_size": "7.9GB",
     "arch": "mllama",
-    "parameters": "895M",
-    "quantization": "F16",
-    "quantization_info": "Default (F16)"
+    "parameters": "11B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
   },
   {
     "model": "11b-instruct-fp16",
@@ -39,7 +39,7 @@
     "model_id": "61be32b20340",
     "file_size": "21GB",
     "arch": "mllama",
-    "parameters": "895M",
+    "parameters": "11B",
     "quantization": "F16",
     "quantization_info": "F16"
   },
@@ -50,9 +50,9 @@
     "model_id": "7a7cc5461ef1",
     "file_size": "12GB",
     "arch": "mllama",
-    "parameters": "895M",
-    "quantization": "F16",
-    "quantization_info": "F16"
+    "parameters": "11B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
   },
   {
     "model": "90b-instruct-fp16",
@@ -61,7 +61,7 @@
     "model_id": "5ceef0c1d3d2",
     "file_size": "177GB",
     "arch": "mllama",
-    "parameters": "926M",
+    "parameters": "90B",
     "quantization": "F16",
     "quantization_info": "F16"
   },
@@ -72,9 +72,9 @@
     "model_id": "e65e1af5e383",
     "file_size": "95GB",
     "arch": "mllama",
-    "parameters": "926M",
-    "quantization": "F16",
-    "quantization_info": "F16"
+    "parameters": "90BB",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
   },
   {
     "model": "11b-instruct-q4_K_M",
@@ -83,9 +83,9 @@
     "model_id": "085a1fdae525",
     "file_size": "7.9GB",
     "arch": "mllama",
-    "parameters": "895M",
-    "quantization": "F16",
-    "quantization_info": "F16"
+    "parameters": "11B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
   },
   {
     "model": "90b-instruct-q4_K_M",
@@ -94,8 +94,8 @@
     "model_id": "d2a5e64c56a9",
     "file_size": "55GB",
     "arch": "mllama",
-    "parameters": "926M",
-    "quantization": "F16",
-    "quantization_info": "F16"
+    "parameters": "90B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
   }
 ]
