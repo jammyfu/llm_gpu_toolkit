@@ -1,0 +1,31 @@
+.bazi-container {
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.bazi-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.bazi-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.bazi-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.bazi-input-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5em;
+} 
