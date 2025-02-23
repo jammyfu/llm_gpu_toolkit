@@ -7,9 +7,12 @@ import dayjs, { Dayjs } from 'dayjs';
 import { BaZiData } from '../types/bazi';
 import { dateTimeLocale, Locale } from '../locales/datetime';
 import './BaziPage.css';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { LunarUtil } from 'lunar-typescript';
 import baziLogger from '../utils/BaziLogger';
+import { GlobalStyle } from '../styles/GlobalStyles';
+import { Switch } from 'antd';
+import { SunOutlined, MoonOutlined } from '@ant-design/icons';
 
 // 主页面组件
 interface BaziPageProps {
@@ -29,18 +32,37 @@ const ContentColumn = styled.div`
   width: 100%;
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;  // 改为顶部对齐
+  padding: 10px 20px;  // 增加左右内边距
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 const Title = styled.h1`
-  color: #333;
+  color: ${(props) => props.theme.isDark ? '#ffffff' : '#333'};
 `;
 
 const Subtitle = styled.p`
-  color: #666;
+  color: ${(props) => props.theme.isDark ? 'rgba(255, 255, 255, 0.85)' : '#666'};
 `;
 
 const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
   const [baziData, setBaziData] = useState<BaZiData | null>(null);
   const t = dateTimeLocale[locale];
   const [defaultDate, setDefaultDate] = useState<Dayjs | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme
+      ? savedTheme === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
 
   const handleCalculate = (date: Dayjs, time: string, gender: number) => {
     try {
@@ -59,39 +81,60 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
     }
   };
 
-  return (
-    <div className="bazi-container">
-      <div className="bazi-header">
-        <Title>{t.title}</Title>
-        <Subtitle>{t.subtitle}</Subtitle>
-      </div>
+  const handleThemeChange = (checked: boolean) => {
+    setIsDarkMode(checked);
+    localStorage.setItem("theme", checked ? "dark" : "light");
+  };
 
-      <ContentWrapper>
-        <div className="bazi-input-section">
-          <BaZiInput 
-            onCalculate={handleCalculate} 
-            locale={locale}
-            defaultDate={defaultDate}
+  return (
+    <ThemeProvider theme={{ isDark: isDarkMode }}>
+      <GlobalStyle theme={{ isDark: isDarkMode }} />
+      <div className="bazi-container">
+        <Header>
+          <div>
+            <TitleContainer>
+              <Title>{t.title}</Title>
+              <Subtitle>{t.subtitle}</Subtitle>
+            </TitleContainer>
+          </div>
+          <Switch
+            checked={isDarkMode}
+            onChange={handleThemeChange}
+            checkedChildren={<MoonOutlined style={{ fontSize: "1rem" }} />}
+            unCheckedChildren={<SunOutlined style={{ fontSize: "1rem" }} />}
           />
-        </div>
-        
-        {baziData && (
-          <ContentColumn>
-            <BaZiDisplay 
-              yearPillar={baziData.yearPillar}
-              monthPillar={baziData.monthPillar}
-              dayPillar={baziData.dayPillar}
-              hourPillar={baziData.hourPillar}
-              solarDate={baziData.birth.solar}
-              lunarDate={baziData.birth.lunar}
+        </Header>
+
+        <ContentWrapper>
+          <div className="bazi-input-section">
+            <BaZiInput 
+              onCalculate={handleCalculate} 
+              locale={locale}
+              defaultDate={defaultDate}
+              theme={{ isDark: isDarkMode }}
             />
-            <DaYunDisplay 
-              daYun={baziData.daYun}
-            />
-          </ContentColumn>
-        )}
-      </ContentWrapper>
-    </div>
+          </div>
+          
+          {baziData && (
+            <ContentColumn>
+              <BaZiDisplay 
+                yearPillar={baziData.yearPillar}
+                monthPillar={baziData.monthPillar}
+                dayPillar={baziData.dayPillar}
+                hourPillar={baziData.hourPillar}
+                solarDate={baziData.birth.solar}
+                lunarDate={baziData.birth.lunar}
+                theme={{ isDark: isDarkMode }}
+              />
+              <DaYunDisplay 
+                daYun={baziData.daYun}
+                theme={{ isDark: isDarkMode }}
+              />
+            </ContentColumn>
+          )}
+        </ContentWrapper>
+      </div>
+    </ThemeProvider>
   );
 };
 

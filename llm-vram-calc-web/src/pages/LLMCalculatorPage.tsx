@@ -32,6 +32,7 @@ import { Helmet } from 'react-helmet-async';
 import { ModelSelection } from "../model/ModelSelection";
 import { Link } from 'react-router-dom';
 import CopyrightPage from "./CopyrightPage";
+import { GlobalStyle } from '../styles/GlobalStyles';
 
 const { Title, Paragraph } = Typography;
 
@@ -39,20 +40,6 @@ const { Title, Paragraph } = Typography;
 interface ThemeInterface {
   isDark: boolean;
 }
-
-const GlobalStyle = createGlobalStyle`
-  html {
-    font-size: 16px;
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: ${(props: { theme: ThemeInterface }) =>
-      props.theme.isDark ? "#141414" : "#ffffff"};
-    transition: background-color 0.3s ease;
-  }
-`;
 
 const StyledApp = styled.div<{ $isDark: boolean }>`
   margin: 0 auto;

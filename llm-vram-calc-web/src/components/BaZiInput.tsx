@@ -1,20 +1,106 @@
 import React from 'react';
-import { Form, DatePicker, TimePicker, Radio, Button } from 'antd';
+import { Form, DatePicker, TimePicker, Radio, Button, Select } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { dateTimeLocale, Locale } from '../locales/datetime';
 import zhCN from 'antd/locale/zh_CN';  // 导入 antd 的中文语言包
 import 'dayjs/locale/zh-cn';  // 导入 dayjs 的中文语言包
+import styled from 'styled-components';
 
 interface BaZiInputProps {
   onCalculate: (date: Dayjs, time: string, gender: number) => void;
-  locale?: Locale;  // 保持可选，但使用 Locale 类型
-  defaultDate?: Dayjs | null;
+  locale: 'zh' | 'en';
+  defaultDate: Dayjs | null;
+  theme: { isDark: boolean }; // 添加 theme 属性
 }
+
+const StyledForm = styled(Form)`
+  background-color: ${(props) => props.theme.isDark ? '#333' : '#fff'};
+  color: ${(props) => props.theme.isDark ? '#fff' : '#000'};
+  padding: 20px;
+  border-radius: 8px;
+  .ant-form-item {
+    margin-bottom: 16px;
+    .ant-form-item-label > label {
+      color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
+    }
+  }
+  .ant-select {
+    width: 100%;
+  }
+`;
+
+const StyledRadioGroup = styled(Radio.Group)`
+  .ant-radio-button-wrapper {
+    background-color: ${(props) => props.theme.isDark ? '#444' : '#fff'};
+    color: ${(props) => props.theme.isDark ? '#fff' : '#000'};
+    border-color: ${(props) => props.theme.isDark ? '#555' : '#d9d9d9'};
+  }
+
+  .ant-radio-button-wrapper-checked {
+    background-color: ${(props) => props.theme.isDark ? '#666' : '#e6f7ff'};
+    color: ${(props) => props.theme.isDark ? '#fff' : '#1890ff'};
+    border-color: ${(props) => props.theme.isDark ? '#777' : '#91d5ff'};
+  }
+`;
+
+const StyledPicker = styled.div`
+  display: flex;
+  gap: 16px;
+
+  .ant-picker {
+    background-color: ${(props) => props.theme.isDark ? '#ffffff' : '#1f1f1f'} !important;
+    border-color: ${(props) => props.theme.isDark ? '#d9d9d9' : '#434343'} !important;
+    
+    .ant-picker-input > input {
+      color: ${(props) => props.theme.isDark ? '#000000' : '#ffffff'} !important;
+    }
+
+    .ant-picker-suffix {
+      color: ${(props) => props.theme.isDark ? '#000000' : '#ffffff'} !important;
+    }
+
+    .ant-picker-clear {
+      background-color: ${(props) => props.theme.isDark ? '#ffffff' : '#1f1f1f'} !important;
+      color: ${(props) => props.theme.isDark ? '#000000' : '#ffffff'} !important;
+    }
+  }
+
+  .ant-picker-dropdown {
+    background-color: ${(props) => props.theme.isDark ? '#ffffff' : '#1f1f1f'} !important;
+    border-color: ${(props) => props.theme.isDark ? '#f0f0f0' : '#434343'} !important;
+
+    .ant-picker-panel {
+      background-color: ${(props) => props.theme.isDark ? '#ffffff' : '#1f1f1f'} !important;
+
+      .ant-picker-header {
+        color: ${(props) => props.theme.isDark ? '#000000' : '#ffffff'} !important;
+        border-bottom-color: ${(props) => props.theme.isDark ? '#f0f0f0' : '#434343'} !important;
+      }
+
+      .ant-picker-cell {
+        color: ${(props) => props.theme.isDark ? '#000000' : '#ffffff'} !important;
+
+        &-inner:hover {
+          background: ${(props) => props.theme.isDark ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)'} !important;
+        }
+
+        &-selected .ant-picker-cell-inner {
+          background: ${(props) => props.theme.isDark ? '#e6f7ff' : '#1890ff'} !important;
+        }
+      }
+    }
+
+    .ant-picker-footer {
+      border-top-color: ${(props) => props.theme.isDark ? '#f0f0f0' : '#434343'} !important;
+    }
+  }
+`;
 
 const BaZiInput: React.FC<BaZiInputProps> = ({ 
   onCalculate, 
   locale = 'zh',  // 设置默认值
-  defaultDate 
+  defaultDate,
+  theme
 }) => {
   const [form] = Form.useForm();
   // 使用类型断言确保 locale 是有效的键
@@ -54,7 +140,7 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
   };
 
   return (
-    <Form
+    <StyledForm
       form={form}
       onFinish={handleFinish}
       layout="inline"
@@ -62,42 +148,45 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
         date: defaultDate,
         gender: 'male'
       }}
+      theme={theme}
     >
-      <Form.Item
-        name="date"
-        label={t.birthDateLabel}
-        rules={[{ required: true, message: validationMessages.date }]}
-      >
-        <DatePicker 
-          placeholder={t.datePlaceholder}
-          locale={dateLocale}  // 使用中文语言包
-          showTime={false}
-          defaultPickerValue={dayjs().subtract(20, 'year')}
-          showToday={false}
-        />
-      </Form.Item>
+      <StyledPicker>
+        <Form.Item
+          name="date"
+          label={t.birthDateLabel}
+          rules={[{ required: true, message: validationMessages.date }]}
+        >
+          <DatePicker 
+            placeholder={t.datePlaceholder}
+            locale={dateLocale}  // 使用中文语言包
+            showTime={false}
+            defaultPickerValue={dayjs().subtract(20, 'year')}
+            showToday={false}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="time"
-        label={t.birthTimeLabel}
-        rules={[{ required: true, message: validationMessages.time }]}
-      >
-        <TimePicker 
-          format="HH:mm"
-          placeholder={t.timePlaceholder}
-          locale={dateLocale}  // 使用中文语言包
-        />
-      </Form.Item>
+        <Form.Item
+          name="time"
+          label={t.birthTimeLabel}
+          rules={[{ required: true, message: validationMessages.time }]}
+        >
+          <TimePicker 
+            format="HH:mm"
+            placeholder={t.timePlaceholder}
+            locale={dateLocale}  // 使用中文语言包
+          />
+        </Form.Item>
+      </StyledPicker>
 
       <Form.Item
         name="gender"
         label={t.genderLabel}
         rules={[{ required: true, message: validationMessages.gender }]}
       >
-        <Radio.Group>
-          <Radio value="male">{t.male}</Radio>
-          <Radio value="female">{t.female}</Radio>
-        </Radio.Group>
+        <StyledRadioGroup theme={theme}>
+          <Radio.Button value="male">{t.male}</Radio.Button>
+          <Radio.Button value="female">{t.female}</Radio.Button>
+        </StyledRadioGroup>
       </Form.Item>
 
       <Form.Item>
@@ -105,7 +194,7 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
           {t.calculate}
         </Button>
       </Form.Item>
-    </Form>
+    </StyledForm>
   );
 };
 
