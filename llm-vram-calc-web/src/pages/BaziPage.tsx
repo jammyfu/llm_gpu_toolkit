@@ -6,21 +6,60 @@ import DaYunDisplay from '../components/DaYunDisplay';
 import dayjs, { Dayjs } from 'dayjs';
 import { BaZiData } from '../types/bazi';
 import { dateTimeLocale, Locale } from '../locales/datetime';
-import './BaziPage.css';
 import styled, { ThemeProvider } from 'styled-components';
 import { LunarUtil } from 'lunar-typescript';
 import baziLogger from '../utils/BaziLogger';
 import { GlobalStyle } from '../styles/GlobalStyles';
 import { Switch } from 'antd';
 import { SunOutlined, MoonOutlined } from '@ant-design/icons';
+import { ConfigProvider } from 'antd';
 
 // 主页面组件
 interface BaziPageProps {
   locale?: Locale;
 }
 
+const StyledApp = styled.div<{ $isDark: boolean }>`
+  margin: 0 auto;
+  padding: 1.25rem;
+  min-height: 100vh;
+  background: ${(props) =>
+    props.$isDark
+      ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${process.env.PUBLIC_URL}/images/background/background02_dark.jpg)`
+      : `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${process.env.PUBLIC_URL}/images/background/background01_light.jpg)`};
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  transition: background 0.3s ease;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+`;
+
+const TitleContainer = styled.div`
+  text-align: left;
+`;
+
+const Title = styled.h1<{ theme: { isDark: boolean } }>`
+  font-size: 2rem;
+  margin: 0;
+  color: ${(props) => (props.theme.isDark ? '#ffffff' : '#000000')};
+`;
+
+const Subtitle = styled.h2<{ theme: { isDark: boolean } }>`
+  font-size: 1rem;
+  margin: 0.5rem 0 0;
+  color: ${(props) => (props.theme.isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)')};
+`;
+
 const ContentWrapper = styled.div`
-  max-width: 2400px;  // 增加最大宽度
+  max-width: 2400px;
   margin: 0 auto;
   padding: 0 20px;
 `;
@@ -28,29 +67,7 @@ const ContentWrapper = styled.div`
 const ContentColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: 100%;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;  // 改为顶部对齐
-  padding: 10px 20px;  // 增加左右内边距
-`;
-
-const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Title = styled.h1`
-  color: ${(props) => props.theme.isDark ? '#ffffff' : '#333'};
-`;
-
-const Subtitle = styled.p`
-  color: ${(props) => props.theme.isDark ? 'rgba(255, 255, 255, 0.85)' : '#666'};
+  gap: 1.25rem;
 `;
 
 const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
@@ -64,10 +81,13 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
       : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
+  const theme = {
+    isDark: isDarkMode,
+    colorPrimary: "#a9d134",
+  };
+
   const handleCalculate = (date: Dayjs, time: string, gender: number) => {
     try {
-      // 确保性别值是数字
-      console.log('Gender value:', gender); // 添加日志以便调试
       const data = baziLogger.displayFullBazi(
         date.toDate(), 
         time, 
@@ -76,7 +96,6 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
       setBaziData(data);
     } catch (error) {
       console.error('八字计算错误:', error);
-      // 可以添加错误提示状态
       setBaziData(null);
     }
   };
@@ -87,53 +106,61 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
   };
 
   return (
-    <ThemeProvider theme={{ isDark: isDarkMode }}>
+    <ThemeProvider theme={theme}>
       <GlobalStyle theme={{ isDark: isDarkMode }} />
-      <div className="bazi-container">
-        <Header>
-          <div>
-            <TitleContainer>
-              <Title>{t.title}</Title>
-              <Subtitle>{t.subtitle}</Subtitle>
-            </TitleContainer>
-          </div>
-          <Switch
-            checked={isDarkMode}
-            onChange={handleThemeChange}
-            checkedChildren={<MoonOutlined style={{ fontSize: "1rem" }} />}
-            unCheckedChildren={<SunOutlined style={{ fontSize: "1rem" }} />}
-          />
-        </Header>
-
-        <ContentWrapper>
-          <div className="bazi-input-section">
-            <BaZiInput 
-              onCalculate={handleCalculate} 
-              locale={locale}
-              defaultDate={defaultDate}
-              theme={{ isDark: isDarkMode }}
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#a9d134",
+          },
+        }}
+      >
+        <StyledApp $isDark={isDarkMode}>
+          <Header>
+            <div>
+              <TitleContainer>
+                <Title>{t.title}</Title>
+                <Subtitle>{t.subtitle}</Subtitle>
+              </TitleContainer>
+            </div>
+            <Switch
+              checked={isDarkMode}
+              onChange={handleThemeChange}
+              checkedChildren={<MoonOutlined style={{ fontSize: "1rem" }} />}
+              unCheckedChildren={<SunOutlined style={{ fontSize: "1rem" }} />}
             />
-          </div>
-          
-          {baziData && (
-            <ContentColumn>
-              <BaZiDisplay 
-                yearPillar={baziData.yearPillar}
-                monthPillar={baziData.monthPillar}
-                dayPillar={baziData.dayPillar}
-                hourPillar={baziData.hourPillar}
-                solarDate={baziData.birth.solar}
-                lunarDate={baziData.birth.lunar}
-                theme={{ isDark: isDarkMode }}
+          </Header>
+
+          <ContentWrapper>
+            <div className="bazi-input-section">
+              <BaZiInput 
+                onCalculate={handleCalculate} 
+                locale={locale}
+                defaultDate={defaultDate}
+                theme={theme}
               />
-              <DaYunDisplay 
-                daYun={baziData.daYun}
-                theme={{ isDark: isDarkMode }}
-              />
-            </ContentColumn>
-          )}
-        </ContentWrapper>
-      </div>
+            </div>
+            
+            {baziData && (
+              <ContentColumn>
+                <BaZiDisplay 
+                  yearPillar={baziData.yearPillar}
+                  monthPillar={baziData.monthPillar}
+                  dayPillar={baziData.dayPillar}
+                  hourPillar={baziData.hourPillar}
+                  solarDate={baziData.birth.solar}
+                  lunarDate={baziData.birth.lunar}
+                  theme={theme}
+                />
+                <DaYunDisplay 
+                  daYun={baziData.daYun}
+                  theme={theme}
+                />
+              </ContentColumn>
+            )}
+          </ContentWrapper>
+        </StyledApp>
+      </ConfigProvider>
     </ThemeProvider>
   );
 };

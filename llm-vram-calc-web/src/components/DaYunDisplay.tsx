@@ -60,6 +60,87 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTh
             : 'rgba(145, 213, 255, 0.2)'} !important; // 浅色模式：浅蓝色，透明度0.2
       }
     }
+
+    && {
+      .ant-pagination {
+        .ant-pagination-item-active {
+          background-color: ${(props) => props.theme.isDark ? 
+            '#8fb82e' : // 深色模式下使用更深的绿色
+            '#7c9a2e' // 浅色模式下使用更深的绿色
+          } !important;
+          border-color: ${(props) => props.theme.isDark ? 
+            '#8fb82e' : 
+            '#7c9a2e'
+          } !important;
+
+          a {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+          }
+        }
+
+        .ant-pagination-item:not(.ant-pagination-item-active):hover {
+          border-color: ${(props) => props.theme.isDark ? 
+            '#a9d134' : 
+            '#8fb82e'
+          } !important;
+          
+          a {
+            color: ${(props) => props.theme.isDark ? 
+              '#a9d134' : 
+              '#8fb82e'
+            } !important;
+          }
+        }
+
+        .ant-pagination-prev, 
+        .ant-pagination-next {
+          &:hover .ant-pagination-item-link {
+            border-color: ${(props) => props.theme.isDark ? 
+              '#a9d134' : 
+              '#8fb82e'
+            } !important;
+            color: ${(props) => props.theme.isDark ? 
+              '#a9d134' : 
+              '#8fb82e'
+            } !important;
+          }
+        }
+
+        // 添加总数文字的样式
+        .ant-pagination-total-text {
+          color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+        }
+
+        // 添加每页条数选择器的样式
+        .ant-select {
+          .ant-select-selector {
+            color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+            background-color: ${(props) => props.theme.isDark ? '#333333' : '#ffffff'} !important;
+            border-color: ${(props) => props.theme.isDark ? '#555555' : '#d9d9d9'} !important;
+          }
+          
+          .ant-select-arrow {
+            color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+          }
+        }
+
+        // 修改箭头按钮的样式
+        .ant-pagination-prev, 
+        .ant-pagination-next {
+          .ant-pagination-item-link {
+            color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+            background-color: ${(props) => props.theme.isDark ? '#333333' : '#ffffff'} !important;
+            border-color: ${(props) => props.theme.isDark ? '#555555' : '#d9d9d9'} !important;
+          }
+
+          &:hover .ant-pagination-item-link {
+            border-color: ${(props) => props.theme.isDark ? '#a9d134' : '#8fb82e'} !important;
+            color: ${(props) => props.theme.isDark ? '#a9d134' : '#8fb82e'} !important;
+          }
+        }
+      }
+    }
   `;
 
   return (

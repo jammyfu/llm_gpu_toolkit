@@ -535,6 +535,15 @@ const CopyrightLink = styled.div`
   color: ${props => props.theme.isDark ? '#ffffff' : '#000000'};
 `;
 
+const StyledButton = styled(Button)`
+  background-color: ${(props) => props.theme.colorPrimary};
+  color: #fff;
+  &:hover {
+    background-color: ${(props) => props.theme.colorPrimary};
+    opacity: 0.8;
+  }
+`;
+
 function LLMCalculatorPage() {
   const [config, setConfig] = useState<Config | null>(null);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
@@ -1137,7 +1146,7 @@ function LLMCalculatorPage() {
   };
 
   return (
-    <ThemeProvider theme={{ isDark: isDarkMode }}>
+    <ThemeProvider theme={{ isDark: isDarkMode, colorPrimary: "#a9d134" }}>
       {contextHolder}
       <GlobalStyle theme={{ isDark: isDarkMode }} />
       <ConfigProvider

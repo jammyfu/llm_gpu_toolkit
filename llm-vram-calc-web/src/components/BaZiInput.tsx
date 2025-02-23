@@ -37,9 +37,9 @@ const StyledRadioGroup = styled(Radio.Group)`
   }
 
   .ant-radio-button-wrapper-checked {
-    background-color: ${(props) => props.theme.isDark ? '#666' : '#e6f7ff'};
+    background-color: ${(props) => props.theme.isDark ? '#1890ff' : '#e6f7ff'};
     color: ${(props) => props.theme.isDark ? '#fff' : '#1890ff'};
-    border-color: ${(props) => props.theme.isDark ? '#777' : '#91d5ff'};
+    border-color: ${(props) => props.theme.isDark ? '#1d39c4' : '#91d5ff'};
   }
 `;
 
@@ -92,6 +92,45 @@ const StyledPicker = styled.div`
 
     .ant-picker-footer {
       border-top-color: ${(props) => props.theme.isDark ? '#434343' : '#f0f0f0'} !important;
+    }
+  }
+`;
+
+const StyledButton = styled(Button)`
+  && {
+    background-color: ${(props) => props.theme.isDark ? 
+      '#8fb82e' : // 深色模式下使用更深的绿色
+      '#7c9a2e' // 浅色模式下使用更深的绿色
+    } !important;
+    border-color: ${(props) => props.theme.isDark ? 
+      '#8fb82e' : 
+      '#7c9a2e'
+    } !important;
+    color: #ffffff !important; // 统一使用白色文字
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); // 统一的文字阴影
+    
+    &:hover {
+      background-color: ${(props) => props.theme.isDark ? 
+        '#a9d134' : // hover 时变亮
+        '#8fb82e'
+      } !important;
+      border-color: ${(props) => props.theme.isDark ? 
+        '#a9d134' : 
+        '#8fb82e'
+      } !important;
+      color: #ffffff !important;
+    }
+
+    &:active {
+      background-color: ${(props) => props.theme.isDark ? 
+        '#c4eb4d' : 
+        '#a9d134'
+      } !important;
+      border-color: ${(props) => props.theme.isDark ? 
+        '#c4eb4d' : 
+        '#a9d134'
+      } !important;
     }
   }
 `;
@@ -184,15 +223,15 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
         rules={[{ required: true, message: validationMessages.gender }]}
       >
         <StyledRadioGroup theme={theme}>
-          <Radio.Button value="male">{t.male}</Radio.Button>
-          <Radio.Button value="female">{t.female}</Radio.Button>
+          <Radio.Button value="male">♂️ {t.male}</Radio.Button>
+          <Radio.Button value="female">♀️ {t.female}</Radio.Button>
         </StyledRadioGroup>
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <StyledButton type="primary" htmlType="submit">
           {t.calculate}
-        </Button>
+        </StyledButton>
       </Form.Item>
     </StyledForm>
   );
