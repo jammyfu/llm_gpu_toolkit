@@ -81,7 +81,7 @@ export class BaZiUtil {
    * @param gender 性别（1: 男, 0: 女, -1: 未指定）
    * @returns 排盘数据
    */
-  private computeEightChar(lunar: Lunar, solar: Solar, gender: number): BaZiData {
+  public computeEightChar(lunar: Lunar, solar: Solar, gender: number, sect: number = 2): BaZiData {
     if (!lunar || !solar) {
       throw new Error('Invalid lunar or solar date');
     }
@@ -89,7 +89,8 @@ export class BaZiUtil {
     console.log('Computing EightChar with:', {
       lunar: lunar.toString(),
       solar: solar.toString(),
-      gender
+      gender,
+      sect
     });
 
     const bazi = lunar.getEightChar();
@@ -97,8 +98,8 @@ export class BaZiUtil {
       throw new Error('Failed to create EightChar instance');
     }
 
-    // 确保设置流派
-    bazi.setSect(this.selectSect);
+    // 设置流派
+    bazi.setSect(sect);
     
     console.log('EightChar instance:', {
       dayGan: bazi.getDayGan(),

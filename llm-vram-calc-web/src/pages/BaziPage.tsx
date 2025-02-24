@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Lunar, Solar } from 'lunar-typescript';
 import BaZiInput from '../components/BaZiInput';
 import BaZiDisplay from '../components/BaZiDisplay';
 import DaYunDisplay from '../components/DaYunDisplay';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { BaZiData } from '../types/bazi';
 import { dateTimeLocale, Locale } from '../locales/datetime';
 import styled, { ThemeProvider } from 'styled-components';
-import { LunarUtil } from 'lunar-typescript';
 import baziLogger from '../utils/BaziLogger';
 import { GlobalStyle } from '../styles/GlobalStyles';
 import { Switch } from 'antd';
@@ -62,6 +60,9 @@ const ContentWrapper = styled.div`
   max-width: 2400px;
   margin: 0 auto;
   padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;
 
 const ContentColumn = styled.div`
@@ -86,12 +87,13 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
     colorPrimary: "#a9d134",
   };
 
-  const handleCalculate = (date: Dayjs, time: string, gender: number) => {
+  const handleCalculate = (date: Dayjs, time: string, gender: number, sect: number) => {
     try {
       const data = baziLogger.displayFullBazi(
         date.toDate(), 
         time, 
-        gender === 1 ? '男' : gender === 0 ? '女' : ''
+        gender === 1 ? '男' : gender === 0 ? '女' : '',
+        sect
       );
       setBaziData(data);
     } catch (error) {

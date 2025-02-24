@@ -11,8 +11,9 @@ class BaziLogger {
    * @param solarDate 公历日期
    * @param time 时间字符串（格式：HH:mm）
    * @param gender 性别（1: 男, 0: 女）
+   * @param sect 流派（默认值为2）
    */
-  displayFullBazi(solarDate: Date, time: string, gender: string): BaZiData {
+  displayFullBazi(solarDate: Date, time: string, gender: string, sect: number = 2): BaZiData {
     const dayjsDate = dayjs(solarDate);
     const [hours, minutes] = time.split(':').map(Number);
     
@@ -41,15 +42,8 @@ class BaziLogger {
 
     const lunar = solar.getLunar();
     console.log('对应的阴历日期:', lunar.toString());
-    
-    const result = this.baziUtil.computeSolar(
-      solar.getYear(),
-      solar.getMonth(),
-      solar.getDay(),
-      solar.getHour(),
-      solar.getMinute(),
-      genderNum
-    );
+    console.log('当前使用流派:', sect); // line 93
+    const result = this.baziUtil.computeEightChar(lunar, solar, genderNum, sect);
 
     if (typeof result === 'string') {
       throw new Error(result);

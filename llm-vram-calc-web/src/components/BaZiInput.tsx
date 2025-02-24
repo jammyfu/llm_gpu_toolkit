@@ -7,7 +7,7 @@ import 'dayjs/locale/zh-cn';  // 导入 dayjs 的中文语言包
 import styled from 'styled-components';
 
 interface BaZiInputProps {
-  onCalculate: (date: Dayjs, time: string, gender: number) => void;
+  onCalculate: (date: Dayjs, time: string, gender: number, sect: number) => void;
   locale: 'zh' | 'en';
   defaultDate: Dayjs | null;
   theme: { isDark: boolean }; // 添加 theme 属性
@@ -135,6 +135,20 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const StyledSelect = styled(Select)`
+  width: 120px !important;
+  
+  .ant-select-selector {
+    background-color: ${(props) => props.theme.isDark ? '#1f1f1f' : '#ffffff'} !important;
+    border-color: ${(props) => props.theme.isDark ? '#434343' : '#d9d9d9'} !important;
+    color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+  }
+
+  .ant-select-arrow {
+    color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'} !important;
+  }
+`;
+
 const BaZiInput: React.FC<BaZiInputProps> = ({ 
   onCalculate, 
   locale = 'zh',  // 设置默认值
@@ -173,9 +187,9 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
   }, [form, defaultDate]);
 
   const handleFinish = (values: any) => {
-    const { date, time, gender } = values;
+    const { date, time, gender, sect } = values;
     const genderNum = gender === 'male' ? 1 : gender === 'female' ? 0 : -1;
-    onCalculate(date, time.format('HH:mm'), genderNum);
+    onCalculate(date, time.format('HH:mm'), genderNum, parseInt(sect));
   };
 
   return (
@@ -185,7 +199,8 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
       layout="inline"
       initialValues={{
         date: defaultDate,
-        gender: 'male'
+        gender: 'male',
+        sect: '2' // 默认选择 2 流派
       }}
       theme={theme}
     >
@@ -226,6 +241,17 @@ const BaZiInput: React.FC<BaZiInputProps> = ({
           <Radio.Button value="male">♂️ {t.male}</Radio.Button>
           <Radio.Button value="female">♀️ {t.female}</Radio.Button>
         </StyledRadioGroup>
+      </Form.Item>
+
+      <Form.Item
+        name="sect"
+        label="流派"
+        rules={[{ required: true, message: '请选择流派' }]}
+      >
+        <StyledSelect theme={theme}>
+          <Select.Option value="1">流派1</Select.Option>
+          <Select.Option value="2">流派2</Select.Option>
+        </StyledSelect>
       </Form.Item>
 
       <Form.Item>

@@ -11,10 +11,16 @@ interface DaYunDisplayProps {
 // 简化样式，移除所有主题相关的代码
 const StyledCard = styled(Card)`
   margin-bottom: 20px;
-  background-color: ${(props) => props.theme.isDark ? '#333' : '#fff'};
+  background-color: ${(props) => props.theme.isDark ? '#424242' : '#fff'};
   color: ${(props) => props.theme.isDark ? '#fff' : '#000'};
   padding: 20px;
   border-radius: 8px;
+  border: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'};
+  
+  .ant-card-head {
+    border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'};
+  }
+  
   .ant-card-head-title {
     color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
   }
@@ -50,6 +56,20 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTh
     .ant-table-thead > tr > th {
       background-color: ${(props) => props.theme.isDark ? '#303030' : '#f0f0f0'};
       color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
+      border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+    }
+
+    // 表格边框颜色
+    .ant-table-bordered .ant-table-container {
+      border: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+    }
+
+    .ant-table-bordered .ant-table-thead > tr > th,
+    .ant-table-bordered .ant-table-tbody > tr > td {
+      border-right: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+      border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
     }
 
     && {

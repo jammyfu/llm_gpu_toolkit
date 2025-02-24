@@ -240,7 +240,7 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
     shiShen: "十神",
     cangGan: "藏干",
     naYin: "纳音",
-    xunKong: "旬空"
+    xunKong: "旬空（空亡）"
   };
 
   const columns = [
@@ -249,33 +249,34 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
       dataIndex: "attribute", 
       key: "attribute",
       align: 'right' as const, // 右对齐
+      minwidth: '128px',
     },
     { 
       title: "年柱", 
       dataIndex: "year", 
       key: "year",
-      width: '22%', 
+      width: '21%', 
       align: 'center' as const,
     },
     { 
       title: "月柱", 
       dataIndex: "month", 
       key: "month",
-      width: '22%',
+      width: '21%',
       align: 'center' as const,
     },
     { 
       title: "日柱", 
       dataIndex: "day", 
       key: "day",
-      width: '22%',
+      width: '21%',
       align: 'center' as const,
     },
     { 
       title: "时柱", 
       dataIndex: "time", 
       key: "time",
-      width: '22%',
+      width: '21%',
       align: 'center' as const,
     },
   ];
@@ -409,14 +410,28 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
     .ant-table-thead > tr > th {
       background-color: ${(props) => props.theme.isDark ? '#303030' : '#f0f0f0'};
       color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
+      border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+    }
+
+    // 表格边框颜色
+    .ant-table-bordered .ant-table-container {
+      border: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+    }
+
+    .ant-table-bordered .ant-table-thead > tr > th,
+    .ant-table-bordered .ant-table-tbody > tr > td {
+      border-right: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
+      border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'} !important;
     }
 
     && {
       .ant-table-tbody > tr:hover > td {
         background-color: ${(props) => 
           props.theme.isDark 
-            ? 'rgba(3, 31, 54, 0.8)'   // 深色模式：深蓝色，透明度0.3
-            : 'rgba(145, 213, 255, 0.2)'} !important; // 浅色模式：浅蓝色，透明度0.2
+            ? 'rgba(3, 31, 54, 0.8)'
+            : 'rgba(145, 213, 255, 0.2)'} !important;
       }
     }
   `;
@@ -424,10 +439,16 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
   // 修改卡片样式
   const StyledCard = styled(Card)`
     margin-bottom: 20px;
-    background-color: ${(props) => props.theme.isDark ? '#333' : '#fff'};
+    background-color: ${(props) => props.theme.isDark ? '#424242' : '#fff'};
     color: ${(props) => props.theme.isDark ? '#fff' : '#000'};
     padding: 20px;
     border-radius: 8px;
+    border: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'};
+    
+    .ant-card-head {
+      border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'};
+    }
+    
     .ant-card-head-title {
       color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
     }
