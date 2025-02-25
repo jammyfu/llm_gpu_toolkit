@@ -1,5 +1,8 @@
 import { Lunar, Solar, EightChar, Yun, DaYun, LunarYear, LunarUtil } from 'lunar-typescript';
-import { BaZiData } from '../types/bazi';
+// 从新的类型文件导入
+import { BaZiData, DaYunInfo, LiuNianInfo, LiuYueInfo, XiaoYunInfo, PillarInfo } from '../types/BaziTypes';
+
+// 删除本地接口定义 (不再需要)
 
 type EightCharMethod = {
   // 基础干支方法
@@ -123,11 +126,26 @@ export class BaZiUtil {
       daYun: DaYun[] = [],
       daYunSize: number = 0,
       currentYun: any = null;
+    
+    // 将这些变量声明在更高的作用域
+    let startYunYear = 0;
+    let startYunMonth = 0;
+    let startYunDay = 0;
+    let startAge = 0;
 
     if (gender !== -1) {
       const date = new Date();
       currentYear = date.getFullYear();
-      const yun = bazi.getYun(gender);
+      const yun = bazi.getYun(sect);
+      
+      // 赋值给外部声明的变量
+      startYunYear = yun.getStartYear();
+      startYunMonth = yun.getStartMonth();
+      startYunDay = yun.getStartDay();
+      
+      const birthYear = lunar.getYear();
+      startAge = startYunYear - birthYear + 1;
+      
       startYunSolar = yun.getStartSolar();
       daYun = yun.getDaYun();
       daYunSize = daYun.length;
@@ -189,16 +207,16 @@ export class BaZiUtil {
       }
     }
 
-    const data: BaZiData = {
+    const data = {
       birth: {
         solar: {
           year: `${solar.getYear()}年`,
           month: `${solar.getMonth()}月`,
           day: `${solar.getDay()}日`,
-          time: `${this.padding(solar.getHour())}:${this.padding(solar.getMinute())}`,
+          time: `${this.padding(solar.getHour())}:${this.padding(solar.getMinute())}`
         },
         lunar: {
-          year: `${lunar.getYearInChinese()}年`,
+          year: `${lunar.getYear()}年`,
           month: `${lunar.getMonthInChinese()}月`,
           day: `${lunar.getDayInChinese()}`,
           time: `${lunar.getTimeZhi()}时`
@@ -211,7 +229,11 @@ export class BaZiUtil {
       monthPillar: this.getPillarInfo(bazi, "month"),
       dayPillar: this.getPillarInfo(bazi, "day"),
       hourPillar: this.getPillarInfo(bazi, "hour"),
-    };
+      ganZhi: `${bazi.getYear()} ${bazi.getMonth()} ${bazi.getDay()} ${bazi.getTime()}`,
+      dayun: "",  // 初始化空字符串
+      gender: gender === 1 ? '男' : '女',  // 直接设置性别
+      sect: sect  // 设置派别
+    } as BaZiData;  // 使用类型断言
 
     if (gender !== -1) {
       data.daYunTitle = "大运";
@@ -222,23 +244,52 @@ export class BaZiUtil {
         year: startYunSolar?.getYear() || 0,
         month: startYunSolar?.getMonth() || 0,
         day: startYunSolar?.getDay() || 0,
+        age: `${startAge}岁${startYunMonth}个月`
       };
       data.daYun = daYun.map((d, index) => {
         const ganZhi = d.getGanZhi();
+        const gan = ganZhi.charAt(0); // 取天干
+        const zhi = ganZhi.charAt(1); // 取地支
+        
+        const xunKong = String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "";
+        
+        // 使用八字计算库给出的正确年份
+        const startYear = d.getStartYear(); 
+        const endYear = d.getEndYear(); 
+        
+        // 根据出生年计算虚岁
+        const birthYear = solar.getYear(); // 使用公历出生年而不是农历年
+        const startAge = startYear - birthYear + 1; // 虚岁计算
+        const endAge = endYear - birthYear + 1; // 结束年龄
+        
+        console.log(`大运计算： 开始年 ${startYear}, 结束年 ${endYear}, 出生年 ${birthYear}, 开始年龄 ${startAge}, 结束年龄 ${endAge}`);
+        
+        // 计算农历年
+        const startLunar = Lunar.fromDate(new Date(startYear, 0, 1));
+        const endLunar = Lunar.fromDate(new Date(endYear, 11, 31));
+        const lunarYearStart = startLunar.getYear();
+        const lunarYearEnd = endLunar.getYear();
+
+        // 正确计算十神
+        const tenGod = LunarUtil.SHI_SHEN[`${bazi.getDayGan()}${gan}`] || "未知";
+        
         return {
-          period: index + 1,
-          startAge: d.getStartAge(),
-          startYear: d.getStartYear(),
-          tenGod: LunarUtil.SHI_SHEN[bazi.getDayGan() + ganZhi.charAt(0)] || "",
-          ganZhi: ganZhi,
+          index: index + 1,
+          startYear: startYear,
+          endYear: endYear,
+          startAge: startAge,
+          endAge: endAge,
+          ganZhi,
+          gan,
+          zhi,
+          zhiSheng: index + 1,
+          xunKong,
+          lunarYearStart,
+          lunarYearEnd,
+          shiShen: tenGod, // 使用相同的十神信息
           naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-          xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
-          hiddenGan: LunarUtil.ZHI_HIDE_GAN[ganZhi.charAt(1)]?.join('') || "未知",
-          liuNian: d.getLiuNian().map(n => ({
-            year: n.getYear(),
-            ganZhi: n.getGanZhi()
-          }))
-        };
+          tenGod: tenGod  // 明确设置十神信息
+        } as unknown as DaYunInfo;
       });
     }
 
@@ -283,104 +334,61 @@ export class BaZiUtil {
   /**
    * 提取单柱信息
    * @param bazi 八字对象
-   * @param pillarType 柱类型（year, month, day, hour）
+   * @param type 柱类型（year, month, day, hour）
    * @returns 柱信息
    */
-  private getPillarInfo(bazi: EightChar, pillarType: "year" | "month" | "day" | "hour") {
-    if (!bazi) {
-      throw new Error('Invalid EightChar instance');
+  private getPillarInfo(bazi: EightChar, type: string): PillarInfo {
+    // 直接使用 EightChar 类已知的可用方法
+    let gan = "";
+    let zhi = "";
+    
+    // 根据类型调用正确的方法
+    switch(type) {
+      case "year":
+        gan = bazi.getYear().charAt(0);
+        zhi = bazi.getYear().charAt(1);
+        break;
+      case "month":
+        gan = bazi.getMonth().charAt(0);
+        zhi = bazi.getMonth().charAt(1);
+        break;
+      case "day":
+        gan = bazi.getDay().charAt(0);
+        zhi = bazi.getDay().charAt(1);
+        break;
+      case "hour":
+        gan = bazi.getTime().charAt(0);
+        zhi = bazi.getTime().charAt(1);
+        break;
+      default:
+        throw new Error(`Unknown pillar type: ${type}`);
     }
-
-    try {
-      let gan: string, zhi: string, tenGod: string, hideGan: string[], 
-          shiShenZhi: string[], naYin: string, wuXing: string, 
-          xunKong: string, diShi: string;
-
-      // 根据柱类型调用对应的方法
-      switch (pillarType) {
-        case "year":
-          gan = bazi.getYearGan();
-          zhi = bazi.getYearZhi();
-          tenGod = bazi.getYearShiShenGan();
-          hideGan = bazi.getYearHideGan();
-          shiShenZhi = bazi.getYearShiShenZhi();
-          naYin = bazi.getYearNaYin();
-          wuXing = bazi.getYearWuXing();
-          xunKong = bazi.getYearXunKong();
-          diShi = bazi.getYearDiShi();
-          break;
-        case "month":
-          gan = bazi.getMonthGan();
-          zhi = bazi.getMonthZhi();
-          tenGod = bazi.getMonthShiShenGan();
-          hideGan = bazi.getMonthHideGan();
-          shiShenZhi = bazi.getMonthShiShenZhi();
-          naYin = bazi.getMonthNaYin();
-          wuXing = bazi.getMonthWuXing();
-          xunKong = bazi.getMonthXunKong();
-          diShi = bazi.getMonthDiShi();
-          break;
-        case "day":
-          gan = bazi.getDayGan();
-          zhi = bazi.getDayZhi();
-          tenGod = "日主"; // 日柱天干十神固定为日主
-          hideGan = bazi.getDayHideGan();
-          shiShenZhi = bazi.getDayShiShenZhi();
-          naYin = bazi.getDayNaYin();
-          wuXing = bazi.getDayWuXing();
-          xunKong = bazi.getDayXunKong();
-          diShi = bazi.getDayDiShi();
-          break;
-        case "hour":
-          gan = bazi.getTimeGan();
-          zhi = bazi.getTimeZhi();
-          tenGod = bazi.getTimeShiShenGan();
-          hideGan = bazi.getTimeHideGan();
-          shiShenZhi = bazi.getTimeShiShenZhi();
-          naYin = bazi.getTimeNaYin();
-          wuXing = bazi.getTimeWuXing();
-          xunKong = bazi.getTimeXunKong();
-          diShi = bazi.getTimeDiShi();
-          break;
-        default:
-          throw new Error(`Invalid pillar type: ${pillarType}`);
-      }
-
-      // 修改藏干的显示格式
-      const hiddenGanTypes = ['本气', '中气', '余气'];
-      const hidden = hideGan.map((h: string, i: number) => {
-        const shiShen = shiShenZhi[i] || '未知';
-        const ganType = hiddenGanTypes[i] || '未知';
-        return {
-          gan: h,                    // 主字
-          type: ganType,            // 气的类型
-          shiShen: shiShen         // 十神
-        };
-      });
-
-      return {
-        gan,
-        zhi,
-        tenGod: String(tenGod || "未知"),
-        hidden, // 返回结构化数据，让显示组件处理格式
-        naYin: String(naYin || "未知"),
-        xunKong: String(xunKong || "未知"),
-        wuXing: String(wuXing || "未知"),
-        diShi: String(diShi || "未知")
+    
+    const ganZhi = gan + zhi;
+    
+    // 替换 LunarUtil.DI_SHI，它可能不存在
+    const diShi = (() => {
+      // 地势映射
+      const diShiMap: Record<string, string> = {
+        '子': '临官', '丑': '帝旺', '寅': '衰', '卯': '病',
+        '辰': '死', '巳': '墓', '午': '绝', '未': '胎',
+        '申': '养', '酉': '长生', '戌': '沐浴', '亥': '冠带'
       };
-    } catch (error) {
-      console.error(`Error getting pillar info for ${pillarType}:`, error);
-      return {
-        gan: '错误',
-        zhi: '错误',
-        tenGod: '错误',
-        hidden: [],
-        naYin: '错误',
-        xunKong: '错误',
-        wuXing: '错误',
-        diShi: '错误'
-      };
-    }
+      return diShiMap[zhi] || "未知";
+    })();
+    
+    return {
+      gan: gan,
+      zhi: zhi,
+      ganZhi: ganZhi,
+      tenGod: LunarUtil.SHI_SHEN[bazi.getDayGan() + gan] || "",
+      hidden: this.getHiddenGan(zhi, bazi.getDayGan()),
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
+      wuXing: LunarUtil.WU_XING_GAN[gan] || "未知",
+      diShi: diShi,
+      shiShen: LunarUtil.SHI_SHEN[`${bazi.getDayGan()}${gan}`] || "未知"
+    };
   }
 
   /**
@@ -513,18 +521,28 @@ export class BaZiUtil {
    * @param dayGan 日干
    * @returns 流年信息
    */
-  public getLiuNian(year: number, dayGan: string) {
+  public getLiuNian(year: number, dayGan: string): LiuNianInfo {
     const lunar = Lunar.fromDate(new Date(year, 0, 1));
     const yearGan = lunar.getYearGanByLiChun();
     const yearZhi = lunar.getYearZhiByLiChun();
     const ganZhi = yearGan + yearZhi;
     
+    // 修正 xunKong 的类型处理
+    const xunKongValue = LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG];
+    const xunKong = typeof xunKongValue === 'string' || typeof xunKongValue === 'number' 
+      ? xunKongValue 
+      : String(xunKongValue);
+    
+    // 确保十神信息正确计算
+    const shiShen = LunarUtil.SHI_SHEN[`${dayGan}${yearGan}`] || "未知";
+    console.log(`流年十神计算：日干=${dayGan}, 年干=${yearGan}, 结果=${shiShen}`);
+    
     return {
       year,
       ganZhi,
-      shiShen: LunarUtil.SHI_SHEN[dayGan + yearGan] || "未知",
+      shiShen,
       naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
+      xunKong,
       hidden: this.getHiddenGan(yearZhi, dayGan)
     };
   }
@@ -536,11 +554,17 @@ export class BaZiUtil {
    * @param dayGan 日干
    * @returns 流月信息
    */
-  public getLiuYue(year: number, month: number, dayGan: string) {
+  public getLiuYue(year: number, month: number, dayGan: string): LiuYueInfo {
     const lunar = Lunar.fromDate(new Date(year, month - 1, 1));
     const monthGan = lunar.getMonthGan();
     const monthZhi = lunar.getMonthZhi();
     const ganZhi = monthGan + monthZhi;
+    
+    // 修正 xunKong 的类型处理
+    const xunKongValue = LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG];
+    const xunKong = typeof xunKongValue === 'string' || typeof xunKongValue === 'number' 
+      ? xunKongValue 
+      : String(xunKongValue);
     
     return {
       year,
@@ -548,7 +572,7 @@ export class BaZiUtil {
       ganZhi,
       shiShen: LunarUtil.SHI_SHEN[dayGan + monthGan] || "未知",
       naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
+      xunKong,  // 使用处理过的 xunKong 值
       hidden: this.getHiddenGan(monthZhi, dayGan)
     };
   }
@@ -594,39 +618,22 @@ export class BaZiUtil {
     });
   }
 
-  // 修改年柱处理
-  private processYearPillar(ganZhi: string, dayGan: string): PillarDetail {
-    const [yearGan, yearZhi] = ganZhi.split('');
+  /**
+   * 获取小运信息
+   * @param year 年份
+   * @param dayGan 日干
+   * @returns 小运信息
+   */
+  public getXiaoYun(year: number, dayGan: string): XiaoYunInfo {
+    const lunar = Lunar.fromDate(new Date(year, 0, 1));
+    const lunarYear = lunar.getYear();
+    
     return {
-      ganZhi,
-      shiShen: LunarUtil.SHI_SHEN[`${dayGan}${yearGan}`] || "未知",
-      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
-      hidden: this.getHiddenGan(yearZhi, dayGan)
-    };
-  }
-
-  // 修改月柱处理 
-  private processMonthPillar(ganZhi: string, dayGan: string): PillarDetail {
-    const [monthGan, monthZhi] = ganZhi.split('');
-    return {
-      ganZhi,
-      shiShen: LunarUtil.SHI_SHEN[`${dayGan}${monthGan}`] || "未知",
-      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
-      hidden: this.getHiddenGan(monthZhi, dayGan)
-    };
-  }
-
-  // 修改日柱处理
-  private processDayPillar(ganZhi: string): PillarDetail {
-    const [riGan, riZhi] = ganZhi.split('');
-    return {
-      ganZhi,
-      shiShen: "日主",
-      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
-      hidden: this.getHiddenGan(riZhi, riGan)
+      index: 1, // 索引，可根据需要调整
+      ganZhi: lunar.getYearInGanZhi(),
+      age: year - parseInt(dayGan, 10) + 1, // 简单计算年龄，实际应根据出生年计算
+      year: year,
+      lunarYear: lunarYear
     };
   }
 }

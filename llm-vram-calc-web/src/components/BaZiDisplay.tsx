@@ -2,7 +2,8 @@ import React from "react";
 import { Card, Table, Tag, theme } from "antd";
 import { EightChar } from "lunar-typescript";
 import styled from "styled-components";
-import { PillarInfo, HiddenGanInfo } from '../types/bazi';
+import { PillarInfo } from '../types/BaziTypes';
+import { HiddenGanInfo } from '../types/bazi';
 
 // 定义组件props接口
 interface BaZiDisplayProps {

@@ -63,6 +63,8 @@ export interface DaYunInfo {
   startYear: number;
   tenGod: string;
   liuNian: LiuNianInfo[];
+  naYin?: string;
+  xunKong?: string;
 }
 
 interface LiuNianInfo {

@@ -3,7 +3,7 @@ import BaZiInput from '../components/BaZiInput';
 import BaZiDisplay from '../components/BaZiDisplay';
 import DaYunDisplay from '../components/DaYunDisplay';
 import { Dayjs } from 'dayjs';
-import { BaZiData } from '../types/bazi';
+import { BaZiData } from '../types/BaziTypes';
 import { dateTimeLocale, Locale } from '../locales/datetime';
 import styled, { ThemeProvider } from 'styled-components';
 import baziLogger from '../utils/BaziLogger';
@@ -81,6 +81,7 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
       ? savedTheme === "dark"
       : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+  const [calculationKey, setCalculationKey] = useState<number>(0);
 
   const theme = {
     isDark: isDarkMode,
@@ -96,6 +97,8 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
         sect
       );
       setBaziData(data);
+      
+      setCalculationKey(prev => prev + 1);
     } catch (error) {
       console.error('八字计算错误:', error);
       setBaziData(null);
@@ -156,8 +159,13 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
                   theme={theme}
                 />
                 <DaYunDisplay 
+                  key={calculationKey}
                   daYun={baziData.daYun}
                   dayGan={baziData.dayPillar.gan}
+                  birthYear={baziData.birth.solar.year}
+                  birthLunar={baziData.birth.lunar}
+                  gender={baziData.baziTitle === '坤造' ? '女' : '男'}
+                  sect={1}
                   theme={theme}
                 />
               </ContentColumn>

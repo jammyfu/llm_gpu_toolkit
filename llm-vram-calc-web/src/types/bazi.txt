@@ -1,0 +1,112 @@
+// 修改 DaYunInfo 接口，修正 xunKong 类型
+export interface DaYunInfo {
+  // 原有属性
+  index: number;
+  startYear: number;
+  startAge: number;
+  ganZhi: string;
+  gan: string;
+  zhi: string;
+  zhiSheng: number;
+  xunKong: string | number;  // 修改为支持 string 或 number
+  shiShen: string;
+  naYin: string;
+  // 新增属性
+  endYear?: number; // 添加结束年份
+}
+
+// 添加流年、流月、小运相关接口
+export interface LiuNianInfo {
+  year: number;
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string | number;
+  hidden: {
+    gan: string;
+    type: string;
+    shiShen: string;
+  }[];
+}
+
+export interface LiuYueInfo {
+  year: number;
+  month: number;
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string | number;
+  hidden: {
+    gan: string;
+    type: string;
+    shiShen: string;
+  }[];
+}
+
+export interface XiaoYunInfo {
+  index: number;
+  ganZhi: string;
+  age: number;
+  year: number;
+  lunarYear: number;
+}
+
+// 修改 BaZiData 接口，添加新的属性
+export interface BaZiData {
+  // 原有属性
+  birth: {
+    solar: {
+      year: string;
+      month: string;
+      day: string;
+      time: string;
+    };
+    lunar: {
+      year: string;
+      month: string;
+      day: string;
+      time: string;
+    };
+  };
+  solarTerms: string;
+  baziTitle: string;
+  
+  // 添加这两个必填属性
+  gender: '男' | '女';  // 明确枚举值
+  sect: 1 | 2;         // 明确枚举值
+
+  yearPillar: PillarInfo;
+  monthPillar: PillarInfo;
+  dayPillar: PillarInfo;
+  hourPillar: PillarInfo;
+  ganZhi: string;
+  riGan: string;
+  dayun: string;
+  daYun?: DaYunInfo[];
+  startYun?: {
+    year: number;
+    month: number;
+    day: number;
+    age: string;
+  };
+  // 新增属性
+  liuNian?: LiuNianInfo[];
+  liuYue?: LiuYueInfo[];
+  xiaoYun?: XiaoYunInfo[];
+}
+
+export interface PillarInfo {
+  gan: string;
+  zhi: string;
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string;
+  hidden: HiddenGanInfo[];
+}
+
+export interface HiddenGanInfo {
+  gan: string;
+  type: string;
+  shiShen: string;
+} 
