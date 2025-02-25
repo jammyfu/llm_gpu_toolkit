@@ -251,7 +251,34 @@ export class BaZiUtil {
         const gan = ganZhi.charAt(0); // 取天干
         const zhi = ganZhi.charAt(1); // 取地支
         
-        const xunKong = String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "";
+        // 正确获取旬空
+        let xunKong = "";
+        try {
+          // 直接使用 EightChar 中的方法获取旬空
+          if (d.getLunar && d.getLunar().getEightChar) {
+            const ec = d.getLunar().getEightChar();
+            // 获取旬空
+            xunKong = ec.getYearXunKong();
+            console.log(`获取到旬空数据: ${xunKong}`);
+          } else {
+            // 备用方法：使用 LunarUtil 查找
+            const xunKongValue = LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG];
+            xunKong = xunKongValue ? String(xunKongValue) : "";
+            console.log(`使用备用方法获取旬空: ${xunKong}`);
+          }
+        } catch (error) {
+          console.error("获取旬空时出错:", error);
+          // 使用备用方法
+          try {
+            // 尝试直接计算旬空
+            const gz = LunarUtil.getXunKong(ganZhi);
+            xunKong = gz || "";
+            console.log(`通过计算获取旬空: ${xunKong}`);
+          } catch (e) {
+            console.error("计算旬空时出错:", e);
+            xunKong = "未知";
+          }
+        }
         
         // 使用八字计算库给出的正确年份
         const startYear = d.getStartYear(); 
@@ -283,7 +310,7 @@ export class BaZiUtil {
           gan,
           zhi,
           zhiSheng: index + 1,
-          xunKong,
+          xunKong, // 使用正确获取的旬空值
           lunarYearStart,
           lunarYearEnd,
           shiShen: tenGod, // 使用相同的十神信息
@@ -332,40 +359,70 @@ export class BaZiUtil {
   }
 
   /**
-   * 提取单柱信息
-   * @param bazi 八字对象
-   * @param type 柱类型（year, month, day, hour）
-   * @returns 柱信息
+   * 获取柱子信息
    */
-  private getPillarInfo(bazi: EightChar, type: string): PillarInfo {
-    // 直接使用 EightChar 类已知的可用方法
+  private getPillarInfo(bazi: any, pillar: "year" | "month" | "day" | "hour"): PillarInfo {
     let gan = "";
     let zhi = "";
-    
-    // 根据类型调用正确的方法
-    switch(type) {
+    let ganZhi = "";
+
+    // 获取干支
+    switch (pillar) {
       case "year":
-        gan = bazi.getYear().charAt(0);
-        zhi = bazi.getYear().charAt(1);
+        gan = bazi.getYearGan();
+        zhi = bazi.getYearZhi();
+        ganZhi = bazi.getYear();
         break;
       case "month":
-        gan = bazi.getMonth().charAt(0);
-        zhi = bazi.getMonth().charAt(1);
+        gan = bazi.getMonthGan();
+        zhi = bazi.getMonthZhi();
+        ganZhi = bazi.getMonth();
         break;
       case "day":
-        gan = bazi.getDay().charAt(0);
-        zhi = bazi.getDay().charAt(1);
+        gan = bazi.getDayGan();
+        zhi = bazi.getDayZhi();
+        ganZhi = bazi.getDay();
         break;
       case "hour":
-        gan = bazi.getTime().charAt(0);
-        zhi = bazi.getTime().charAt(1);
+        gan = bazi.getTimeGan();
+        zhi = bazi.getTimeZhi();
+        ganZhi = bazi.getTime();
         break;
-      default:
-        throw new Error(`Unknown pillar type: ${type}`);
+    }
+
+    // 修复旬空获取逻辑
+    let xunKong = "";
+    try {
+      // 首先尝试使用 bazi 的方法获取旬空
+      const getXunKongMethod = `get${pillar.charAt(0).toUpperCase() + pillar.slice(1)}XunKong`;
+      if (typeof bazi[getXunKongMethod] === 'function') {
+        xunKong = bazi[getXunKongMethod]();
+        console.log(`使用 ${getXunKongMethod} 获取旬空: ${xunKong}`);
+      } else {
+        // 备用方法：通过 LunarUtil.XUN_KONG 查找
+        const xunKongValue = LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG];
+        xunKong = xunKongValue ? String(xunKongValue) : "";
+        console.log(`使用 XUN_KONG 查找旬空 [${ganZhi}]: ${xunKong}`);
+      }
+    } catch (error) {
+      console.error(`获取${pillar}旬空时出错:`, error);
+      // 再一个备用方法
+      try {
+        // 直接使用计算方法
+        if (typeof LunarUtil.getXunKong === 'function') {
+          xunKong = LunarUtil.getXunKong(ganZhi) || "";
+        }
+      } catch (e) {
+        console.error(`计算${pillar}旬空时出错:`, e);
+      }
     }
     
-    const ganZhi = gan + zhi;
-    
+    // 确保有默认值
+    if (!xunKong) {
+      xunKong = "未知";
+      console.warn(`${pillar} 旬空无法获取，使用默认值`);
+    }
+
     // 替换 LunarUtil.DI_SHI，它可能不存在
     const diShi = (() => {
       // 地势映射
@@ -384,7 +441,7 @@ export class BaZiUtil {
       tenGod: LunarUtil.SHI_SHEN[bazi.getDayGan() + gan] || "",
       hidden: this.getHiddenGan(zhi, bazi.getDayGan()),
       naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
-      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
+      xunKong: xunKong, // 使用修复后的旬空值
       wuXing: LunarUtil.WU_XING_GAN[gan] || "未知",
       diShi: diShi,
       shiShen: LunarUtil.SHI_SHEN[`${bazi.getDayGan()}${gan}`] || "未知"
@@ -527,15 +584,23 @@ export class BaZiUtil {
     const yearZhi = lunar.getYearZhiByLiChun();
     const ganZhi = yearGan + yearZhi;
     
-    // 修正 xunKong 的类型处理
-    const xunKongValue = LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG];
-    const xunKong = typeof xunKongValue === 'string' || typeof xunKongValue === 'number' 
-      ? xunKongValue 
-      : String(xunKongValue);
+    // 直接计算旬空
+    let xunKong = "";
+    try {
+      const ec = lunar.getEightChar();
+      xunKong = ec.getYearXunKong();
+    } catch (error) {
+      console.error("计算流年旬空时出错:", error);
+      // 备用方法
+      try {
+        xunKong = String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "");
+      } catch (e) {
+        xunKong = "未知";
+      }
+    }
     
     // 确保十神信息正确计算
     const shiShen = LunarUtil.SHI_SHEN[`${dayGan}${yearGan}`] || "未知";
-    console.log(`流年十神计算：日干=${dayGan}, 年干=${yearGan}, 结果=${shiShen}`);
     
     return {
       year,

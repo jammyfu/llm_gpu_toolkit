@@ -469,7 +469,7 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
         render: (shiShen: string) => shiShen || '--'
       },
       { title: '纳音', dataIndex: 'naYin', key: 'naYin' },
-      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong' }
+      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong', render: (xunKong: string) => xunKong || '未知' }
     ];
     
     const dataSource = liuNianData.map((item, index) => ({ ...item, key: index })) as TableType[];
@@ -524,7 +524,7 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
       { title: '干支', dataIndex: 'ganZhi', key: 'ganZhi' },
       { title: '十神', dataIndex: 'shiShen', key: 'shiShen' },
       { title: '纳音', dataIndex: 'naYin', key: 'naYin' },
-      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong' }
+      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong', render: (xunKong: string) => xunKong || '未知' }
     ];
     
     const dataSource = liuYueData.map((item, index) => ({ ...item, key: index })) as TableType[];
@@ -551,7 +551,7 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
       { title: '干支', dataIndex: 'ganZhi', key: 'ganZhi' },
       { title: '十神', dataIndex: 'shiShen', key: 'shiShen' },
       { title: '纳音', dataIndex: 'naYin', key: 'naYin' },
-      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong' }
+      { title: '旬空', dataIndex: 'xunKong', key: 'xunKong', render: (xunKong: string) => xunKong || '未知' }
     ];
     
     return (
@@ -620,7 +620,7 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
             <Descriptions.Item label="农历结束年">农历{daYunItem.lunarYearEnd || '--'}年</Descriptions.Item>
             <Descriptions.Item label="十神">{daYunItem.tenGod || daYunItem.shiShen || '--'}</Descriptions.Item>
             <Descriptions.Item label="纳音">{daYunItem.naYin}</Descriptions.Item>
-            <Descriptions.Item label="旬空">{daYunItem.xunKong}</Descriptions.Item>
+            <Descriptions.Item label="旬空">{daYunItem.xunKong || '未知'}</Descriptions.Item>
           </StyledDescriptions>
         )}
         
@@ -687,6 +687,36 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
     );
   };
   
+  // 修改大运标签样式，支持深色模式
+  const renderTabLabel = (item: DaYunInfo) => {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ 
+          fontSize: '16px', 
+          fontWeight: 'bold',
+          color: customTheme.isDark ? '#e0e0e0' : '#333333'
+        }}>
+          {/* 对于第一个大运显示"童限"，其他只显示干支 */}
+          {item.index === 1 ? "童限" : item.ganZhi}
+        </div>
+        <div style={{ 
+          fontSize: '12px', 
+          color: customTheme.isDark ? '#aaaaaa' : '#888888',
+          marginTop: '2px'
+        }}>
+          ({item.startYear}年-{item.endYear}年)
+        </div>
+        <div style={{ 
+          fontSize: '13px',
+          color: customTheme.isDark ? '#cccccc' : '#555555',
+          marginTop: '2px'
+        }}>
+          {item.startAge}岁-{item.endAge}岁
+        </div>
+      </div>
+    );
+  };
+  
   // 生成标签页数据
   const generateTabItems = () => {
     console.log("DaYunDisplay - 正在生成标签页项目, 大运数量:", extendedDaYun.length);
@@ -695,14 +725,7 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({
       const key = String(index);
       return {
         key,
-        label: (
-          <div style={{ lineHeight: '1.2', padding: '4px 0' }}>
-            <div>{item.ganZhi} 大运</div>
-            <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-              {item.startYear}年({item.startAge}岁) - {item.endYear}年({item.startAge + 9}岁)
-            </div>
-          </div>
-        ),
+        label: renderTabLabel(item),
         children: renderTabContent(key)
       };
     });
