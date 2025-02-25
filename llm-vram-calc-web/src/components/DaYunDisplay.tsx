@@ -1,14 +1,38 @@
-import React from 'react';
-import { Card, Table, theme } from 'antd';
+import React, { useState } from 'react';
+import { Card, Table, Button, Drawer, Tabs } from 'antd';
+import type { ColumnsType, TableProps } from 'antd/es/table';
 import { DaYunInfo } from '../types/bazi';
 import styled from 'styled-components';
+import { useContext } from 'react';
+import { BaZiUtil } from '../utils/BaziUtil';
+
+// 定义流年数据接口，修改 xunKong 类型
+interface LiuNianInfo {
+  year: number;
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string | number; // 允许字符串或数字类型
+  hidden: any[];
+}
+
+// 定义流月数据接口，修改 xunKong 类型
+interface LiuYueInfo {
+  year: number;
+  month: number;
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string | number; // 允许字符串或数字类型
+  hidden: any[];
+}
 
 interface DaYunDisplayProps {
   daYun?: DaYunInfo[];
   theme: { isDark: boolean };
+  dayGan: string;
 }
 
-// 简化样式，移除所有主题相关的代码
 const StyledCard = styled(Card)`
   margin-bottom: 20px;
   background-color: ${(props) => props.theme.isDark ? '#424242' : '#fff'};
@@ -26,26 +50,28 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTheme }) => {
-  const { token } = theme.useToken();
-
-  const columns = [
-    { title: '大运', dataIndex: 'period', width: 80 },
-    { title: '干支', dataIndex: 'ganZhi', width: 100 },
-    { title: '起运年龄', dataIndex: 'startAge', width: 100 },
-    { title: '起运年份', dataIndex: 'startYear', width: 100 },
-    { title: '纳音', dataIndex: 'naYin', width: 120 },
-    { title: '十神', dataIndex: 'tenGod', width: 100 },
-    { title: '藏干', dataIndex: 'hiddenGan', width: 120 },
-    { title: '旬空', dataIndex: 'xunKong', width: 100 },
-    { 
-      title: '运势分析', 
-      dataIndex: 'analysis',
-      ellipsis: true
+const StyledDrawer = styled(Drawer)<{ theme: { isDark: boolean } }>`
+  .ant-drawer-header {
+    background-color: ${(props) => props.theme.isDark ? '#333333' : '#ffffff'};
+    border-bottom: 1px solid ${(props) => props.theme.isDark ? '#555555' : '#f0f0f0'};
+    
+    .ant-drawer-title {
+      color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
     }
-  ];
+    
+    .ant-drawer-close {
+      color: ${(props) => props.theme.isDark ? '#ffffff' : '#000000'};
+    }
+  }
+  
+  .ant-drawer-body {
+    background-color: ${(props) => props.theme.isDark ? '#1f1f1f' : '#ffffff'};
+  }
+`;
 
-  const StyledTable = styled(Table)<{ theme: { isDark: boolean } }>`
+// 修改 StyledTable 组件，使其接受泛型参数
+function createStyledTable<T extends object>() {
+  return styled(Table)<{ theme: { isDark: boolean } } & TableProps<T>>`
     .ant-table-cell {
       vertical-align: middle;
       padding: 12px 8px;
@@ -76,8 +102,8 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTh
       .ant-table-tbody > tr:hover > td {
         background-color: ${(props) => 
           props.theme.isDark 
-            ? 'rgba(3, 31, 54, 0.8)'   // 深色模式：深蓝色，透明度0.8
-            : 'rgba(145, 213, 255, 0.2)'} !important; // 浅色模式：浅蓝色，透明度0.2
+            ? 'rgba(3, 31, 54, 0.8)'
+            : 'rgba(145, 213, 255, 0.2)'} !important;
       }
     }
 
@@ -85,8 +111,8 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTh
       .ant-pagination {
         .ant-pagination-item-active {
           background-color: ${(props) => props.theme.isDark ? 
-            '#8fb82e' : // 深色模式下使用更深的绿色
-            '#7c9a2e' // 浅色模式下使用更深的绿色
+            '#8fb82e' : 
+            '#7c9a2e'
           } !important;
           border-color: ${(props) => props.theme.isDark ? 
             '#8fb82e' : 
@@ -162,23 +188,126 @@ const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTh
       }
     }
   `;
+}
+
+const DaYunDisplay: React.FC<DaYunDisplayProps> = ({ daYun = [], theme: customTheme, dayGan }) => {
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(0);
+  const [liuNianData, setLiuNianData] = useState<LiuNianInfo[]>([]);
+  const [liuYueData, setLiuYueData] = useState<LiuYueInfo[]>([]);
+
+  // 创建表格组件
+  const DaYunTable = createStyledTable<DaYunInfo>();
+  const LiuNianTable = createStyledTable<LiuNianInfo>();
+  const LiuYueTable = createStyledTable<LiuYueInfo>();
+
+  const baziUtil = new BaZiUtil();
+  
+  // 查看流年流月详情
+  const handleViewDetail = (startYear: number) => {
+    setSelectedYear(startYear);
+    
+    // 生成10年的流年数据
+    const years = Array.from({ length: 10 }, (_, i) => startYear + i);
+    const liuNianData = years.map(year => baziUtil.getLiuNian(year, dayGan));
+    setLiuNianData(liuNianData as LiuNianInfo[]); // 使用类型断言
+    
+    // 获取当前年的流月数据
+    const currentYear = new Date().getFullYear();
+    if (years.includes(currentYear)) {
+      const months = Array.from({ length: 12 }, (_, i) => i + 1);
+      const liuYueData = months.map(month => baziUtil.getLiuYue(currentYear, month, dayGan));
+      setLiuYueData(liuYueData as LiuYueInfo[]); // 使用类型断言
+    } else {
+      setLiuYueData([]);
+    }
+    
+    setDrawerVisible(true);
+  };
+
+  const columns: ColumnsType<DaYunInfo> = [
+    { title: '大运', dataIndex: 'period', width: 80 },
+    { title: '干支', dataIndex: 'ganZhi', width: 100 },
+    { title: '起运年龄', dataIndex: 'startAge', width: 100 },
+    { title: '起运年份', dataIndex: 'startYear', width: 100 },
+    { 
+      title: '操作', 
+      key: 'action',
+      render: (_, record) => (
+        <Button 
+          type="link" 
+          onClick={() => handleViewDetail(record.startYear)}
+        >
+          查看流年
+        </Button>
+      ),
+    }
+  ];
+
+  const liuNianColumns: ColumnsType<LiuNianInfo> = [
+    { title: '年份', dataIndex: 'year', width: 80 },
+    { title: '干支', dataIndex: 'ganZhi', width: 120 },
+    { title: '十神', dataIndex: 'shiShen', width: 80 },
+  ];
+  
+  const liuYueColumns: ColumnsType<LiuYueInfo> = [
+    { title: '月份', dataIndex: 'month', width: 60 },
+    { title: '干支', dataIndex: 'ganZhi', width: 120 },
+    { title: '十神', dataIndex: 'shiShen', width: 80 },
+  ];
 
   return (
-    <StyledCard title="大运信息" theme={customTheme}>
-      <StyledTable 
-        columns={columns}
-        dataSource={daYun}
-        rowKey="period"
-        scroll={{ x: 'max-content' }}
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showTotal: (total) => `共 ${total} 条`
-        }}
-        bordered
+    <>
+      <StyledCard title="大运信息" theme={customTheme}>
+        <DaYunTable 
+          columns={columns}
+          dataSource={daYun}
+          rowKey="period"
+          scroll={{ x: 'max-content' }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total) => `共 ${total} 条`
+          }}
+          bordered
+          theme={customTheme}
+        />
+      </StyledCard>
+
+      <StyledDrawer
+        title={`流年流月信息 (从${selectedYear}年起)`}
+        placement="right"
+        width={600}
+        onClose={() => setDrawerVisible(false)}
+        visible={drawerVisible}
         theme={customTheme}
-      />
-    </StyledCard>
+      >
+        <Tabs defaultActiveKey="liuNian">
+          <Tabs.TabPane tab="流年" key="liuNian">
+            <LiuNianTable 
+              columns={liuNianColumns}
+              dataSource={liuNianData}
+              rowKey="year"
+              pagination={false}
+              bordered
+              theme={customTheme}
+            />
+          </Tabs.TabPane>
+          {liuYueData.length > 0 && (
+            <Tabs.TabPane tab="流月" key="liuYue">
+              <LiuYueTable 
+                columns={liuYueColumns}
+                dataSource={liuYueData}
+                rowKey="month"
+                pagination={false}
+                bordered
+                theme={customTheme}
+              />
+            </Tabs.TabPane>
+          )}
+        </Tabs>
+      </StyledDrawer>
+    </>
   );
 };
 

@@ -22,6 +22,7 @@ interface BaZiDisplayProps {
     day: string;
     time: string;
   };
+  baziTitle?: string;
   theme: { isDark: boolean };
 }
 
@@ -227,6 +228,7 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
   hourPillar,
   solarDate,
   lunarDate,
+  baziTitle = "八字",
   theme: customTheme
 }) => {
   const { token } = theme.useToken();
@@ -455,7 +457,7 @@ const BaZiDisplay: React.FC<BaZiDisplayProps> = ({
   `;
 
   return (
-    <StyledCard title="八字信息" theme={customTheme}>
+    <StyledCard title={`八字信息 - ${baziTitle}`} theme={customTheme}>
       <StyledTable
         columns={columns}
         dataSource={data}

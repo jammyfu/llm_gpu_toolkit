@@ -63,6 +63,18 @@ type EightCharMethod = {
   getTimeDiShi: () => string;
 };
 
+interface PillarDetail {
+  ganZhi: string;
+  shiShen: string;
+  naYin: string;
+  xunKong: string;
+  hidden: {
+    gan: string;
+    type: string;
+    shiShen: string;
+  }[];
+}
+
 export class BaZiUtil {
   private selectSect: number = 2; // 默认子时流派（晚子时算当天）
 
@@ -493,5 +505,128 @@ export class BaZiUtil {
       const gender = rest === "+" ? 1 : rest === "-" ? 0 : -1;
       return this.computeSolar(year, month, day, hour, minute, gender);
     }
+  }
+
+  /**
+   * 获取流年信息
+   * @param year 年份
+   * @param dayGan 日干
+   * @returns 流年信息
+   */
+  public getLiuNian(year: number, dayGan: string) {
+    const lunar = Lunar.fromDate(new Date(year, 0, 1));
+    const yearGan = lunar.getYearGanByLiChun();
+    const yearZhi = lunar.getYearZhiByLiChun();
+    const ganZhi = yearGan + yearZhi;
+    
+    return {
+      year,
+      ganZhi,
+      shiShen: LunarUtil.SHI_SHEN[dayGan + yearGan] || "未知",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
+      hidden: this.getHiddenGan(yearZhi, dayGan)
+    };
+  }
+
+  /**
+   * 获取流月信息
+   * @param year 年份
+   * @param month 月份
+   * @param dayGan 日干
+   * @returns 流月信息
+   */
+  public getLiuYue(year: number, month: number, dayGan: string) {
+    const lunar = Lunar.fromDate(new Date(year, month - 1, 1));
+    const monthGan = lunar.getMonthGan();
+    const monthZhi = lunar.getMonthZhi();
+    const ganZhi = monthGan + monthZhi;
+    
+    return {
+      year,
+      month,
+      ganZhi,
+      shiShen: LunarUtil.SHI_SHEN[dayGan + monthGan] || "未知",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
+      hidden: this.getHiddenGan(monthZhi, dayGan)
+    };
+  }
+
+  /**
+   * 获取流日信息
+   * @param date 日期
+   * @param dayGan 日干
+   * @returns 流日信息
+   */
+  public getLiuRi(date: Date, dayGan: string) {
+    const lunar = Lunar.fromDate(date);
+    const riGan = lunar.getDayGan();
+    const riZhi = lunar.getDayZhi();
+    const ganZhi = riGan + riZhi;
+    
+    return {
+      date,
+      ganZhi,
+      shiShen: LunarUtil.SHI_SHEN[dayGan + riGan] || "未知",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG] || "未知",
+      hidden: this.getHiddenGan(riZhi, dayGan)
+    };
+  }
+
+  /**
+   * 获取地支藏干信息
+   * @param zhi 地支
+   * @param dayGan 日干
+   * @returns 藏干信息
+   */
+  private getHiddenGan(zhi: string, dayGan: string) {
+    const hideGan = LunarUtil.ZHI_HIDE_GAN[zhi] || [];
+    const hiddenGanTypes = ['本气', '中气', '余气'];
+    
+    return hideGan.map((h: string, i: number) => {
+      return {
+        gan: h,
+        type: hiddenGanTypes[i] || '未知',
+        shiShen: LunarUtil.SHI_SHEN[dayGan + h] || '未知'
+      };
+    });
+  }
+
+  // 修改年柱处理
+  private processYearPillar(ganZhi: string, dayGan: string): PillarDetail {
+    const [yearGan, yearZhi] = ganZhi.split('');
+    return {
+      ganZhi,
+      shiShen: LunarUtil.SHI_SHEN[`${dayGan}${yearGan}`] || "未知",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
+      hidden: this.getHiddenGan(yearZhi, dayGan)
+    };
+  }
+
+  // 修改月柱处理 
+  private processMonthPillar(ganZhi: string, dayGan: string): PillarDetail {
+    const [monthGan, monthZhi] = ganZhi.split('');
+    return {
+      ganZhi,
+      shiShen: LunarUtil.SHI_SHEN[`${dayGan}${monthGan}`] || "未知",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
+      hidden: this.getHiddenGan(monthZhi, dayGan)
+    };
+  }
+
+  // 修改日柱处理
+  private processDayPillar(ganZhi: string): PillarDetail {
+    const [riGan, riZhi] = ganZhi.split('');
+    return {
+      ganZhi,
+      shiShen: "日主",
+      naYin: LunarUtil.NAYIN[ganZhi as keyof typeof LunarUtil.NAYIN] || "未知",
+      xunKong: String(LunarUtil.XUN_KONG[ganZhi as keyof typeof LunarUtil.XUN_KONG]) || "未知",
+      hidden: this.getHiddenGan(riZhi, riGan)
+    };
   }
 }

@@ -152,10 +152,12 @@ const BaziPage: React.FC<BaziPageProps> = ({ locale = 'zh' }) => {
                   hourPillar={baziData.hourPillar}
                   solarDate={baziData.birth.solar}
                   lunarDate={baziData.birth.lunar}
+                  baziTitle={baziData.baziTitle}
                   theme={theme}
                 />
                 <DaYunDisplay 
                   daYun={baziData.daYun}
+                  dayGan={baziData.dayPillar.gan}
                   theme={theme}
                 />
               </ContentColumn>
