@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/qrcode.react": "^3.0.0",
+    "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0"
   }
 }
