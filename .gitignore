@@ -54,3 +54,10 @@ coverage/
 
 # 其它不需要记录的文件或目录
 # 可根据项目实际情况进行补充 
+
+# 配置文件备份
+config.json.bak*
+*.bak_* 
+test.html
+zhongkao.html
+zhongkao01.html

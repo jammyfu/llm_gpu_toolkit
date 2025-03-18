@@ -1,0 +1,178 @@
+[
+  {
+    "model": "1b-it-q8_0",
+    "url": "https://ollama.com/library/gemma3:1b-it-q8_0",
+    "is_default": false,
+    "model_id": "b5e03d5884e3",
+    "file_size": "1.1GB",
+    "arch": "gemma3",
+    "parameters": "1000M",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "4b-it-q8_0",
+    "url": "https://ollama.com/library/gemma3:4b-it-q8_0",
+    "is_default": false,
+    "model_id": "874b9944536c",
+    "file_size": "5.0GB",
+    "arch": "gemma3",
+    "parameters": "4.3B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "12b-it-q8_0",
+    "url": "https://ollama.com/library/gemma3:12b-it-q8_0",
+    "is_default": false,
+    "model_id": "c7eb2ce83119",
+    "file_size": "13GB",
+    "arch": "gemma3",
+    "parameters": "12.2B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "27b-it-q8_0",
+    "url": "https://ollama.com/library/gemma3:27b-it-q8_0",
+    "is_default": false,
+    "model_id": "273dcbe898b5",
+    "file_size": "30GB",
+    "arch": "gemma3",
+    "parameters": "27.4B",
+    "quantization": "Q8_0",
+    "quantization_info": "Q8_0"
+  },
+  {
+    "model": "1b",
+    "url": "https://ollama.com/library/gemma3:1b",
+    "is_default": true,
+    "model_id": "2d27a774bc62",
+    "file_size": "815MB",
+    "arch": "gemma3",
+    "parameters": "1000M",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "4b",
+    "url": "https://ollama.com/library/gemma3:4b",
+    "is_default": true,
+    "model_id": "c0494fe00251",
+    "file_size": "3.3GB",
+    "arch": "gemma3",
+    "parameters": "4.3B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "12b",
+    "url": "https://ollama.com/library/gemma3:12b",
+    "is_default": true,
+    "model_id": "6fd036cefda5",
+    "file_size": "8.1GB",
+    "arch": "gemma3",
+    "parameters": "12.2B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "27b",
+    "url": "https://ollama.com/library/gemma3:27b",
+    "is_default": true,
+    "model_id": "30ddded7fba6",
+    "file_size": "17GB",
+    "arch": "gemma3",
+    "parameters": "27.4B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "latest",
+    "url": "https://ollama.com/library/gemma3:latest",
+    "is_default": true,
+    "model_id": "c0494fe00251",
+    "file_size": "3.3GB",
+    "arch": "gemma3",
+    "parameters": "4.3B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Default (Q4_K_M)"
+  },
+  {
+    "model": "4b-it-q4_K_M",
+    "url": "https://ollama.com/library/gemma3:4b-it-q4_K_M",
+    "is_default": false,
+    "model_id": "c0494fe00251",
+    "file_size": "3.3GB",
+    "arch": "gemma3",
+    "parameters": "4.3B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "12b-it-q4_K_M",
+    "url": "https://ollama.com/library/gemma3:12b-it-q4_K_M",
+    "is_default": false,
+    "model_id": "6fd036cefda5",
+    "file_size": "8.1GB",
+    "arch": "gemma3",
+    "parameters": "12.2B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "27b-it-q4_K_M",
+    "url": "https://ollama.com/library/gemma3:27b-it-q4_K_M",
+    "is_default": false,
+    "model_id": "30ddded7fba6",
+    "file_size": "17GB",
+    "arch": "gemma3",
+    "parameters": "27.4B",
+    "quantization": "Q4_K_M",
+    "quantization_info": "Q4_K_M"
+  },
+  {
+    "model": "1b-it-fp16",
+    "url": "https://ollama.com/library/gemma3:1b-it-fp16",
+    "is_default": false,
+    "model_id": "b822f21cb741",
+    "file_size": "2.0GB",
+    "arch": "gemma3",
+    "parameters": "1000M",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  },
+  {
+    "model": "4b-it-fp16",
+    "url": "https://ollama.com/library/gemma3:4b-it-fp16",
+    "is_default": false,
+    "model_id": "5a54224d4d14",
+    "file_size": "8.6GB",
+    "arch": "gemma3",
+    "parameters": "4.3B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  },
+  {
+    "model": "12b-it-fp16",
+    "url": "https://ollama.com/library/gemma3:12b-it-fp16",
+    "is_default": false,
+    "model_id": "aac605cdf033",
+    "file_size": "24GB",
+    "arch": "gemma3",
+    "parameters": "12.2B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  },
+  {
+    "model": "27b-it-fp16",
+    "url": "https://ollama.com/library/gemma3:27b-it-fp16",
+    "is_default": false,
+    "model_id": "cf10306fe9c6",
+    "file_size": "55GB",
+    "arch": "gemma3",
+    "parameters": "27.4B",
+    "quantization": "F16",
+    "quantization_info": "F16"
+  }
+]

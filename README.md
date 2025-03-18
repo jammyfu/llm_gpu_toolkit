@@ -55,6 +55,50 @@ pip install llm-gpu-toolkit
   - idna >= 3.6
   - soupsieve >= 2.5
 
+## 使用方法
+
+### 获取模型数据 (get_model.py)
+
+`get_model.py` 可以从 Ollama 库中获取不同模型的信息，包括模型名称、大小、量化方式等数据。
+
+#### 配置文件
+
+在运行 `get_model.py` 前，请确保配置文件 `config.json` 已正确设置：
+
+```json
+{
+    "output_dirs": {
+        "cleaned": "modeldata/cleaned"
+    },
+    "models": [
+        {
+            "name": "deepseek r1",
+            "key": "deepseek",
+            "version": "r1",
+            "description": "DeepSeek R1: 作为一个由 DeepSeek 公司开发的模型...",
+            "base_url": "https://ollama.com/library/deepseek-r1",
+            "tags_url": "https://ollama.com/library/deepseek-r1/tags",
+            "output_file": "deepseek_r1_models.json"
+        },
+        // 其他模型配置...
+    ]
+}
+```
+
+#### 运行模型数据获取
+
+1. 确保已安装所有依赖
+2. 运行脚本获取模型数据：
+
+```bash
+python get_model.py
+```
+
+3. 数据将保存在 `modeldata/cleaned/` 目录下，每个模型系列对应一个 JSON 文件
+
+#### 示例输出
+
+脚本运行后会在控制台输出处理进度，并在指定目录生成 JSON 文件，包含模型的详细信息：
 
 ## 许可证
 
