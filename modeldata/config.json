@@ -92,6 +92,16 @@
             "base_url": "https://ollama.com/library/llama3.2",
             "tags_url": "https://ollama.com/library/llama3.2/tags",
             "output_file": "llama_3.2_models.json"
+        },
+        {
+            "name": "gemma3",
+            "key": "gemma3",
+            "version": "3",
+            "description": "Gemma3: 这是Google基于Gemini技术开发的轻量级模型家族。Gemma 3系列支持多模态（处理文本和图像），拥有128K上下文窗口，支持超过140种语言。有1B、4B、12B和27B参数规模版本，在问答、摘要和推理等任务上表现出色，其紧凑设计可部署在资源有限的设备上。",
+            "description_en": "Gemma3: This is a lightweight family of models from Google built on Gemini technology. The Gemma 3 models are multimodal—processing text and images—and feature a 128K context window with support for over 140 languages. Available in 1B, 4B, 12B, and 27B parameter sizes, they excel in tasks like question answering, summarization, and reasoning, while their compact design allows deployment on resource-limited devices.",
+            "base_url": "https://ollama.com/library/gemma3",
+            "tags_url": "https://ollama.com/library/gemma3/tags",
+            "output_file": "gemma3_models.json"
         }
     ]
 }
