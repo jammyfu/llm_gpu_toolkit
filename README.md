@@ -1,3 +1,22 @@
+<!-- BEGIN:personal-project-standard-entry -->
+## Project Entry
+
+- Project brief: [PROJECT_BRIEF.md](PROJECT_BRIEF.md)
+- Long-range roadmap: [MASTER_PLAN.md](MASTER_PLAN.md)
+- Current execution entry: [CURRENT_PLAN.md](CURRENT_PLAN.md)
+- Candidate backlog: [TODO_BACKLOG.md](TODO_BACKLOG.md)
+- Governance log: [docs/project-governance/WORKLOG.md](docs/project-governance/WORKLOG.md)
+- Automation notes: [docs/AUTOMATION_COMMANDS.md](docs/AUTOMATION_COMMANDS.md)
+- Long-running autonomy: [docs/LONG_RUNNING_AUTONOMY.md](docs/LONG_RUNNING_AUTONOMY.md)
+- Verification entry: `python3 tools/verify.py`
+
+## Standardized Summary
+
+- Positioning: Mixed Python and web tooling for LLM GPU sizing, model data collection, and resource estimation.
+- Stack: Python scripts plus static web assets.
+- Current goal: Normalize the mixed-tooling repo into a stable planning loop without changing its data model or calculators.
+<!-- END:personal-project-standard-entry -->
+
 # LLM GPU Toolkit
 
 LLM GPU工具包，专注于大语言模型的GPU资源计算和优化，帮助开发者更好地规划和利用GPU资源。

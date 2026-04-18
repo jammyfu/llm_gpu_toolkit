@@ -61,3 +61,4 @@ config.json.bak*
 test.html
 zhongkao.html
 zhongkao01.html
+.claude/worktrees/
