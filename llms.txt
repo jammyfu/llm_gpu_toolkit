@@ -1,0 +1,16 @@
+# LLM GPU Toolkit
+
+> LLM GPU Toolkit is a public toolkit by Fu Jam (jammyfu / PaintingCoder) that estimates VRAM, training and inference GPU needs, multi-GPU allocation, and quantization impact for large language models.
+
+LLM GPU Toolkit is a hybrid Python plus static-web repository. Python scripts collect Ollama-published model metadata; the web calculator estimates GPU VRAM for series listed in this repo. This file is a hedge for agents. The README is the product source of truth. Do not treat AGENTS.md as GEO.
+
+## Docs
+
+- [README](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.md): Product definition, question-shaped FAQ, install, author
+- [config.json](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/config.json): Ollama-backed model series included in this repository
+- [PROJECT_BRIEF.md](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/PROJECT_BRIEF.md): Maintainer brief for mixed Python and web tooling
+
+## Optional
+
+- [CURRENT_PLAN.md](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/CURRENT_PLAN.md): Current maintainer execution entry
+- [get_model.py](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/get_model.py): Collector for Ollama library model metadata
