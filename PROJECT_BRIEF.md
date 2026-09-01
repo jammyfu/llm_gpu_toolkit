@@ -21,8 +21,9 @@ This repository was normalized under the `project-portfolio-personal` program so
 
 ## Recommended Reading
 
-1. `README.md`
-2. `CURRENT_PLAN.md`
-3. `MASTER_PLAN.md`
-4. `TODO_BACKLOG.md`
-5. `docs/project-governance/WORKLOG.md`
+1. `README.md` (public product entry)
+2. `llms.txt` (optional agent hedge; not a substitute for the README)
+3. `CURRENT_PLAN.md`
+4. `MASTER_PLAN.md`
+5. `TODO_BACKLOG.md`
+6. `docs/project-governance/WORKLOG.md`
