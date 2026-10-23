@@ -1,3 +1,11 @@
+<!-- geo:badges -->
+**LLM GPU Toolkit** estimates GPU memory (VRAM) and compute for training and running large language models, including quantization and multi-GPU setups. 估算大语言模型训练与推理所需的显存和算力（含量化、多卡）。
+
+[![Live demo](https://img.shields.io/badge/demo-GitHub%20Pages-2c5364)](https://jammyfu.github.io/llm_gpu_toolkit/) [![Python](https://img.shields.io/badge/python-3.8%2B-3776AB)](setup.py) [![Release](https://img.shields.io/github/v/release/jammyfu/llm_gpu_toolkit)](https://github.com/jammyfu/llm_gpu_toolkit/releases)
+
+Online / 在线使用: https://jammyfu.github.io/llm_gpu_toolkit/ · Install / 安装: see [安装说明](#安装说明)
+
+
 <!-- BEGIN:personal-project-standard-entry -->
 ## Project Entry
 
