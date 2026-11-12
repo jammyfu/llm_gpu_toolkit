@@ -1,6 +1,8 @@
 # LLM GPU Toolkit
 
-<p align="center"><img src="docs/images/logo/main_logo.jpg" alt="LLM GPU Toolkit" width="160"></p>
+![LLM GPU Toolkit](docs/images/llm-gpu-toolkit-hero.webp)
+
+<sub>AI生成のプロジェクト用イラスト：大きなモデルを小さなGPUに詰め込む様子。アプリのスクリーンショットではありません。</sub>
 
 保存済みの Ollama モデル情報を参照し、概算VRAMとGPU容量を比較するツールです。計画の参考であり、実機ベンチマークや動作保証ではありません。
 

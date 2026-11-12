@@ -21,5 +21,13 @@
     "window": null,
     "group_order": "same tasks across languages",
     "tie_break": "stable task order"
+  },
+  "hero": {
+    "path": "docs/images/llm-gpu-toolkit-hero.webp",
+    "source": "original AI-generated branding illustration, 2026-11-12",
+    "concept": "large neural cloud squeezing into a small GPU suitcase; estimate fit before hardware selection",
+    "tool": "built-in image generation",
+    "review": "title and composition visually inspected; not a product screenshot",
+    "prompt": "Wide 3:1 original GitHub banner. Exact title LLM GPU Toolkit. Playful 3D neural-network cloud squeezing into a tiny GPU suitcase, measuring ruler, charcoal/gold/cyan, no benchmark claims or fake UI."
   }
 }

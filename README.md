@@ -1,6 +1,8 @@
 # LLM GPU Toolkit
 
-<p align="center"><img src="docs/images/logo/main_logo.jpg" alt="LLM GPU Toolkit" width="160"></p>
+![LLM GPU Toolkit](docs/images/llm-gpu-toolkit-hero.webp)
+
+<sub>AI 生成的项目品牌插画：大模型挤进小显卡，不是软件截图。</sub>
 
 浏览已保存的 Ollama 模型资料，粗略比较预估显存与 GPU 容量。这是选型参考，不是硬件实测，也不保证模型一定能运行。
 

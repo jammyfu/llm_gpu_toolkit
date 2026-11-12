@@ -1,6 +1,8 @@
 # LLM GPU Toolkit
 
-<p align="center"><img src="docs/images/logo/main_logo.jpg" alt="LLM GPU Toolkit" width="160"></p>
+![LLM GPU Toolkit](docs/images/llm-gpu-toolkit-hero.webp)
+
+<sub>AI-generated project artwork: a large model squeezing into a small GPU, not an application screenshot.</sub>
 
 Browse stored Ollama model metadata and compare a rough VRAM estimate with your GPU memory. This is a planning aid, not a hardware benchmark or a guarantee that a model will run.
 
