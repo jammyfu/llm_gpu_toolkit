@@ -1,12 +1,11 @@
-# LLM GPU Toolkit
+# llm_gpu_toolkit
 
-> Python and web tooling that estimates GPU memory (VRAM) and compute needed to train or run large language models, including the effect of quantization and multi-GPU parallelism. 估算大模型显存与算力。
+> Browse stored Ollama model metadata and compare a rough VRAM estimate with your GPU memory. This is a planning aid, not a hardware benchmark or a guarantee that a model will run.
 
-- Repository: https://github.com/jammyfu/llm_gpu_toolkit
-- Web calculator: https://jammyfu.github.io/llm_gpu_toolkit/
+- [English](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.en.md)
+- [简体中文](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.md)
+- [繁體中文（臺灣）](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.zh-TW.md)
+- [日本語](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.ja.md)
+- [한국어](https://github.com/jammyfu/llm_gpu_toolkit/blob/main/README.ko.md)
 
-## Use
-Open the web calculator, or run locally: `python setup.py setup_venv`, activate `venv`, then `pip install -e .`. Requires Python 3.8+.
-
-## FAQ
-- How much VRAM does a model need? Pick the model size, precision/quantization and batch settings in the calculator to get an estimate.
+Root index.html uses a file-size heuristic, not a context/KV-cache/training model. No LICENSE file; confirm permission before reuse. Collector currently disables TLS verification on some requests.
