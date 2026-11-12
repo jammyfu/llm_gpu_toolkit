@@ -1,187 +1,55 @@
-<!-- geo:badges -->
-**LLM GPU Toolkit** estimates GPU memory (VRAM) and compute for training and running large language models, including quantization and multi-GPU setups. 估算大语言模型训练与推理所需的显存和算力（含量化、多卡）。
-
-[![Live demo](https://img.shields.io/badge/demo-GitHub%20Pages-2c5364)](https://jammyfu.github.io/llm_gpu_toolkit/) [![Python](https://img.shields.io/badge/python-3.8%2B-3776AB)](setup.py) [![Release](https://img.shields.io/github/v/release/jammyfu/llm_gpu_toolkit)](https://github.com/jammyfu/llm_gpu_toolkit/releases)
-
-Online / 在线使用: https://jammyfu.github.io/llm_gpu_toolkit/ · Install / 安装: see [安装说明](#安装说明)
-
-
-<!-- BEGIN:personal-project-standard-entry -->
-## Project Entry
-
-- Project brief: [PROJECT_BRIEF.md](PROJECT_BRIEF.md)
-- Long-range roadmap: [MASTER_PLAN.md](MASTER_PLAN.md)
-- Current execution entry: [CURRENT_PLAN.md](CURRENT_PLAN.md)
-- Candidate backlog: [TODO_BACKLOG.md](TODO_BACKLOG.md)
-- Governance log: [docs/project-governance/WORKLOG.md](docs/project-governance/WORKLOG.md)
-- Automation notes: [docs/AUTOMATION_COMMANDS.md](docs/AUTOMATION_COMMANDS.md)
-- Long-running autonomy: [docs/LONG_RUNNING_AUTONOMY.md](docs/LONG_RUNNING_AUTONOMY.md)
-- Verification entry: `python3 tools/verify.py`
-
-## Standardized Summary
-
-- Positioning: Mixed Python and web tooling for LLM GPU sizing, model data collection, and resource estimation.
-- Stack: Python scripts plus static web assets.
-- Current goal: Normalize the mixed-tooling repo into a stable planning loop without changing its data model or calculators.
-<!-- END:personal-project-standard-entry -->
-
 # LLM GPU Toolkit
 
-LLM GPU工具包，专注于大语言模型的GPU资源计算和优化，帮助开发者更好地规划和利用GPU资源。
+<p align="center"><img src="docs/images/logo/main_logo.jpg" alt="LLM GPU Toolkit" width="160"></p>
 
-## 功能特点
+浏览已保存的 Ollama 模型资料，粗略比较预估显存与 GPU 容量。这是选型参考，不是硬件实测，也不保证模型一定能运行。
 
-- 计算LLM模型在不同配置下的GPU显存占用
-- 估算模型训练和推理时的GPU算力需求
-- 提供多卡并行训练的资源分配建议
-- 支持主流LLM模型的显存优化方案分析
-- 模型量化对GPU资源影响的评估
+[English](README.en.md) | [简体中文](README.md) | [繁體中文（臺灣）](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
-## 安装说明
+## 选择入口
 
-### 方法1：使用虚拟环境（推荐）
+| 入口 | 用途 |
+| --- | --- |
+| [静态计算页面](index.html) | 选择已存模型、量化类型和显存容量 |
+| [模型配置](config.json) | 检查采集脚本将请求哪些上游页面 |
+| [已采集 JSON](modeldata/cleaned/) | 先检查保存的数据是否仍然有效 |
+| [React 源码](llm-vram-calc-web/) | 独立前端源码，勿与根目录静态页混淆 |
 
-1. 创建并配置虚拟环境：
+## 本地运行静态页
 
-```bash
-python setup.py setup_venv
+在仓库根目录启动仅绑定本机的服务器，然后打开 http://127.0.0.1:8000。这只提供已有文件，不会自动更新模型数据。
+
+```sh
+git clone https://github.com/jammyfu/llm_gpu_toolkit.git
+cd llm_gpu_toolkit
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-2. 激活虚拟环境：
+## 有意识地更新数据
 
-Windows:
-```bash
-.\venv\Scripts\activate
-```
+使用 Python 3.8+ 和虚拟环境，先检查 config.json 及采集脚本再运行。脚本访问上游页面并写入本地 JSON；当前部分请求关闭了 TLS 证书校验，在敏感环境使用前应审查或修复。该命令不会下载模型权重。
 
-Linux/Mac:
-```bash
-source venv/bin/activate
-```
-
-3. 安装包：
-```bash
-pip install -e .
-```
-
-### 方法2：直接安装
-
-```bash
-pip install llm-gpu-toolkit
-```
-
-## 环境要求
-
-- Python >= 3.8
-- 依赖包会在安装时自动配置：
-  - beautifulsoup4 >= 4.12.0
-  - requests >= 2.31.0
-  - urllib3 >= 2.0.0
-  - certifi >= 2023.11.17
-  - charset-normalizer >= 3.3.0
-  - idna >= 3.6
-  - soupsieve >= 2.5
-
-## 使用方法
-
-### 获取模型数据 (get_model.py)
-
-`get_model.py` 可以从 Ollama 库中获取不同模型的信息，包括模型名称、大小、量化方式等数据。
-
-#### 配置文件
-
-在运行 `get_model.py` 前，请确保配置文件 `config.json` 已正确设置：
-
-```json
-{
-    "output_dirs": {
-        "cleaned": "modeldata/cleaned"
-    },
-    "models": [
-        {
-            "name": "deepseek r1",
-            "key": "deepseek",
-            "version": "r1",
-            "description": "DeepSeek R1: 作为一个由 DeepSeek 公司开发的模型...",
-            "base_url": "https://ollama.com/library/deepseek-r1",
-            "tags_url": "https://ollama.com/library/deepseek-r1/tags",
-            "output_file": "deepseek_r1_models.json"
-        },
-        // 其他模型配置...
-    ]
-}
-```
-
-#### 运行模型数据获取
-
-1. 确保已安装所有依赖
-2. 运行脚本获取模型数据：
-
-```bash
+```sh
+python3 -m venv .venv
+# Windows: .venv\Scripts\activate
+. .venv/bin/activate
+python -m pip install -r requirements.txt
 python get_model.py
 ```
 
-3. 数据将保存在 `modeldata/cleaned/` 目录下，每个模型系列对应一个 JSON 文件
+## 估算值代表什么
 
-#### 示例输出
+根目录页面目前解析文件大小的 GB/TB 文本，FP16 乘 2、Q8_0 乘 1.5，其他情况（含 Q4_K_M）乘 1.2，最小值为 0.5。它没有模拟上下文长度、KV 缓存、训练优化器状态或特定推理引擎。“可运行”标签只是这个粗略比较，资料也可能过时。不要单凭它购买硬件或承诺多卡训练容量。
 
-脚本运行后会在控制台输出处理进度，并在指定目录生成 JSON 文件，包含模型的详细信息：
+## 使用与许可
 
-## 许可证
+当前版本没有 LICENSE 文件。包的分类字段写有 MIT，但这不是完整的许可授权；复用或再分发前请确认权利。本次更新不会自行补造许可证。
 
-本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+## 进一步阅读
 
-## 贡献指南
+五语导读不代表应用界面支持五语。原混合语言技术说明保留为历史参考，其中安装建议可能已经过时。
 
-欢迎提交 Issue 和 Pull Request！
-
-## 作者
-
-- jammyfu
-- GitHub: [https://github.com/jammyfu/llm-gpu-toolkit](https://github.com/jammyfu/llm-gpu-toolkit)
-
-## 更新日志
-
-### 0.1.0
-- 初始版本发布
-- 基础GPU资源计算功能实现
-- 支持主流LLM模型的显存分析
-
-## 本地服务器运行
-
-### 方法1：使用 Python 内置 HTTP 服务器
-
-1. 进入项目根目录：
-```bash
-cd llm-gpu-toolkit
-```
-
-2. 启动 HTTP 服务器：
-```bash
-python -m http.server 8000
-```
-
-3. 在浏览器中访问：
-```
-http://localhost:8000/index.html
-```
-
-### 方法2：使用 Node.js（推荐，支持热重载）
-
-1. 安装 Node.js 依赖：
-```bash
-npm install -g live-server
-```
-
-2. 启动服务器：
-```bash
-live-server --port=8000
-```
-
-3. 浏览器会自动打开 index.html
-
-### 方法3：使用 VSCode Live Server
-
-1. 在 VSCode 中安装 "Live Server" 扩展
-2. 右键 index.html，选择 "Open with Live Server"
-3. 浏览器会自动打开页面
+- [README.reference.md](README.reference.md)
+- [CURRENT_PLAN.md](CURRENT_PLAN.md) · [PROJECT_BRIEF.md](PROJECT_BRIEF.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md)
+- [Issues](https://github.com/jammyfu/llm_gpu_toolkit/issues)
