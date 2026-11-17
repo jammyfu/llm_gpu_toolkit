@@ -1,0 +1,62 @@
+diff --git a/node_modules/react-scripts/config/webpackDevServer.config.js b/node_modules/react-scripts/config/webpackDevServer.config.js
+index 522a81b..1422b1a 100644
+--- a/node_modules/react-scripts/config/webpackDevServer.config.js
++++ b/node_modules/react-scripts/config/webpackDevServer.config.js
+@@ -99,7 +99,17 @@ module.exports = function (proxy, allowedHost) {
+       publicPath: paths.publicUrlOrPath.slice(0, -1),
+     },
+ 
+-    https: getHttpsConfig(),
++    // webpack-dev-server 5 removed `https` in favor of `server`.
++    server: (() => {
++      const httpsConfig = getHttpsConfig();
++      if (httpsConfig === true) {
++        return 'https';
++      }
++      if (httpsConfig) {
++        return { type: 'https', options: httpsConfig };
++      }
++      return 'http';
++    })(),
+     host,
+     historyApiFallback: {
+       // Paths with dots should still use the history fallback.
+@@ -109,27 +119,22 @@ module.exports = function (proxy, allowedHost) {
+     },
+     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
+     proxy,
+-    onBeforeSetupMiddleware(devServer) {
+-      // Keep `evalSourceMapMiddleware`
+-      // middlewares before `redirectServedPath` otherwise will not have any effect
+-      // This lets us fetch source contents from webpack for the error overlay
+-      devServer.app.use(evalSourceMapMiddleware(devServer));
++    // webpack-dev-server 5 removed onBeforeSetupMiddleware/onAfterSetupMiddleware.
++    setupMiddlewares(middlewares, devServer) {
++      if (!devServer) {
++        throw new Error('webpack-dev-server is not defined');
++      }
++
++      // Keep evalSourceMapMiddleware before redirectServedPath.
++      middlewares.unshift(evalSourceMapMiddleware(devServer));
+ 
+       if (fs.existsSync(paths.proxySetup)) {
+-        // This registers user provided middleware for proxy reasons
+         require(paths.proxySetup)(devServer.app);
+       }
+-    },
+-    onAfterSetupMiddleware(devServer) {
+-      // Redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
+-      devServer.app.use(redirectServedPath(paths.publicUrlOrPath));
+ 
+-      // This service worker file is effectively a 'no-op' that will reset any
+-      // previous service worker registered for the same host:port combination.
+-      // We do this in development to avoid hitting the production cache if
+-      // it used the same host and port.
+-      // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
+-      devServer.app.use(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
++      middlewares.push(redirectServedPath(paths.publicUrlOrPath));
++      middlewares.push(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
++      return middlewares;
+     },
+   };
+ };
