@@ -1,0 +1,15 @@
+diff --git a/node_modules/svgo/node_modules/css-select/lib/pseudos.js b/node_modules/svgo/node_modules/css-select/lib/pseudos.js
+index 93eb6bf..d178c0c 100644
+--- a/node_modules/svgo/node_modules/css-select/lib/pseudos.js
++++ b/node_modules/svgo/node_modules/css-select/lib/pseudos.js
+@@ -11,7 +11,9 @@
+ 	  they need to return a boolean
+ */
+ 
+-var getNCheck = require("nth-check");
++var nthCheckMod = require("nth-check");
++var getNCheck =
++    typeof nthCheckMod === "function" ? nthCheckMod : nthCheckMod.default;
+ var BaseFuncs = require("boolbase");
+ var attributes = require("./attributes.js");
+ var trueFunc = BaseFuncs.trueFunc;

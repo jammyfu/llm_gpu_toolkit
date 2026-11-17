@@ -19,11 +19,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
+      - name: Record toolchain versions
+        working-directory: ./llm-vram-calc-web
+        run: |
+          node -v
+          yarn -v
+          npm -v
+          python3 -c "import json; print(json.load(open('package.json')).get('engines'))"
 
       - name: Install dependencies
         working-directory: ./llm-vram-calc-web
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Build project
         working-directory: ./llm-vram-calc-web
